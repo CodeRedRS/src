@@ -58,6 +58,10 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
     @Override
     public void poll() {
+        if (!ctx.players.local().inMotion() && ctx.players.local().animation() == -1) {
+            Paint.status = "Idle";
+        }
+
         for (Task t : StartUp.taskList) {
             if (t.activate()) {
                 t.execute();

@@ -22,7 +22,7 @@ public class PaintMethods extends ClientAccessor {
 
     // FORMATTING
     public NumberFormat formatExperience = new DecimalFormat("###,###,###");
-    DecimalFormat df = new DecimalFormat("#.00");
+    DecimalFormat df = new DecimalFormat("#.0");
 
     public String formatLetter(int n) {
         if (n > 10000) {

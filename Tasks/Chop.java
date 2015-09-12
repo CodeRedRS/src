@@ -21,7 +21,6 @@ public class Chop extends Task<ClientContext> {
     @Override
     public boolean activate() {
         return ctx.inventory.select().count() < 28
-                && ctx.players.local().interacting() != null
                 && !ctx.objects.select().name(Gui.selectedTree).isEmpty()
                 && !ctx.players.local().inCombat() //TODO: Running from combat to bank temporary fix
                 && ctx.players.local().animation() == -1;
