@@ -40,7 +40,7 @@ public class Gui extends JFrame {
 
         add(cboTrees);
         add(cboMethod);
-        add(chkDebug);
+//        add(chkDebug);
         add(btnStart);
 
         if (!ctx.objects.select().name("Bank booth", "Grand Exchange booth").isEmpty()) {

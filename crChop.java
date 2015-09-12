@@ -8,8 +8,13 @@ import crChop.Visual.Paint;
 import org.powerbot.script.*;
 import org.powerbot.script.rt4.ClientContext;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Dakota on 9/7/2015.
@@ -21,6 +26,22 @@ import java.util.ArrayList;
 public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener {
     Paint paint = new Paint(ctx);
     CursorPaint cursor = new CursorPaint(ctx);
+    final int width = ctx.game.dimensions().width, height = ctx.game.dimensions().height;
+    BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+
+    public void savePaint(String name) {
+        System.out.println("Screenshot saved at: " + ctx.controller.script().getStorageDirectory().getPath());
+        repaint(img.createGraphics());
+        img = img.getSubimage(2, 2, Paint.width + 1, Paint.height + 1);
+        final File path = new File(ctx.controller.script().getStorageDirectory().getPath(), name + ".png");
+
+        try {
+            ImageIO.write(img, "png", path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void start() {
@@ -30,7 +51,9 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
     @Override
     public void stop() {
-        System.out.println("Run time: " + ctx.controller.script().getTotalRuntime());
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        savePaint(dateFormat.format(date));
     }
 
     @Override

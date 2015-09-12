@@ -23,7 +23,7 @@ public class Paint extends ClientAccessor implements PaintListener {
 
     public static String status = "";
     public static int logs;
-    int width, height;
+    public static int width, height;
     long runtime;
 
     public void repaint(Graphics g) {
@@ -31,7 +31,7 @@ public class Paint extends ClientAccessor implements PaintListener {
         final Graphics2D g2 = (Graphics2D) g;
         FontMetrics fm = g2.getFontMetrics();
         int textOffset = fm.getHeight();
-        width = 125 ;
+        width = 125;
         height = (textOffset * 6) + 2;
 
         // SCRIPT PAINT
@@ -41,8 +41,6 @@ public class Paint extends ClientAccessor implements PaintListener {
         g2.setColor(paint);
         PaintMethods.stringTitle("crChop - " + PaintMethods.formatTime(runtime), width + 1, g2);
         g2.drawString("Level: " + ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + " (+" + PaintMethods.levelsGained() + ")", 5, textOffset * 2);
-//        g2.drawString("Exp: " + PaintMethods.formatLetter(PaintMethods.experienceGained()), 5, textOffset * 3);
-//        g2.drawString("Exp: " + PaintMethods.formatExperience.format(PaintMethods.experienceGained()), 5, textOffset * 3);
         g2.drawString("Exp: " + PaintMethods.formatLetter(PaintMethods.experienceGained()) + "(" + PaintMethods.formatLetter(PaintMethods.hourlyExperience()) + " /hr)", 5, textOffset * 3);
         g2.drawString("Logs: " + logs + "(" + PaintMethods.logsPerHour() + " /hr)", 5, textOffset * 4);
         g2.drawString("Leveling in: " + PaintMethods.timeTillLevel(), 5, textOffset * 5);

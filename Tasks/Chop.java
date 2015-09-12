@@ -21,6 +21,7 @@ public class Chop extends Task<ClientContext> {
     @Override
     public boolean activate() {
         return ctx.inventory.select().count() < 28
+                && ctx.players.local().interacting() != null
                 && !ctx.objects.select().name(Gui.selectedTree).isEmpty()
                 && !ctx.players.local().inCombat() //TODO: Running from combat to bank temporary fix
                 && ctx.players.local().animation() == -1;
@@ -29,6 +30,7 @@ public class Chop extends Task<ClientContext> {
     @Override
     public void execute() {
         GameObject tree = ctx.objects.nearest().poll();
+        ctx.camera.turnTo(tree);
         if (!tree.inViewport()) {
             Paint.status = "Going to " + tree.name();
             if (ctx.movement.step(tree)) {
@@ -39,7 +41,7 @@ public class Chop extends Task<ClientContext> {
                         return ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(tree) < 10;
                     }
                 }, 1000, 10);
-                if (ctx.players.local().tile().distanceTo(tree) < 10) {
+                if (ctx.players.local().tile().distanceTo(tree) < 10 && !tree.inViewport()) {
                     ctx.camera.pitch(Random.nextInt(0, 15));
                 }
             }

@@ -4,7 +4,7 @@ import crChop.Task;
 import crChop.Variables.Player;
 import crChop.Variables.Widget;
 import crChop.Visual.Gui;
-import org.powerbot.script.Condition;
+import crChop.Visual.Paint;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Constants;
 import org.powerbot.script.rt4.Item;
@@ -19,6 +19,7 @@ public class StartUp extends Task<ClientContext> {
     public StartUp(ClientContext ctx) {
         super(ctx);
     }
+
     Gui gui;
 
     public static List<Task> taskList = new ArrayList<>();
@@ -31,7 +32,8 @@ public class StartUp extends Task<ClientContext> {
 
     @Override
     public void execute() {
-         gui = new Gui(ctx);
+        Paint.status = "Setting up script";
+        gui = new Gui(ctx);
 
         // GET AXE ID
         for (Item i : ctx.inventory.items()) {
