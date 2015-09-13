@@ -1,6 +1,7 @@
 package crChop.Visual;
 
-import crChop.Variables.Player;
+import crChop.Tasks.StartUp;
+import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientAccessor;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Constants;
@@ -13,16 +14,16 @@ import java.text.NumberFormat;
  * Created by Dakota on 9/7/2015.
  */
 public class PaintMethods extends ClientAccessor {
-    public PaintMethods(ClientContext ctx) {
-        super(ctx);
-    }
 
     // CONSTANTS
     final int woodcutting = Constants.SKILLS_WOODCUTTING;
-
     // FORMATTING
     public NumberFormat formatExperience = new DecimalFormat("###,###,###");
     DecimalFormat df = new DecimalFormat("#.0");
+
+    public PaintMethods(ClientContext ctx) {
+        super(ctx);
+    }
 
     public String formatLetter(int n) {
         if (n > 10000) {
@@ -78,11 +79,11 @@ public class PaintMethods extends ClientAccessor {
     }
 
     public int levelsGained() {
-        return ctx.skills.realLevel(woodcutting) - Player.startLevel;
+        return ctx.skills.realLevel(woodcutting) - StartUp.startLevel;
     }
 
     public int experienceGained() {
-        return ctx.skills.experience(woodcutting) - Player.startExperience;
+        return ctx.skills.experience(woodcutting) - StartUp.startExperience;
     }
 
     // PAINT ELEMENTS
@@ -132,5 +133,15 @@ public class PaintMethods extends ClientAccessor {
         g2.setColor(c);
         g2.drawString(s, x, y);
 
+    }
+
+    public Double mapArea() {
+        Tile playerTile = ctx.players.local().tile();
+        Tile mapBorder = new Tile(playerTile.x(), playerTile.y() + 10);
+
+        Point playerPoint = playerTile.matrix(ctx).mapPoint();
+        Point mapPoint = mapBorder.matrix(ctx).mapPoint();
+
+        return Math.sqrt((playerPoint.x - mapPoint.x) * (playerPoint.x - mapPoint.x) + (playerPoint.y - mapPoint.y) * (playerPoint.y - mapPoint.y));
     }
 }

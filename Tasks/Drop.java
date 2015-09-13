@@ -1,7 +1,6 @@
 package crChop.Tasks;
 
 import crChop.Task;
-import crChop.Visual.Gui;
 import crChop.Visual.Paint;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Item;
