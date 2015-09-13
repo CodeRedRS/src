@@ -24,11 +24,11 @@ import java.util.Date;
         description = "AIO Woodcutter"
 )
 public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener {
-    Paint paint = new Paint(ctx);
-    CursorPaint cursor = new CursorPaint(ctx);
-    final int width = ctx.game.dimensions().width, height = ctx.game.dimensions().height;
-    BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
+    private final int width = ctx.game.dimensions().width, height = ctx.game.dimensions().height;
+    public int rand;
+    //    private Paint paint = new Paint(ctx);
+    private CursorPaint cursor = new CursorPaint(ctx);
+    private BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
     public void savePaint(String name) {
         System.out.println("Screenshot saved at: " + ctx.controller.script().getStorageDirectory().getPath());
@@ -51,16 +51,17 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
     @Override
     public void stop() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         Date date = new Date();
         savePaint(dateFormat.format(date));
     }
 
     @Override
     public void poll() {
-        if (!ctx.players.local().inMotion() && ctx.players.local().animation() == -1) {
-            Paint.status = "Idle";
-        }
+        rand = Random.nextInt(0, 1000);
+//        if (!ctx.players.local().inMotion() && ctx.players.local().animation() == -1) {
+//            Paint.status = "Idle";
+//        }
 
         for (Task t : StartUp.taskList) {
             if (t.activate()) {
@@ -71,6 +72,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
     @Override
     public void repaint(Graphics g) {
+        Paint paint = new Paint(ctx, "");
         cursor.drawMouse(g);
         if (ctx.game.loggedIn()) {
             paint.repaint(g);

@@ -16,16 +16,14 @@ import java.util.HashSet;
  * Created by Dakota on 9/9/2015.
  */
 public class Gui extends JFrame {
-    HashSet<String> set = new HashSet<>();
     // VARIABLES
     public static String selectedTree, method;
-    public boolean guiConfigured, debug;
     final Tree[] treeTypes = Tree.values();
-
     // JFRAME ELEMENTS
     final JComboBox<Tree> cboTrees = new JComboBox<Tree>(treeTypes);
     final JButton btnStart = new JButton("Start Script");
     final JCheckBox chkDebug = new JCheckBox("Debug");
+    public boolean guiConfigured, debug;
     DefaultComboBoxModel<String> cboDefault = new DefaultComboBoxModel<>(new String[]{"Drop"});
     final JComboBox<String> cboMethod = new JComboBox<>(cboDefault);
 
@@ -45,8 +43,9 @@ public class Gui extends JFrame {
 
         if (!ctx.objects.select().name("Bank booth", "Grand Exchange booth").isEmpty()) {
             for (GameObject g : ctx.objects.nearest()) {
+                HashSet<String> set = new HashSet<>();
                 if (!set.contains("Bank : " + g.name() + g.id())) {
-                    cboMethod.addItem("Bank : " + g.name() + " : " + (int)g.tile().distanceTo(ctx.players.local()));
+                    cboMethod.addItem("Bank : " + g.name() + " : " + (int) g.tile().distanceTo(ctx.players.local()));
                     set.add("Bank : " + g.name() + g.id());
                 }
             }

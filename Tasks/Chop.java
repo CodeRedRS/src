@@ -18,6 +18,7 @@ public class Chop extends Task<ClientContext> {
         super(ctx);
     }
 
+
     @Override
     public boolean activate() {
         return ctx.inventory.select().count() < 28

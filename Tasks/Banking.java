@@ -13,16 +13,14 @@ import java.util.concurrent.Callable;
  * Created by Dakota on 9/8/2015.
  */
 public class Banking extends Task<ClientContext> {
+    private String[] split = Gui.method.split("\\s:\\s");
+    private String bankName = split[1];
     public Banking(ClientContext ctx) {
         super(ctx);
     }
 
-    public static int axeId;
-    String[] split = Gui.method.split("\\s:\\s");
-    String bankName = split[1];
-
     public boolean activate() {
-        return (ctx.inventory.count() == 28 || ctx.inventory.id(axeId).count() != 1)
+        return ctx.inventory.count() == 28
                 || ctx.players.local().inCombat(); //TODO: Running from combat to bank temporary fix
     }
 
@@ -47,7 +45,7 @@ public class Banking extends Task<ClientContext> {
         if (ctx.bank.opened()) {
             if (ctx.inventory.count() > 1) {
                 ctx.bank.depositInventory();
-                ctx.bank.withdraw(axeId, 1);
+                ctx.bank.withdraw(StartUp.axeId, 1);
                 ctx.bank.close();
             }
         } else {
