@@ -1,6 +1,7 @@
 package crChop;
 
 import crChop.Tasks.StartUp;
+import crChop.Variables.Variables;
 import crChop.Visual.CursorPaint;
 import crChop.Visual.Gui;
 import crChop.Visual.Paint;
@@ -26,6 +27,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     private final int width = ctx.game.dimensions().width, height = ctx.game.dimensions().height;
     public int rand;
     Gui gui = new Gui(ctx);
+    Variables variables = new Variables();
     //    private Paint paint = new Paint(ctx);
     private CursorPaint cursor = new CursorPaint(ctx);
     private BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -71,12 +73,12 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
     @Override
     public void repaint(Graphics g) {
-        Paint paint = new Paint(ctx, gui.tree, gui.method);
+        Paint paint = new Paint(ctx);
         cursor.drawMouse(g);
-        if (ctx.game.loggedIn()) {
+        if (ctx.game.loggedIn() && variables.getTree() != null) {
             paint.repaint(g);
         } else {
-            Paint.status = "Logging in";
+            Paint.status = "Starting up";
         }
     }
 
@@ -84,7 +86,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void messaged(MessageEvent messageEvent) {
         String msg = messageEvent.text();
 
-        if (msg.contains("You get some " + gui.tree.toLowerCase())) {
+        if (msg.contains("You get some " + variables.getTree().getName().toLowerCase())) {
             Paint.logs++;
         } else if (msg.contains("You get some logs.")) {
             Paint.logs++;

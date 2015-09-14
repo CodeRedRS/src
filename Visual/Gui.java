@@ -2,6 +2,7 @@ package crChop.Visual;
 
 import crChop.Enums.Tree;
 import crChop.Tasks.*;
+import crChop.Variables.Variables;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.GameObject;
 
@@ -21,10 +22,9 @@ public class Gui extends JFrame {
     final JCheckBox chkDebug = new JCheckBox("Debug");
     final JComboBox<String> cboMethod = new JComboBox<>(new String[]{"Drop"});
     final JComboBox<Tree> cboTrees = new JComboBox<>(Tree.values());
-
     public String method, tree;
     public boolean guiConfigured, debug;
-    StartUp startUp = new StartUp();
+    Variables variables = new Variables();
 
     public Gui(final ClientContext ctx) {
         if (isVisible())
@@ -33,7 +33,6 @@ public class Gui extends JFrame {
         setLayout(new FlowLayout());
         setTitle("crChop GUI");
         setSize(550, 250);
-        setVisible(true);
 
         add(cboTrees);
         add(cboMethod);
@@ -59,6 +58,7 @@ public class Gui extends JFrame {
                 tree = cboTrees.getSelectedItem().toString();
 
                 StartUp.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new Chop(ctx, tree)));
+                variables.setTree(Tree.valueOf(tree));
 
                 if (method.toLowerCase().contains("bank")) {
                     StartUp.taskList.add(new Banking(ctx, method));

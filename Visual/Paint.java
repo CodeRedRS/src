@@ -1,5 +1,7 @@
 package crChop.Visual;
 
+import crChop.Enums.Tree;
+import crChop.Variables.Variables;
 import org.powerbot.script.PaintListener;
 import org.powerbot.script.rt4.ClientAccessor;
 import org.powerbot.script.rt4.ClientContext;
@@ -16,19 +18,19 @@ public class Paint extends ClientAccessor implements PaintListener {
     public static int logs;
     public static int width, height;
     long runtime;
+    Gui gui = new Gui(ctx);
+    Variables variables = new Variables();
     private PaintMethods PaintMethods = new PaintMethods(ctx);
     private Color bg = new Color(0, 0, 0, 150);
     private Color paint = Color.white;
     private Color debug = Color.red;
-    private String tree, method;
 
-    public Paint(ClientContext ctx, String tree, String method) {
+    public Paint(ClientContext ctx) {
         super(ctx);
-        this.tree = tree;
-        this.method = method;
     }
 
     public void repaint(Graphics g) {
+        Tree tree = variables.getTree();
         runtime = ctx.controller.script().getTotalRuntime();
         final Graphics2D g2 = (Graphics2D) g;
         FontMetrics fm = g2.getFontMetrics();
@@ -51,7 +53,7 @@ public class Paint extends ClientAccessor implements PaintListener {
         g2.drawString("Exp: " + PaintMethods.formatLetter(PaintMethods.experienceGained()) + " (" + PaintMethods.formatLetter(PaintMethods.hourlyExperience()) + " /hr)", 5, textOffset * 3);
 
         // Logs Cut
-        g2.drawString(tree + "s: " + logs + " (" + PaintMethods.logsPerHour() + " /hr)", 5, textOffset * 4);
+        g2.drawString(tree.getName() + "s: " + logs + " (" + PaintMethods.logsPerHour() + " /hr)", 5, textOffset * 4);
 
         // Time Till Level
         g2.drawString("Leveling in: " + PaintMethods.timeTillLevel(), 5, textOffset * 5);
@@ -59,7 +61,7 @@ public class Paint extends ClientAccessor implements PaintListener {
         // Time Till Max
         g2.drawString("Maxing in: " + PaintMethods.timeTillMax(), 5, textOffset * 6);
 
-        for (GameObject t : ctx.objects.select().name(tree).within(PaintMethods.mapArea()).limit(10)) {
+        for (GameObject t : ctx.objects.select().name(tree.getName()).within(PaintMethods.mapArea()).limit(10)) {
             Point p = t.tile().matrix(ctx).mapPoint();
 
             g2.setColor(bg);

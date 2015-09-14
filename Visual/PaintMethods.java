@@ -1,5 +1,6 @@
 package crChop.Visual;
 
+import crChop.Variables.Variables;
 import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientAccessor;
 import org.powerbot.script.rt4.ClientContext;
@@ -17,6 +18,7 @@ public class PaintMethods extends ClientAccessor {
     final int woodcutting = Constants.SKILLS_WOODCUTTING;
     // FORMATTING
     public NumberFormat formatExperience = new DecimalFormat("###,###,###");
+    Variables variables = new Variables();
     DecimalFormat df = new DecimalFormat("#.0");
 
     public PaintMethods(ClientContext ctx) {
@@ -77,11 +79,11 @@ public class PaintMethods extends ClientAccessor {
     }
 
     public int levelsGained() {
-        return ctx.skills.realLevel(woodcutting) - miscVars.getStartLevel();
+        return ctx.skills.realLevel(woodcutting) - variables.getStartLevel();
     }
 
     public int experienceGained() {
-        return ctx.skills.experience(woodcutting) - miscVars.getStartExperience();
+        return ctx.skills.experience(woodcutting) - variables.getStartExperience();
     }
 
     // PAINT ELEMENTS
