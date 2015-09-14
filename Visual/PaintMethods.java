@@ -1,6 +1,5 @@
 package crChop.Visual;
 
-import crChop.Tasks.StartUp;
 import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientAccessor;
 import org.powerbot.script.rt4.ClientContext;
@@ -14,7 +13,6 @@ import java.text.NumberFormat;
  * Created by Dakota on 9/7/2015.
  */
 public class PaintMethods extends ClientAccessor {
-
     // CONSTANTS
     final int woodcutting = Constants.SKILLS_WOODCUTTING;
     // FORMATTING
@@ -79,11 +77,11 @@ public class PaintMethods extends ClientAccessor {
     }
 
     public int levelsGained() {
-        return ctx.skills.realLevel(woodcutting) - StartUp.startLevel;
+        return ctx.skills.realLevel(woodcutting) - miscVars.getStartLevel();
     }
 
     public int experienceGained() {
-        return ctx.skills.experience(woodcutting) - StartUp.startExperience;
+        return ctx.skills.experience(woodcutting) - miscVars.getStartExperience();
     }
 
     // PAINT ELEMENTS
@@ -137,7 +135,7 @@ public class PaintMethods extends ClientAccessor {
 
     public Double mapArea() {
         Tile playerTile = ctx.players.local().tile();
-        Tile mapBorder = new Tile(playerTile.x(), playerTile.y() + 10);
+        Tile mapBorder = new Tile(playerTile.x(), playerTile.y() + 4);
 
         Point playerPoint = playerTile.matrix(ctx).mapPoint();
         Point mapPoint = mapBorder.matrix(ctx).mapPoint();

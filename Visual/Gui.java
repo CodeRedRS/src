@@ -16,16 +16,15 @@ import java.util.HashSet;
  * Created by Dakota on 9/9/2015.
  */
 public class Gui extends JFrame {
-    // VARIABLES
-    public static String selectedTree, method;
-    final Tree[] treeTypes = Tree.values();
     // JFRAME ELEMENTS
-    final JComboBox<Tree> cboTrees = new JComboBox<Tree>(treeTypes);
     final JButton btnStart = new JButton("Start Script");
     final JCheckBox chkDebug = new JCheckBox("Debug");
+    final JComboBox<String> cboMethod = new JComboBox<>(new String[]{"Drop"});
+    final JComboBox<Tree> cboTrees = new JComboBox<>(Tree.values());
+
+    public String method, tree;
     public boolean guiConfigured, debug;
-    DefaultComboBoxModel<String> cboDefault = new DefaultComboBoxModel<>(new String[]{"Drop"});
-    final JComboBox<String> cboMethod = new JComboBox<>(cboDefault);
+    StartUp startUp = new StartUp();
 
     public Gui(final ClientContext ctx) {
         if (isVisible())
@@ -56,15 +55,13 @@ public class Gui extends JFrame {
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final Tree t = (Tree) cboTrees.getSelectedItem();
-                selectedTree = t.getName();
-                method = (String) cboMethod.getSelectedItem();
-                System.out.println("Selected Bank: " + cboMethod.getSelectedItem());
+                method = cboMethod.getSelectedItem().toString();
+                tree = cboTrees.getSelectedItem().toString();
 
-                StartUp.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new Chop(ctx)));
+                StartUp.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new Chop(ctx, tree)));
 
                 if (method.toLowerCase().contains("bank")) {
-                    StartUp.taskList.add(new Banking(ctx));
+                    StartUp.taskList.add(new Banking(ctx, method));
                 } else if (method.toLowerCase().contains("drop")) {
                     StartUp.taskList.add(new Drop(ctx));
                 }

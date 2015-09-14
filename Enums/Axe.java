@@ -14,9 +14,9 @@ public enum Axe {
     DRAGON("Dragon axe", 6739, 61),
     INFERNAL("Infernal axe", -1, 61);
 
-    final String axeName;
-    final int axeId;
-    final int axeLevel;
+    private final String axeName;
+    private final int axeId;
+    private final int axeLevel;
 
     Axe(final String axeName, final int axeId, final int axeLevel) {
         this.axeName = axeName;

@@ -1,7 +1,6 @@
 package crChop;
 
 import crChop.Tasks.StartUp;
-import crChop.Variables.Widget;
 import crChop.Visual.CursorPaint;
 import crChop.Visual.Gui;
 import crChop.Visual.Paint;
@@ -26,6 +25,7 @@ import java.util.Date;
 public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener {
     private final int width = ctx.game.dimensions().width, height = ctx.game.dimensions().height;
     public int rand;
+    Gui gui = new Gui(ctx);
     //    private Paint paint = new Paint(ctx);
     private CursorPaint cursor = new CursorPaint(ctx);
     private BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -46,7 +46,6 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     @Override
     public void start() {
         StartUp.taskList.add(new StartUp(ctx));
-        Widget.initiateWidgets(ctx);
     }
 
     @Override
@@ -72,7 +71,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
     @Override
     public void repaint(Graphics g) {
-        Paint paint = new Paint(ctx, "");
+        Paint paint = new Paint(ctx, gui.tree, gui.method);
         cursor.drawMouse(g);
         if (ctx.game.loggedIn()) {
             paint.repaint(g);
@@ -85,7 +84,9 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void messaged(MessageEvent messageEvent) {
         String msg = messageEvent.text();
 
-        if (msg.contains("You get some " + Gui.selectedTree.toLowerCase())) {
+        if (msg.contains("You get some " + gui.tree.toLowerCase())) {
+            Paint.logs++;
+        } else if (msg.contains("You get some logs.")) {
             Paint.logs++;
         }
     }

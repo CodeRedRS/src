@@ -1,7 +1,6 @@
 package crChop.Tasks;
 
 import crChop.Task;
-import crChop.Visual.Gui;
 import crChop.Visual.Paint;
 import org.powerbot.script.Condition;
 import org.powerbot.script.rt4.ClientContext;
@@ -13,10 +12,14 @@ import java.util.concurrent.Callable;
  * Created by Dakota on 9/8/2015.
  */
 public class Banking extends Task<ClientContext> {
-    private String[] split = Gui.method.split("\\s:\\s");
+    StartUp startUp = new StartUp(ctx, 0, 0, 0);
+    private String method;
+    private String[] split = method.split("\\s:\\s");
     private String bankName = split[1];
-    public Banking(ClientContext ctx) {
+
+    public Banking(ClientContext ctx, String method) {
         super(ctx);
+        this.method = method;
     }
 
     public boolean activate() {
@@ -45,7 +48,7 @@ public class Banking extends Task<ClientContext> {
         if (ctx.bank.opened()) {
             if (ctx.inventory.count() > 1) {
                 ctx.bank.depositInventory();
-                ctx.bank.withdraw(StartUp.axeId, 1);
+                ctx.bank.withdraw(miscVars.getAxeId(), 1);
                 ctx.bank.close();
             }
         } else {

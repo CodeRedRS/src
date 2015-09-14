@@ -13,7 +13,7 @@ import org.powerbot.script.rt4.Component;
  */
 public class Antiban extends Task<ClientContext> {
     public Boolean antibanEnable = false;
-    crChop crChop = new crChop();
+    private crChop crChop = new crChop();
 
     public Antiban(ClientContext ctx) {
         super(ctx);

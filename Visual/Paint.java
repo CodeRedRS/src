@@ -15,25 +15,21 @@ public class Paint extends ClientAccessor implements PaintListener {
     public static String status = "";
     public static int logs;
     public static int width, height;
-    PaintMethods PaintMethods = new PaintMethods(ctx);
     long runtime;
-    private String selectedTree;
+    private PaintMethods PaintMethods = new PaintMethods(ctx);
     private Color bg = new Color(0, 0, 0, 150);
     private Color paint = Color.white;
     private Color debug = Color.red;
-    private String tree;
+    private String tree, method;
 
-    public Paint(ClientContext ctx, String selectedTree) {
+    public Paint(ClientContext ctx, String tree, String method) {
         super(ctx);
-        this.selectedTree = selectedTree;
+        this.tree = tree;
+        this.method = method;
     }
 
     public void repaint(Graphics g) {
-        if (selectedTree != null) {
-            tree = selectedTree;
-        }
         runtime = ctx.controller.script().getTotalRuntime();
-        ctx.objects.select().name(selectedTree).poll();
         final Graphics2D g2 = (Graphics2D) g;
         FontMetrics fm = g2.getFontMetrics();
         int textOffset = fm.getHeight();
@@ -63,17 +59,14 @@ public class Paint extends ClientAccessor implements PaintListener {
         // Time Till Max
         g2.drawString("Maxing in: " + PaintMethods.timeTillMax(), 5, textOffset * 6);
 
-        g2.setColor(Color.cyan);
+        for (GameObject t : ctx.objects.select().name(tree).within(PaintMethods.mapArea()).limit(10)) {
+            Point p = t.tile().matrix(ctx).mapPoint();
 
-        for (GameObject trees : ctx.objects.within(PaintMethods.mapArea())) {
-            Point tp = trees.tile().matrix(ctx).mapPoint();
-
-            g2.fillOval(tp.x, tp.y, 5, 5);
+            g2.setColor(bg);
+            g2.fillRect(p.x + 8, p.y - 2, fm.stringWidth(t.name() + " (" + (int) ctx.players.local().tile().distanceTo(t.tile()) + ")") + 2, textOffset - 2);
+            PaintMethods.shadowString(t.name() + " (" + (int) ctx.players.local().tile().distanceTo(t.tile()) + ")", p.x + 10, p.y + (textOffset / 2 + 1), Color.cyan, g2);
+            g2.setColor(Color.cyan);
+            g2.fillOval(p.x, p.y, 10, 10);
         }
-
-        GameObject t = ctx.objects.nearest().poll();
-        Polygon poly = t.tile().matrix(ctx).getBounds();
-
-        g2.drawPolygon(poly);
     }
 }

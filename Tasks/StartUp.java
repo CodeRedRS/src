@@ -15,11 +15,15 @@ import java.util.List;
  * Created by Dakota on 9/8/2015.
  */
 public class StartUp extends Task<ClientContext> {
-    public static List<Task> taskList = new ArrayList<>();
-    public static int axeId, startLevel, startExperience;
+    public List<Task> taskList = new ArrayList<>();
     public boolean started;
-    public StartUp(ClientContext ctx) {
+    public int axeId, startLevel, startExperience;
+
+    public StartUp(ClientContext ctx, int axeId, int startLevel, int startExperience) {
         super(ctx);
+        this.axeId = axeId;
+        this.startLevel = startLevel;
+        this.startExperience = startExperience;
     }
 
     @Override
@@ -29,7 +33,12 @@ public class StartUp extends Task<ClientContext> {
 
     @Override
     public void execute() {
+        Gui gui = new Gui(ctx);
         Paint.status = "Setting up script";
+        Widget.initiateWidgets(ctx);
+        if (!Widget.inventoryWidget.visible()) {
+            Widget.inventoryButtonWidget.click();
+        }
 
         // GET AXE ID
         for (Item i : ctx.inventory.items()) {
@@ -45,9 +54,10 @@ public class StartUp extends Task<ClientContext> {
         if (!Widget.settingsWidget.visible()) {
             Widget.settingsButtonWidget.click();
             Widget.zoomWidget.interact("Restore Default Zoom");
+            Widget.inventoryButtonWidget.click();
         }
         ctx.camera.pitch(50);
-        Gui gui = new Gui(ctx);
+        gui.setVisible(true);
         started = true;
     }
 
