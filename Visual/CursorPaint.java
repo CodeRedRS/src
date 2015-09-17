@@ -9,12 +9,16 @@ import java.awt.*;
  * Created by Dakota on 9/7/2015.
  */
 public class CursorPaint extends ClientAccessor {
-    public CursorPaint(ClientContext ctx) {
+    private int startLevel, startExpeience;
+
+    public CursorPaint(ClientContext ctx, int startLevel, int startExpeience) {
         super(ctx);
+        this.startLevel = startLevel;
+        this.startExpeience = startExpeience;
     }
 
     public void drawMouse(Graphics g) {
-        PaintMethods paintMethods = new PaintMethods(ctx);
+        PaintMethods paintMethods = new PaintMethods(ctx, this.startLevel, this.startExpeience);
         final Graphics2D g2 = (Graphics2D) g;
         Point p = ctx.input.getLocation();
 

@@ -1,43 +1,35 @@
 package crChop.Visual;
 
 import crChop.Enums.Tree;
-import crChop.Tasks.*;
-import crChop.Variables.Variables;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.GameObject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
 import java.util.HashSet;
 
 /**
  * Created by Dakota on 9/9/2015.
  */
 public class Gui extends JFrame {
-    // JFRAME ELEMENTS
     final JButton btnStart = new JButton("Start Script");
-    final JCheckBox chkDebug = new JCheckBox("Debug");
     final JComboBox<String> cboMethod = new JComboBox<>(new String[]{"Drop"});
     final JComboBox<Tree> cboTrees = new JComboBox<>(Tree.values());
-    public String method, tree;
-    public boolean guiConfigured, debug;
-    Variables variables = new Variables();
 
     public Gui(final ClientContext ctx) {
         if (isVisible())
             Paint.status = "GUI";
 
-        setLayout(new FlowLayout());
-        setTitle("crChop GUI");
-        setSize(550, 250);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+        this.setTitle("crChop Gui");
 
-        add(cboTrees);
-        add(cboMethod);
-//        add(chkDebug);
-        add(btnStart);
+        this.add(cboTrees);
+        this.add(cboMethod);
+        this.add(btnStart);
+
+        setLayout(new FlowLayout());
+        setSize(150, 150);
 
         if (!ctx.objects.select().name("Bank booth", "Grand Exchange booth").isEmpty()) {
             for (GameObject g : ctx.objects.nearest()) {
@@ -51,28 +43,15 @@ public class Gui extends JFrame {
 
         cboTrees.setSelectedIndex(0);
 
-        btnStart.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                method = cboMethod.getSelectedItem().toString();
-                tree = cboTrees.getSelectedItem().toString();
+        btnStart.addActionListener(e -> dispose());
+    }
 
-                StartUp.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new Chop(ctx, tree)));
-                variables.setTree(Tree.valueOf(tree));
+    public final String getMethod() {
+        return cboMethod.getSelectedItem().toString();
+    }
 
-                if (method.toLowerCase().contains("bank")) {
-                    StartUp.taskList.add(new Banking(ctx, method));
-                } else if (method.toLowerCase().contains("drop")) {
-                    StartUp.taskList.add(new Drop(ctx));
-                }
-
-                if (chkDebug.isSelected()) {
-                    debug = true;
-                }
-
-                guiConfigured = true;
-                dispose();
-            }
-        });
+    public final Tree getTree() {
+        return Tree.valueOf(cboTrees.getSelectedItem().toString());
     }
 }
+

@@ -1,8 +1,8 @@
 package crChop.Tasks;
 
 import crChop.Task;
+import crChop.Visual.Gui;
 import crChop.Visual.Paint;
-import crChop.crChop;
 import org.powerbot.script.Condition;
 import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
@@ -13,7 +13,7 @@ import org.powerbot.script.rt4.Component;
  */
 public class Antiban extends Task<ClientContext> {
     public Boolean antibanEnable = false;
-    private crChop crChop = new crChop();
+    Gui gui = new Gui(ctx);
 
     public Antiban(ClientContext ctx) {
         super(ctx);
@@ -21,13 +21,13 @@ public class Antiban extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
-        return crChop.rand == 500;
+        return ctx.players.local().animation() > -1;
     }
 
     @Override
     public void execute() {
         antibanEnable = true;
-        int rand = Random.nextInt(1, 4);
+        int rand = Random.nextInt(1, 4000);
         int sleepTime = Random.nextInt(500, 1000);
         String antiban = "[ANTIBAN] ";
         switch (rand) {
