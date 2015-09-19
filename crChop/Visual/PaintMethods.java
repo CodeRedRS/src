@@ -1,6 +1,5 @@
-package crChop.Visual;
+package org.crChop.Visual;
 
-import crChop.Tasks.StartUp;
 import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientAccessor;
 import org.powerbot.script.rt4.ClientContext;
@@ -14,15 +13,34 @@ import java.text.NumberFormat;
  * Created by Dakota on 9/7/2015.
  */
 public class PaintMethods extends ClientAccessor {
-
     // CONSTANTS
     final int woodcutting = Constants.SKILLS_WOODCUTTING;
     // FORMATTING
-    public NumberFormat formatExperience = new DecimalFormat("###,###,###");
+    public NumberFormat formatNumber = new DecimalFormat("###,###,###");
     DecimalFormat df = new DecimalFormat("#.0");
+    private int startLevel, startExperience, logs;
 
-    public PaintMethods(ClientContext ctx) {
+    public PaintMethods(ClientContext ctx, int startLevel, int startExperience, int logs) {
         super(ctx);
+        this.startLevel = startLevel;
+        this.startExperience = startExperience;
+        this.logs = logs;
+    }
+
+    public String formatTime(long time) {
+        long seconds = time / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+        if (days > 0) {
+            return (days < 10 ? "0" + days : days) + ":"
+                    + (hours % 24 < 10 ? "0" + hours % 24 : hours % 24) + ":"
+                    + (minutes % 60 < 10 ? "0" + minutes % 60 : minutes % 60) + ":"
+                    + (seconds % 60 < 10 ? "0" + seconds % 60 : seconds % 60);
+        }
+        return (hours % 24 < 10 ? "0" + hours % 24 : hours % 24) + ":"
+                + (minutes % 60 < 10 ? "0" + minutes % 60 : minutes % 60) + ":"
+                + (seconds % 60 < 10 ? "0" + seconds % 60 : seconds % 60);
     }
 
     public String formatLetter(int n) {
@@ -31,13 +49,7 @@ public class PaintMethods extends ClientAccessor {
         } else if (n > 1000000) {
             return df.format(n / 1000000.0) + "m";
         }
-        return formatExperience.format(n);
-    }
-
-    public String formatTime(final long time) {
-        final int sec = (int) (time / 1000), h = sec / 3600, m = sec / 60 % 60, s = sec % 60;
-        return (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m) + ":"
-                + (s < 10 ? "0" + s : s);
+        return formatNumber.format(n);
     }
 
     // CALCULATIONS
@@ -51,10 +63,10 @@ public class PaintMethods extends ClientAccessor {
     }
 
     public long logsPerHour() {
-        if (Paint.logs < 1) {
+        if (logs < 1) {
             return 0;
         }
-        return (long) (Paint.logs * 3600000D) / ctx.controller.script().getTotalRuntime();
+        return (long) (logs * 3600000D) / ctx.controller.script().getTotalRuntime();
     }
 
     public String timeTillLevel() {
@@ -79,11 +91,11 @@ public class PaintMethods extends ClientAccessor {
     }
 
     public int levelsGained() {
-        return ctx.skills.realLevel(woodcutting) - StartUp.startLevel;
+        return ctx.skills.realLevel(woodcutting) - startLevel;
     }
 
     public int experienceGained() {
-        return ctx.skills.experience(woodcutting) - StartUp.startExperience;
+        return ctx.skills.experience(woodcutting) - startExperience;
     }
 
     // PAINT ELEMENTS
@@ -137,7 +149,7 @@ public class PaintMethods extends ClientAccessor {
 
     public Double mapArea() {
         Tile playerTile = ctx.players.local().tile();
-        Tile mapBorder = new Tile(playerTile.x(), playerTile.y() + 10);
+        Tile mapBorder = new Tile(playerTile.x(), playerTile.y() + 4);
 
         Point playerPoint = playerTile.matrix(ctx).mapPoint();
         Point mapPoint = mapBorder.matrix(ctx).mapPoint();

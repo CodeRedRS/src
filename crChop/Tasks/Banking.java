@@ -1,8 +1,7 @@
-package crChop.Tasks;
+package org.crChop.Tasks;
 
-import crChop.Task;
-import crChop.Visual.Gui;
-import crChop.Visual.Paint;
+import org.crChop.Task;
+import org.crChop.Visual.Paint;
 import org.powerbot.script.Condition;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.GameObject;
@@ -13,10 +12,13 @@ import java.util.concurrent.Callable;
  * Created by Dakota on 9/8/2015.
  */
 public class Banking extends Task<ClientContext> {
-    private String[] split = Gui.method.split("\\s:\\s");
-    private String bankName = split[1];
-    public Banking(ClientContext ctx) {
+    private final String method;
+    private final int axeId;
+
+    public Banking(ClientContext ctx, String method, int axeId) {
         super(ctx);
+        this.method = method;
+        this.axeId = axeId;
     }
 
     public boolean activate() {
@@ -27,6 +29,7 @@ public class Banking extends Task<ClientContext> {
 
     @Override
     public void execute() {
+        String bankName = method.split("\\s:\\s")[1];
         GameObject bank = ctx.objects.select().name(bankName).poll();
         if (!bank.inViewport()) {
             Paint.status = "Waking to bank : " + bankName;
@@ -45,8 +48,6 @@ public class Banking extends Task<ClientContext> {
         if (ctx.bank.opened()) {
             if (ctx.inventory.count() > 1) {
                 ctx.bank.depositInventory();
-                ctx.bank.withdraw(StartUp.axeId, 1);
-                ctx.bank.close();
             }
         } else {
             if (bank.interact("Bank")) {
@@ -59,5 +60,6 @@ public class Banking extends Task<ClientContext> {
                 }, 300, 10);
             }
         }
+        ctx.bank.withdraw(this.axeId, 1);
     }
 }

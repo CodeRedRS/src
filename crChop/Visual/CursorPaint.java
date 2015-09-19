@@ -1,4 +1,4 @@
-package crChop.Visual;
+package org.crChop.Visual;
 
 import org.powerbot.script.rt4.ClientAccessor;
 import org.powerbot.script.rt4.ClientContext;
@@ -9,12 +9,17 @@ import java.awt.*;
  * Created by Dakota on 9/7/2015.
  */
 public class CursorPaint extends ClientAccessor {
-    public CursorPaint(ClientContext ctx) {
+    private int startLevel, startExpeience, logs;
+
+    public CursorPaint(ClientContext ctx, int startLevel, int startExpeience, int logs) {
         super(ctx);
+        this.startLevel = startLevel;
+        this.startExpeience = startExpeience;
+        this.logs = logs;
     }
 
     public void drawMouse(Graphics g) {
-        PaintMethods paintMethods = new PaintMethods(ctx);
+        PaintMethods paintMethods = new PaintMethods(ctx, this.startLevel, this.startExpeience, this.logs);
         final Graphics2D g2 = (Graphics2D) g;
         Point p = ctx.input.getLocation();
 

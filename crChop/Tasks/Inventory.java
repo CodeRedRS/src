@@ -1,21 +1,23 @@
-package crChop.Tasks;
+package org.crChop.Tasks;
 
-import crChop.Task;
-import crChop.Variables.Widget;
-import crChop.Visual.Paint;
+import org.crChop.Task;
+import org.crChop.Variables.Widget;
+import org.crChop.Visual.Paint;
 import org.powerbot.script.rt4.ClientContext;
 
 /**
  * Created by Dakota on 9/8/2015.
  */
 public class Inventory extends Task<ClientContext> {
+    Widget widget = new Widget();
+
     public Inventory(ClientContext ctx) {
         super(ctx);
     }
 
     @Override
     public boolean activate() {
-        return !Widget.inventoryWidget.visible()
+        return !widget.inventoryWidget.visible()
                 && !ctx.bank.opened();
     }
 
@@ -23,6 +25,6 @@ public class Inventory extends Task<ClientContext> {
     public void execute() {
         Paint.status = "Opening inventory";
 
-        Widget.inventoryButtonWidget.click();
+        widget.inventoryButtonWidget.click();
     }
 }

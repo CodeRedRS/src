@@ -1,8 +1,7 @@
-package crChop.Tasks;
+package org.crChop.Tasks;
 
-import crChop.Task;
-import crChop.Visual.Paint;
-import crChop.crChop;
+import org.crChop.Task;
+import org.crChop.Visual.Paint;
 import org.powerbot.script.Condition;
 import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
@@ -13,7 +12,6 @@ import org.powerbot.script.rt4.Component;
  */
 public class Antiban extends Task<ClientContext> {
     public Boolean antibanEnable = false;
-    crChop crChop = new crChop();
 
     public Antiban(ClientContext ctx) {
         super(ctx);
@@ -21,15 +19,15 @@ public class Antiban extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
-        return crChop.rand == 500;
+        return ctx.players.local().animation() > -1;
     }
 
     @Override
     public void execute() {
         antibanEnable = true;
-        int rand = Random.nextInt(1, 4);
+        int rand = Random.nextInt(1, 4000);
         int sleepTime = Random.nextInt(500, 1000);
-        String antiban = "[ANTIBAN] ";
+        String antiban = "[ANTIBAN - " + ctx.controller.script().getTotalRuntime() + "] ";
         switch (rand) {
             case 1:
                 int x = Random.nextInt(0, 500);
@@ -38,6 +36,7 @@ public class Antiban extends Task<ClientContext> {
                 System.out.println(antiban + "Moving Mouse (" + x + ", " + y + ")");
                 ctx.input.move(x, y);
                 Condition.sleep(sleepTime);
+                Paint.status = "Antiban Done";
                 antibanEnable = false;
                 break;
             case 2:
@@ -45,6 +44,7 @@ public class Antiban extends Task<ClientContext> {
                 Paint.status = antiban + "AFK " + (a / 1000.0) + "s";
                 System.out.println(antiban + "AFK " + (a / 1000.0) + "s");
                 Condition.sleep(sleepTime * 10);
+                Paint.status = "Antiban Done";
                 antibanEnable = false;
                 break;
             case 3:
@@ -53,6 +53,7 @@ public class Antiban extends Task<ClientContext> {
                 System.out.println(antiban + "Opening Random Tab");
                 randWidget.click();
                 Condition.sleep(sleepTime);
+                Paint.status = "Antiban Done";
                 antibanEnable = false;
                 break;
             case 4:
@@ -61,6 +62,7 @@ public class Antiban extends Task<ClientContext> {
                 System.out.println(antiban + "Setting Angle to: " + rAngle);
                 ctx.camera.angle(rAngle);
                 Condition.sleep(sleepTime);
+                Paint.status = "Antiban Done";
                 antibanEnable = false;
                 break;
 //            case 5:
