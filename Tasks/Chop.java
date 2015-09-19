@@ -15,10 +15,12 @@ import java.util.concurrent.Callable;
  */
 public class Chop extends Task<ClientContext> {
     private Tree tree;
+    private int axeId;
 
-    public Chop(ClientContext ctx, Tree tree) {
+    public Chop(ClientContext ctx, Tree tree, int axeId) {
         super(ctx);
         this.tree = tree;
+        this.axeId = axeId;
     }
 
     @Override
@@ -26,12 +28,18 @@ public class Chop extends Task<ClientContext> {
         return ctx.inventory.select().count() < 28
                 && !ctx.objects.select().name(tree.getName()).isEmpty()
                 && !ctx.players.local().inCombat() //TODO: Running from combat to bank temporary fix
-                && ctx.players.local().animation() == -1;
+                && ctx.players.local().animation() == -1
+                && (ctx.inventory.id(axeId).count() == 1 || ctx.equipment.id(axeId).count() == 1);
     }
 
     @Override
     public void execute() {
         GameObject tree = ctx.objects.nearest().poll();
+
+        if (ctx.bank.opened()) {
+            ctx.movement.step(tree);
+        }
+
         if (!tree.inViewport()) {
             ctx.camera.pitch(Random.nextInt(0, 15));
             ctx.camera.turnTo(tree);
@@ -39,12 +47,14 @@ public class Chop extends Task<ClientContext> {
             if (!tree.inViewport()) {
                 if (ctx.movement.step(tree)) {
                     ctx.camera.turnTo(tree);
-                    Condition.wait(new Callable<Boolean>() {
-                        @Override
-                        public Boolean call() throws Exception {
-                            return ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(tree) < 10;
-                        }
-                    }, 1000, 10);
+                    if (ctx.players.local().inMotion()) {
+                        Condition.wait(new Callable<Boolean>() {
+                            @Override
+                            public Boolean call() throws Exception {
+                                return ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(tree) < 10;
+                            }
+                        }, 1000, 10);
+                    }
                 }
             }
 //            ctx.movement.step(tree);

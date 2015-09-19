@@ -15,6 +15,8 @@ public class Gui extends JFrame {
     final JButton btnStart = new JButton("Start Script");
     final JComboBox<String> cboMethod = new JComboBox<>(new String[]{"Drop"});
     final JComboBox<Tree> cboTrees = new JComboBox<>(Tree.values());
+    final JCheckBox chkHideName = new JCheckBox("Hide Username");
+    final JCheckBox chkScreenshot = new JCheckBox("Save Screenshot");
 
     public Gui(final ClientContext ctx) {
         if (isVisible())
@@ -26,10 +28,12 @@ public class Gui extends JFrame {
 
         this.add(cboTrees);
         this.add(cboMethod);
+        this.add(chkHideName);
+        this.add(chkScreenshot);
         this.add(btnStart);
 
         setLayout(new FlowLayout());
-        setSize(150, 150);
+        setSize(250, 150);
 
         if (!ctx.objects.select().name("Bank booth", "Grand Exchange booth").isEmpty()) {
             for (GameObject g : ctx.objects.nearest()) {
@@ -52,6 +56,14 @@ public class Gui extends JFrame {
 
     public final Tree getTree() {
         return Tree.valueOf(cboTrees.getSelectedItem().toString());
+    }
+
+    public final Boolean hideName() {
+        return chkHideName.isSelected();
+    }
+
+    public final Boolean screenshot() {
+        return chkScreenshot.isSelected();
     }
 }
 

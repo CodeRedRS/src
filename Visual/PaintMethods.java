@@ -18,12 +18,13 @@ public class PaintMethods extends ClientAccessor {
     // FORMATTING
     public NumberFormat formatNumber = new DecimalFormat("###,###,###");
     DecimalFormat df = new DecimalFormat("#.0");
-    private int startLevel, startExperience;
+    private int startLevel, startExperience, logs;
 
-    public PaintMethods(ClientContext ctx, int startLevel, int startExperience) {
+    public PaintMethods(ClientContext ctx, int startLevel, int startExperience, int logs) {
         super(ctx);
         this.startLevel = startLevel;
         this.startExperience = startExperience;
+        this.logs = logs;
     }
 
     public String formatTime(long time) {
@@ -62,10 +63,10 @@ public class PaintMethods extends ClientAccessor {
     }
 
     public long logsPerHour() {
-        if (Paint.logs < 1) {
+        if (logs < 1) {
             return 0;
         }
-        return (long) (Paint.logs * 3600000D) / ctx.controller.script().getTotalRuntime();
+        return (long) (logs * 3600000D) / ctx.controller.script().getTotalRuntime();
     }
 
     public String timeTillLevel() {

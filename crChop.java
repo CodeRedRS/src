@@ -33,11 +33,11 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     private final int width = ctx.game.dimensions().width, height = ctx.game.dimensions().height;
     private List<Task> taskList = new ArrayList<>();
     private Gui gui = new Gui(ctx);
-    private final Tree tree = gui.getTree();
-    private final String method = gui.getMethod();
-    private int startExperience, startLevel, axeId;
-    private CursorPaint cursor = new CursorPaint(ctx, this.startLevel, this.startExperience);
-    private Paint paint = new Paint(ctx, this.startLevel, this.startExperience);
+    private int startExperience, startLevel, axeId, logs;
+    private Tree tree;
+    private boolean started;
+
+    private CursorPaint cursor = new CursorPaint(ctx, this.startLevel, this.startExperience, this.logs);
     private BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
     public void savePaint(String name) {
@@ -68,14 +68,13 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
                 Widget.zoomWidget.interact("Restore Default Zoom");
                 if (!Widget.inventoryWidget.visible()) {
                     Widget.inventoryButtonWidget.click();
-                } else {
-                    // GET AXE ID
-                    for (Item i : ctx.inventory.items()) {
-                        if (i.name().toLowerCase().contains("axe")) {
-                            System.out.println(i.name() + "(" + i.id() + ")");
-                            axeId = i.id();
-                        }
-                    }
+                }
+            }
+            // GET AXE ID
+            for (Item i : ctx.inventory.items()) {
+                if (i.name().toLowerCase().contains("axe")) {
+                    System.out.println(i.name() + "(" + i.id() + ")");
+                    this.axeId = i.id();
                 }
             }
 
@@ -86,10 +85,17 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
                 Condition.sleep(100);
             }
 
+            final Tree guiTree = gui.getTree();
+            final String guiMethod = gui.getMethod();
+            this.tree = guiTree;
+            String method = guiMethod;
+
             if (gui.getMethod().toLowerCase().contains("bank")) {
-                taskList.addAll(Arrays.asList(new Banking(ctx, this.method, this.axeId), new Run(ctx), new Inventory(ctx), new Chop(ctx, this.tree), new Antiban(ctx)));
+                taskList.addAll(Arrays.asList(new Banking(ctx, method, this.axeId), new Run(ctx), new Inventory(ctx), new Chop(ctx, this.tree, this.axeId), new Antiban(ctx)));
+                this.started = true;
             } else if (gui.getMethod().toLowerCase().contains("drop")) {
-                taskList.addAll(Arrays.asList(new Drop(ctx), new Run(ctx), new Inventory(ctx), new Chop(ctx, tree), new Antiban(ctx)));
+                taskList.addAll(Arrays.asList(new Drop(ctx), new Run(ctx), new Inventory(ctx), new Chop(ctx, this.tree, this.axeId), new Antiban(ctx)));
+                this.started = true;
             }
         } else {
             ctx.controller.stop();
@@ -100,12 +106,16 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void stop() {
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         Date date = new Date();
-//        if (ctx.game.loggedIn())
-//            savePaint(dateFormat.format(date));
+        if (gui.screenshot())
+            savePaint(dateFormat.format(date));
     }
 
     @Override
     public void poll() {
+        while (ctx.players.local().animation() == 867) {
+            Paint.status = "Chopping";
+        }
+
         for (Task t : taskList) {
             if (t.activate()) {
                 t.execute();
@@ -116,7 +126,8 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     @Override
     public void repaint(Graphics g) {
         cursor.drawMouse(g);
-        if (ctx.game.loggedIn() && this.tree != null) {
+        if (ctx.game.loggedIn() && started) {
+            Paint paint = new Paint(ctx, this.startLevel, this.startExperience, this.tree, this.logs, gui.hideName());
             paint.repaint(g);
         } else {
             Paint.status = "Starting up";
@@ -128,9 +139,9 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
         String msg = messageEvent.text();
 
         if (msg.contains("You get some " + this.tree.getName().toLowerCase())) {
-            Paint.logs++;
+            logs++;
         } else if (msg.contains("You get some logs.")) {
-            Paint.logs++;
+            logs++;
         }
     }
 }

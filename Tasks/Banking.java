@@ -30,8 +30,7 @@ public class Banking extends Task<ClientContext> {
     @Override
     public void execute() {
         String bankName = method.split("\\s:\\s")[1];
-        GameObject bank = ctx.objects.select().name(bankName).action("Bank").poll();
-        System.out.println(this.method);
+        GameObject bank = ctx.objects.select().name(bankName).poll();
         if (!bank.inViewport()) {
             Paint.status = "Waking to bank : " + bankName;
             if (ctx.movement.step(bank)) {
@@ -49,9 +48,6 @@ public class Banking extends Task<ClientContext> {
         if (ctx.bank.opened()) {
             if (ctx.inventory.count() > 1) {
                 ctx.bank.depositInventory();
-                Condition.sleep(100);
-                ctx.bank.withdraw(this.axeId, 1);
-//                ctx.bank.close();
             }
         } else {
             if (bank.interact("Bank")) {
@@ -64,5 +60,6 @@ public class Banking extends Task<ClientContext> {
                 }, 300, 10);
             }
         }
+        ctx.bank.withdraw(this.axeId, 1);
     }
 }
