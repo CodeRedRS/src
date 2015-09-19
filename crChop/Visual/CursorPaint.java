@@ -1,4 +1,4 @@
-package crChop.Visual;
+package org.crChop.Visual;
 
 import org.powerbot.script.rt4.ClientAccessor;
 import org.powerbot.script.rt4.ClientContext;

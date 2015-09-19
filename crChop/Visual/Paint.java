@@ -1,7 +1,7 @@
-package crChop.Visual;
+package org.crChop.Visual;
 
-import crChop.Enums.Tree;
-import crChop.Variables.Widget;
+import org.crChop.Enums.Tree;
+import org.crChop.Variables.Widget;
 import org.powerbot.script.PaintListener;
 import org.powerbot.script.rt4.ClientAccessor;
 import org.powerbot.script.rt4.ClientContext;
@@ -48,7 +48,7 @@ public class Paint extends ClientAccessor implements PaintListener {
         g2.setColor(paint);
 
         // Paint Title
-        PaintMethods.stringTitle("crChop - " + PaintMethods.formatTime(runtime), width + 1, g2);
+        PaintMethods.stringTitle("org.crChop - " + PaintMethods.formatTime(runtime), width + 1, g2);
 
         // Level Information
         g2.drawString("Level: " + ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + " (+" + PaintMethods.levelsGained() + ")", 5, textOffset * ++dataCount);

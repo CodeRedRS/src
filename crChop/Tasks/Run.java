@@ -1,7 +1,7 @@
-package crChop.Tasks;
+package org.crChop.Tasks;
 
-import crChop.Task;
-import crChop.Variables.Widget;
+import org.crChop.Task;
+import org.crChop.Variables.Widget;
 import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
 
@@ -11,6 +11,7 @@ import org.powerbot.script.rt4.ClientContext;
  */
 public class Run extends Task<ClientContext> {
     Widget widget = new Widget();
+
     public Run(ClientContext ctx) {
         super(ctx);
     }

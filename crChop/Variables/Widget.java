@@ -1,4 +1,4 @@
-package crChop.Variables;
+package org.crChop.Variables;
 
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Component;

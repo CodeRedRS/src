@@ -1,4 +1,4 @@
-package crChop.Enums;
+package org.crChop.Enums;
 
 /**
  * Created by Dakota on 9/10/2015.

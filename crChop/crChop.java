@@ -1,11 +1,11 @@
-package crChop;
+package org.crChop;
 
-import crChop.Enums.Tree;
-import crChop.Tasks.*;
-import crChop.Variables.Widget;
-import crChop.Visual.CursorPaint;
-import crChop.Visual.Gui;
-import crChop.Visual.Paint;
+import org.crChop.Enums.Tree;
+import org.crChop.Tasks.*;
+import org.crChop.Variables.Widget;
+import org.crChop.Visual.CursorPaint;
+import org.crChop.Visual.Gui;
+import org.crChop.Visual.Paint;
 import org.powerbot.script.*;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Constants;
@@ -26,7 +26,7 @@ import java.util.List;
  * Created by Dakota on 9/7/2015.
  */
 @Script.Manifest(
-        name = "crChop",
+        name = "org/crChop",
         description = "AIO Woodcutter"
 )
 public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener {

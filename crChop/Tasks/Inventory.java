@@ -1,8 +1,8 @@
-package crChop.Tasks;
+package org.crChop.Tasks;
 
-import crChop.Task;
-import crChop.Variables.Widget;
-import crChop.Visual.Paint;
+import org.crChop.Task;
+import org.crChop.Variables.Widget;
+import org.crChop.Visual.Paint;
 import org.powerbot.script.rt4.ClientContext;
 
 /**

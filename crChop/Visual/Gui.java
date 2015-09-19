@@ -1,6 +1,6 @@
-package crChop.Visual;
+package org.crChop.Visual;
 
-import crChop.Enums.Tree;
+import org.crChop.Enums.Tree;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.GameObject;
 
@@ -24,7 +24,7 @@ public class Gui extends JFrame {
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-        this.setTitle("crChop Gui");
+        this.setTitle("org.crChop Gui");
 
         this.add(cboTrees);
         this.add(cboMethod);

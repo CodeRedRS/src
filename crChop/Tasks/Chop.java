@@ -1,8 +1,8 @@
-package crChop.Tasks;
+package org.crChop.Tasks;
 
-import crChop.Enums.Tree;
-import crChop.Task;
-import crChop.Visual.Paint;
+import org.crChop.Enums.Tree;
+import org.crChop.Task;
+import org.crChop.Visual.Paint;
 import org.powerbot.script.Condition;
 import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
