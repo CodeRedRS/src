@@ -9,17 +9,12 @@ import java.awt.*;
  * Created by Dakota on 9/7/2015.
  */
 public class CursorPaint extends ClientAccessor {
-    private int startLevel, startExpeience, logs;
-
-    public CursorPaint(ClientContext ctx, int startLevel, int startExpeience, int logs) {
+    public CursorPaint(ClientContext ctx) {
         super(ctx);
-        this.startLevel = startLevel;
-        this.startExpeience = startExpeience;
-        this.logs = logs;
     }
 
     public void drawMouse(Graphics g) {
-        PaintMethods paintMethods = new PaintMethods(ctx, this.startLevel, this.startExpeience, this.logs);
+        PaintMethods paintMethods = new PaintMethods(ctx);
         final Graphics2D g2 = (Graphics2D) g;
         Point p = ctx.input.getLocation();
 
@@ -28,8 +23,8 @@ public class CursorPaint extends ClientAccessor {
         g2.drawLine(p.x + 5, p.y + 5, p.x - 5, p.y - 5);
         g2.drawLine(p.x + 5, p.y - 5, p.x - 5, p.y + 5);
 
-        if (!ctx.game.loggedIn()) {
-            paintMethods.shadowString(Paint.status, p.x + 15, p.y + 5, Color.red, g2);
+        if (!ctx.game.loggedIn() || Paint.status.contains("[i]")) {
+            paintMethods.shadowString(Paint.status.replace("[i]", ""), p.x + 15, p.y + 5, Color.red, g2);
         } else {
             paintMethods.shadowString(Paint.status, p.x + 15, p.y + 5, Color.white, g2);
         }

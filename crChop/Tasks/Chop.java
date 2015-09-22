@@ -3,9 +3,12 @@ package org.crChop.Tasks;
 import org.crChop.Enums.Tree;
 import org.crChop.Task;
 import org.crChop.Visual.Paint;
+import org.powerbot.script.Area;
 import org.powerbot.script.Condition;
 import org.powerbot.script.Random;
+import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientContext;
+import org.powerbot.script.rt4.Equipment;
 import org.powerbot.script.rt4.GameObject;
 
 import java.util.concurrent.Callable;
@@ -28,13 +31,14 @@ public class Chop extends Task<ClientContext> {
         return ctx.inventory.select().count() < 28
                 && !ctx.objects.select().name(tree.getName()).isEmpty()
                 && !ctx.players.local().inCombat() //TODO: Running from combat to bank temporary fix
-                && ctx.players.local().animation() == -1
-                && (ctx.inventory.id(axeId).count() == 1 || ctx.equipment.id(axeId).count() == 1);
+                && (ctx.players.local().animation() == -1 && !ctx.players.local().inMotion())
+                && (ctx.inventory.id(axeId).count() == 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND) != null);
     }
 
     @Override
     public void execute() {
         GameObject tree = ctx.objects.nearest().poll();
+        Area treeArea = new Area(new Tile(tree.tile().x() - 1, tree.tile().y() - 1), new Tile(tree.tile().x() + 1, tree.tile().y() + 1));
 
         if (ctx.bank.opened()) {
             ctx.movement.step(tree);
@@ -51,13 +55,12 @@ public class Chop extends Task<ClientContext> {
                         Condition.wait(new Callable<Boolean>() {
                             @Override
                             public Boolean call() throws Exception {
-                                return ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(tree) < 10;
+                                return !ctx.players.local().inMotion() && (ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(tree) < 10);
                             }
                         }, 1000, 10);
                     }
                 }
             }
-//            ctx.movement.step(tree);
         }
 
         if (tree.interact(true, "Chop down")) {
@@ -68,7 +71,7 @@ public class Chop extends Task<ClientContext> {
             Condition.wait(new Callable<Boolean>() {
                 @Override
                 public Boolean call() throws Exception {
-                    return ctx.players.local().animation() != -1;
+                    return !ctx.players.local().inMotion() && ctx.players.local().animation() != -1;
                 }
             }, 300, 10);
         }

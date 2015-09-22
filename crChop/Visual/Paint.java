@@ -1,7 +1,6 @@
 package org.crChop.Visual;
 
 import org.crChop.Enums.Tree;
-import org.crChop.Variables.Widget;
 import org.powerbot.script.PaintListener;
 import org.powerbot.script.rt4.ClientAccessor;
 import org.powerbot.script.rt4.ClientContext;
@@ -15,22 +14,19 @@ import java.awt.*;
 public class Paint extends ClientAccessor implements PaintListener {
     public static String status = "";
     public static int width, height;
-    private int startLevel, startExperience, logs, dataCount = 1;
-    private boolean hideName;
+    private int logs, dataCount = 1;
     private String tree = "";
     private Color bg = new Color(0, 0, 0, 150), paint = Color.white;
 
-    public Paint(ClientContext ctx, int startLevel, int startExperience, Tree tree, int logs, boolean hideName) {
+    public Paint(ClientContext ctx, Tree tree, int logs) {
         super(ctx);
-        this.startLevel = startLevel;
-        this.startExperience = startExperience;
         this.tree = tree.getName();
         this.logs = logs;
-        this.hideName = hideName;
     }
 
     public void repaint(Graphics g) {
-        PaintMethods PaintMethods = new PaintMethods(ctx, this.startLevel, this.startExperience, this.logs);
+
+        PaintMethods PaintMethods = new PaintMethods(ctx);
         long runtime = ctx.controller.script().getTotalRuntime();
         final Graphics2D g2 = (Graphics2D) g;
         FontMetrics fm = g2.getFontMetrics();
@@ -39,16 +35,18 @@ public class Paint extends ClientAccessor implements PaintListener {
 
         // SCRIPT PAINT
         // ============
-        if (hideName) {
-            g2.setColor(Color.black);
-            g2.fill(new Rectangle(Widget.nameWidget.screenPoint().x, Widget.nameWidget.screenPoint().y, fm.stringWidth(Widget.nameWidget.text().split(":")[0]), Widget.nameWidget.height()));
-        }
-
         PaintMethods.borderedRect(2, 2, width, height, paint, bg, g2);
         g2.setColor(paint);
 
         // Paint Title
-        PaintMethods.stringTitle("org.crChop - " + PaintMethods.formatTime(runtime), width + 1, g2);
+        String[] paintStrings = {"crChop - " + PaintMethods.formatTime(runtime),
+                "Level: " + ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + " (+" + PaintMethods.levelsGained() + ")",
+                "Exp: " + PaintMethods.formatLetter(PaintMethods.experienceGained()) + " (" + PaintMethods.formatLetter(PaintMethods.hourlyExperience()) + " /hr)",
+                tree + "s: " + logs + " (" + PaintMethods.logsPerHour() + " /hr)",
+                "Leveling in: " + PaintMethods.timeTillLevel(),
+                "Maxing in: " + PaintMethods.timeTillMax()
+        };
+        PaintMethods.stringTitle("crChop - " + PaintMethods.formatTime(runtime), width + 1, g2);
 
         // Level Information
         g2.drawString("Level: " + ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + " (+" + PaintMethods.levelsGained() + ")", 5, textOffset * ++dataCount);
@@ -65,7 +63,8 @@ public class Paint extends ClientAccessor implements PaintListener {
         // Time Till Max
         g2.drawString("Maxing in: " + PaintMethods.timeTillMax(), 5, textOffset * ++dataCount);
 
-        width = 125;
+
+        width = fm.stringWidth(PaintMethods.getLongestString(paintStrings, g2)) + 4;
         height = (textOffset * dataCount) + 2;
 
 //        for (GameObject t : ctx.objects.select().name(tree.getName()).within(PaintMethods.mapArea()).limit(10)) {

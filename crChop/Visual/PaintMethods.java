@@ -1,5 +1,6 @@
 package org.crChop.Visual;
 
+import org.crChop.crChop;
 import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientAccessor;
 import org.powerbot.script.rt4.ClientContext;
@@ -18,13 +19,12 @@ public class PaintMethods extends ClientAccessor {
     // FORMATTING
     public NumberFormat formatNumber = new DecimalFormat("###,###,###");
     DecimalFormat df = new DecimalFormat("#.0");
-    private int startLevel, startExperience, logs;
+    private int logs = crChop.logs;
+    private int startLevel = crChop.startLevel;
+    private int startExperience = crChop.startExperience;
 
-    public PaintMethods(ClientContext ctx, int startLevel, int startExperience, int logs) {
+    public PaintMethods(ClientContext ctx) {
         super(ctx);
-        this.startLevel = startLevel;
-        this.startExperience = startExperience;
-        this.logs = logs;
     }
 
     public String formatTime(long time) {
@@ -53,6 +53,19 @@ public class PaintMethods extends ClientAccessor {
     }
 
     // CALCULATIONS
+    public String getLongestString(String[] array, Graphics g) {
+        FontMetrics fm = g.getFontMetrics();
+        int maxLength = 0;
+        String longestString = null;
+        for (String s : array) {
+            if (fm.stringWidth(s) > maxLength) {
+                maxLength = fm.stringWidth(s);
+                longestString = s;
+            }
+        }
+        return longestString;
+    }
+
     public int experienceAt(int level) {
         double total = 0;
         for (int i = 1; i < level; i++) {
@@ -63,10 +76,10 @@ public class PaintMethods extends ClientAccessor {
     }
 
     public long logsPerHour() {
-        if (logs < 1) {
+        if (this.logs < 1) {
             return 0;
         }
-        return (long) (logs * 3600000D) / ctx.controller.script().getTotalRuntime();
+        return (long) (this.logs * 3600000D) / ctx.controller.script().getTotalRuntime();
     }
 
     public String timeTillLevel() {
