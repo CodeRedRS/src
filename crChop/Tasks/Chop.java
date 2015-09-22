@@ -31,7 +31,7 @@ public class Chop extends Task<ClientContext> {
         return ctx.inventory.select().count() < 28
                 && !ctx.objects.select().name(tree.getName()).isEmpty()
                 && !ctx.players.local().inCombat() //TODO: Running from combat to bank temporary fix
-                && ctx.players.local().animation() == -1
+                && (ctx.players.local().animation() == -1 && !ctx.players.local().inMotion())
                 && (ctx.inventory.id(axeId).count() == 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND) != null);
     }
 
@@ -52,18 +52,15 @@ public class Chop extends Task<ClientContext> {
                 if (ctx.movement.step(tree)) {
                     ctx.camera.turnTo(tree);
                     if (ctx.players.local().inMotion()) {
-                        System.out.println("Player: " + treeArea.contains(ctx.players.local()));
-                        System.out.println("Destination: " + treeArea.contains(ctx.movement.destination()));
                         Condition.wait(new Callable<Boolean>() {
                             @Override
                             public Boolean call() throws Exception {
-                                return ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(tree) < 10;
+                                return !ctx.players.local().inMotion() && (ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(tree) < 10);
                             }
                         }, 1000, 10);
                     }
                 }
             }
-//            ctx.movement.step(tree);
         }
 
         if (tree.interact(true, "Chop down")) {
@@ -74,7 +71,7 @@ public class Chop extends Task<ClientContext> {
             Condition.wait(new Callable<Boolean>() {
                 @Override
                 public Boolean call() throws Exception {
-                    return ctx.players.local().animation() != -1;
+                    return !ctx.players.local().inMotion() && ctx.players.local().animation() != -1;
                 }
             }, 300, 10);
         }

@@ -18,11 +18,15 @@ import java.util.HashSet;
  * Created by Dakota on 9/9/2015.
  */
 public class Gui extends JFrame {
+
     final JButton btnStart;
     final JButton btnCancel;
     final JComboBox<String> cboMethod;
     final JComboBox<Tree> cboTrees;
     final JCheckBox chkScreenshot;
+    int axeId;
+    String method;
+    Tree tree;
 
     public Gui(final ClientContext ctx) {
         btnStart = new JButton("Start Script");
@@ -56,24 +60,27 @@ public class Gui extends JFrame {
         cboTrees.setSelectedIndex(0);
 
         btnStart.addActionListener(new ActionListener() {
-            int axeId;
-            String method = cboMethod.getSelectedItem().toString();
-            Tree tree = Tree.valueOf(cboTrees.getSelectedItem().toString());
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 // GET AXE ID
                 for (Item i : ctx.inventory.items()) {
                     if (i.name().toLowerCase().contains("axe")) {
                         System.out.println(i.name() + "(" + i.id() + ")");
-                        this.axeId = i.id();
+                        axeId = i.id();
                     }
                 }
 
+                method = cboMethod.getSelectedItem().toString();
+                tree = Tree.valueOf(cboTrees.getSelectedItem().toString());
+
+                System.out.println(axeId);
+                System.out.println(method);
+                System.out.println(tree);
+
                 if (cboMethod.getSelectedItem().toString().toLowerCase().contains("bank")) {
-                    crChop.taskList.addAll(Arrays.asList(new Banking(ctx, this.method, this.axeId), new Run(ctx), new Inventory(ctx), new Chop(ctx, this.tree, this.axeId), new Antiban(ctx)));
+                    crChop.taskList.addAll(Arrays.asList(new Banking(ctx, method, axeId), new Run(ctx), new Inventory(ctx), new Chop(ctx, tree, axeId), new Antiban(ctx)));
                 } else if (cboMethod.getSelectedItem().toString().toLowerCase().contains("drop")) {
-                    crChop.taskList.addAll(Arrays.asList(new Drop(ctx), new Run(ctx), new Inventory(ctx), new Chop(ctx, this.tree, this.axeId), new Antiban(ctx)));
+                    crChop.taskList.addAll(Arrays.asList(new Drop(ctx), new Run(ctx), new Inventory(ctx), new Chop(ctx, tree, axeId), new Antiban(ctx)));
                 }
 
                 dispose();

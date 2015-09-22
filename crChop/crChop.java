@@ -1,6 +1,5 @@
 package org.crChop;
 
-import org.crChop.Enums.Tree;
 import org.crChop.Variables.Widget;
 import org.crChop.Visual.CursorPaint;
 import org.crChop.Visual.Gui;
@@ -36,8 +35,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public static List<Task> taskList = new ArrayList<>();
     public static int logs;
     private final int width = ctx.game.dimensions().width, height = ctx.game.dimensions().height;
-    private Gui gui = new Gui(ctx);
-    private Tree tree = gui.getTree();
+    private Gui gui;
 
     private CursorPaint cursor = new CursorPaint(ctx);
     private BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -59,6 +57,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
     @Override
     public void start() {
+        gui = new Gui(ctx);
         if (ctx.game.loggedIn()) {
 
             startExperience = ctx.skills.experience(Constants.SKILLS_WOODCUTTING);
@@ -111,7 +110,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void repaint(Graphics g) {
         cursor.drawMouse(g);
         if (ctx.game.loggedIn()) {
-            Paint paint = new Paint(ctx, this.tree, logs);
+            Paint paint = new Paint(ctx, gui.getTree(), logs);
             paint.repaint(g);
         }
     }
@@ -120,7 +119,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void messaged(MessageEvent messageEvent) {
         String msg = messageEvent.text();
 
-        if (msg.contains("You get some " + this.tree.getName().toLowerCase())) {
+        if (msg.contains("You get some " + gui.getTree().getName().toLowerCase())) {
             logs++;
         } else if (msg.contains("You get some logs.")) {
             logs++;
