@@ -3,6 +3,7 @@ package codered.crChop;
 import codered.crChop.Variables.Widget;
 import codered.crChop.Visual.CursorPaint;
 import codered.crChop.Visual.Gui;
+import codered.crChop.Visual.Paint;
 import codered.universal.Task;
 import org.powerbot.script.*;
 import org.powerbot.script.rt4.ClientContext;
@@ -37,7 +38,6 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public static int logs;
     private final int width = ctx.game.dimensions().width, height = ctx.game.dimensions().height;
     private Gui gui;
-    codered.crChop.Visual.Paint paint;
 
     private CursorPaint cursor = new CursorPaint(ctx);
     private BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -83,8 +83,6 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
                 Condition.sleep(100);
             }
 
-            paint = new codered.crChop.Visual.Paint(ctx, gui.getTree(), logs);
-
 
         } else {
             JOptionPane.showMessageDialog(null, "Please login then start the script.\nThank you!", "Start Logged In", ERROR_MESSAGE);
@@ -114,6 +112,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void repaint(Graphics g) {
         cursor.drawMouse(g);
         if (ctx.game.loggedIn()) {
+            Paint paint = new Paint(ctx, gui.getTree(), logs);
             paint.repaint(g);
         }
     }

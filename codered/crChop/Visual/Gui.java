@@ -31,8 +31,8 @@ public class Gui extends JFrame {
     public Gui(final ClientContext ctx) {
         btnStart = new JButton("Start Script");
         btnCancel = new JButton("Cancel");
-        cboMethod = new JComboBox<>(new String[]{"Drop"});
-        cboTrees = new JComboBox<>(Tree.values());
+        cboMethod = new JComboBox<String>(new String[]{"Drop"});
+        cboTrees = new JComboBox<Tree>(Tree.values());
         chkScreenshot = new JCheckBox("Save Screenshot");
 
         this.setLocationRelativeTo(Frame.getFrames()[0]);
