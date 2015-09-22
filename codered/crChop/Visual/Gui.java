@@ -49,7 +49,7 @@ public class Gui extends JFrame {
 
         if (!ctx.objects.select().name("Bank booth", "Grand Exchange booth").isEmpty()) {
             for (GameObject g : ctx.objects.nearest()) {
-                HashSet<String> set = new HashSet<>();
+                HashSet set = new HashSet();
                 if (!set.contains("Bank : " + g.name())) {
                     cboMethod.addItem("Bank : " + g.name() + " : " + (int) g.tile().distanceTo(ctx.players.local()));
                     set.add("Bank : " + g.name());
@@ -60,6 +60,7 @@ public class Gui extends JFrame {
         cboTrees.setSelectedIndex(0);
 
         btnStart.addActionListener(new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 // GET AXE ID
@@ -84,6 +85,7 @@ public class Gui extends JFrame {
         });
 
         btnCancel.addActionListener(new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 ctx.controller.stop();

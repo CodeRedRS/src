@@ -37,7 +37,7 @@ public class Chop extends Task<ClientContext> {
 
     @Override
     public void execute() {
-        GameObject tree = ctx.objects.nearest().poll();
+        final GameObject tree = ctx.objects.nearest().poll();
         Area treeArea = new Area(new Tile(tree.tile().x() - 1, tree.tile().y() - 1), new Tile(tree.tile().x() + 1, tree.tile().y() + 1));
 
         if (ctx.bank.opened()) {

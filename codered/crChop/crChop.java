@@ -34,7 +34,7 @@ import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener {
 
     public static int startExperience, startLevel;
-    public static List<Task> taskList = new ArrayList<>();
+    public static List<Task> taskList = new ArrayList<Task>();
     public static int logs;
     private final int width = ctx.game.dimensions().width, height = ctx.game.dimensions().height;
     private Gui gui;
