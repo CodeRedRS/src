@@ -8,7 +8,6 @@ import org.crChop.Visual.Paint;
 import org.powerbot.script.*;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Constants;
-import org.powerbot.script.rt4.Item;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -32,14 +31,15 @@ import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
         description = "AIO Woodcutter"
 )
 public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener {
-    private final int width = ctx.game.dimensions().width, height = ctx.game.dimensions().height;
-    private List<Task> taskList = new ArrayList<>();
-    private Gui gui = new Gui(ctx);
-    private int startExperience, startLevel, axeId, logs;
-    private Tree tree;
-    private boolean started;
 
-    private CursorPaint cursor = new CursorPaint(ctx, this.startLevel, this.startExperience, this.logs);
+    public static int startExperience, startLevel;
+    public static List<Task> taskList = new ArrayList<>();
+    public static int logs;
+    private final int width = ctx.game.dimensions().width, height = ctx.game.dimensions().height;
+    private Gui gui = new Gui(ctx);
+    private Tree tree = gui.getTree();
+
+    private CursorPaint cursor = new CursorPaint(ctx);
     private BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
     public void savePaint(String name) {
@@ -61,24 +61,17 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void start() {
         if (ctx.game.loggedIn()) {
 
+            startExperience = ctx.skills.experience(Constants.SKILLS_WOODCUTTING);
+            startLevel = ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING);
+
             Paint.status = "[i]Setting up script";
             Widget.initiateWidgets(ctx);
-
-            this.startExperience = ctx.skills.experience(Constants.SKILLS_WOODCUTTING);
-            this.startLevel = ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING);
 
             if (!Widget.settingsWidget.visible()) {
                 Widget.settingsButtonWidget.click();
                 Widget.zoomWidget.interact("Restore Default Zoom");
                 if (!Widget.inventoryWidget.visible()) {
                     Widget.inventoryButtonWidget.click();
-                }
-            }
-            // GET AXE ID
-            for (Item i : ctx.inventory.items()) {
-                if (i.name().toLowerCase().contains("axe")) {
-                    System.out.println(i.name() + "(" + i.id() + ")");
-                    this.axeId = i.id();
                 }
             }
 
@@ -88,11 +81,6 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
             while (gui.isVisible()) {
                 Condition.sleep(100);
             }
-
-            final Tree guiTree = gui.getTree();
-            final String guiMethod = gui.getMethod();
-            this.tree = guiTree;
-            String method = guiMethod;
 
 
         } else {
@@ -106,7 +94,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void stop() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd hh-mm-ssaaa");
         Date date = new Date();
-        if (gui.screenshot())
+        if (gui.saveScreenshot())
             savePaint(dateFormat.format(date));
     }
 
@@ -122,8 +110,8 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     @Override
     public void repaint(Graphics g) {
         cursor.drawMouse(g);
-        if (ctx.game.loggedIn() && started) {
-            Paint paint = new Paint(ctx, this.startLevel, this.startExperience, this.tree, this.logs, gui.hideName());
+        if (ctx.game.loggedIn()) {
+            Paint paint = new Paint(ctx, this.tree, logs);
             paint.repaint(g);
         }
     }

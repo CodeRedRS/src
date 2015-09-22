@@ -13,14 +13,10 @@ import org.powerbot.script.rt4.Component;
  */
 public class Antiban extends Task<ClientContext> {
     public Boolean antibanEnable = false;
-    private int startLevel, startExperience, logs;
-    private PaintMethods PaintMethods = new PaintMethods(ctx, this.startLevel, this.startExperience, this.logs);
+    private PaintMethods PaintMethods = new PaintMethods(ctx);
 
-    public Antiban(ClientContext ctx, int startLevel, int startExperience, int logs) {
+    public Antiban(ClientContext ctx) {
         super(ctx);
-        this.startLevel = startLevel;
-        this.startExperience = startExperience;
-        this.logs = logs;
     }
 
     @Override

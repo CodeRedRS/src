@@ -15,7 +15,8 @@ public class Drop extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
-        return ctx.inventory.select().count() == 28;
+        return ctx.inventory.select().count() == 28
+                && !ctx.players.local().inCombat();
     }
 
     @Override
