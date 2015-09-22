@@ -73,10 +73,6 @@ public class Gui extends JFrame {
                 method = cboMethod.getSelectedItem().toString();
                 tree = Tree.valueOf(cboTrees.getSelectedItem().toString());
 
-                System.out.println(axeId);
-                System.out.println(method);
-                System.out.println(tree);
-
                 if (cboMethod.getSelectedItem().toString().toLowerCase().contains("bank")) {
                     crChop.taskList.addAll(Arrays.asList(new Banking(ctx, method, axeId), new Run(ctx), new Inventory(ctx), new Chop(ctx, tree, axeId), new Antiban(ctx)));
                 } else if (cboMethod.getSelectedItem().toString().toLowerCase().contains("drop")) {

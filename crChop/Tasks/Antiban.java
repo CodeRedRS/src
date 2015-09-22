@@ -27,7 +27,7 @@ public class Antiban extends Task<ClientContext> {
     @Override
     public void execute() {
         antibanEnable = true;
-        int rand = Random.nextInt(1, 4000);
+        int rand = Random.nextInt(1, 10000);
         int sleepTime = Random.nextInt(500, 1000);
         String antiban = "[ANTIBAN - " + PaintMethods.formatTime(ctx.controller.script().getTotalRuntime()) + "] ";
         switch (rand) {
