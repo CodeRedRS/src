@@ -28,8 +28,8 @@ public class CursorPaint extends ClientAccessor {
         g2.drawLine(p.x + 5, p.y + 5, p.x - 5, p.y - 5);
         g2.drawLine(p.x + 5, p.y - 5, p.x - 5, p.y + 5);
 
-        if (!ctx.game.loggedIn()) {
-            paintMethods.shadowString(Paint.status, p.x + 15, p.y + 5, Color.red, g2);
+        if (!ctx.game.loggedIn() || Paint.status.contains("[i]")) {
+            paintMethods.shadowString(Paint.status.replace("[i]", ""), p.x + 15, p.y + 5, Color.red, g2);
         } else {
             paintMethods.shadowString(Paint.status, p.x + 15, p.y + 5, Color.white, g2);
         }

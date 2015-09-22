@@ -30,6 +30,7 @@ public class Paint extends ClientAccessor implements PaintListener {
     }
 
     public void repaint(Graphics g) {
+
         PaintMethods PaintMethods = new PaintMethods(ctx, this.startLevel, this.startExperience, this.logs);
         long runtime = ctx.controller.script().getTotalRuntime();
         final Graphics2D g2 = (Graphics2D) g;
@@ -44,11 +45,19 @@ public class Paint extends ClientAccessor implements PaintListener {
             g2.fill(new Rectangle(Widget.nameWidget.screenPoint().x, Widget.nameWidget.screenPoint().y, fm.stringWidth(Widget.nameWidget.text().split(":")[0]), Widget.nameWidget.height()));
         }
 
+
         PaintMethods.borderedRect(2, 2, width, height, paint, bg, g2);
         g2.setColor(paint);
 
         // Paint Title
-        PaintMethods.stringTitle("org.crChop - " + PaintMethods.formatTime(runtime), width + 1, g2);
+        String[] paintStrings = {"crChop - " + PaintMethods.formatTime(runtime),
+                "Level: " + ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + " (+" + PaintMethods.levelsGained() + ")",
+                "Exp: " + PaintMethods.formatLetter(PaintMethods.experienceGained()) + " (" + PaintMethods.formatLetter(PaintMethods.hourlyExperience()) + " /hr)",
+                tree + "s: " + logs + " (" + PaintMethods.logsPerHour() + " /hr)",
+                "Leveling in: " + PaintMethods.timeTillLevel(),
+                "Maxing in: " + PaintMethods.timeTillMax()
+        };
+        PaintMethods.stringTitle("crChop - " + PaintMethods.formatTime(runtime), width + 1, g2);
 
         // Level Information
         g2.drawString("Level: " + ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + " (+" + PaintMethods.levelsGained() + ")", 5, textOffset * ++dataCount);
@@ -65,7 +74,8 @@ public class Paint extends ClientAccessor implements PaintListener {
         // Time Till Max
         g2.drawString("Maxing in: " + PaintMethods.timeTillMax(), 5, textOffset * ++dataCount);
 
-        width = 125;
+
+        width = fm.stringWidth(PaintMethods.getLongestString(paintStrings)) + 4;
         height = (textOffset * dataCount) + 2;
 
 //        for (GameObject t : ctx.objects.select().name(tree.getName()).within(PaintMethods.mapArea()).limit(10)) {

@@ -2,6 +2,7 @@ package org.crChop.Tasks;
 
 import org.crChop.Task;
 import org.crChop.Visual.Paint;
+import org.crChop.Visual.PaintMethods;
 import org.powerbot.script.Condition;
 import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
@@ -12,9 +13,14 @@ import org.powerbot.script.rt4.Component;
  */
 public class Antiban extends Task<ClientContext> {
     public Boolean antibanEnable = false;
+    private int startLevel, startExperience, logs;
+    private PaintMethods PaintMethods = new PaintMethods(ctx, this.startLevel, this.startExperience, this.logs);
 
-    public Antiban(ClientContext ctx) {
+    public Antiban(ClientContext ctx, int startLevel, int startExperience, int logs) {
         super(ctx);
+        this.startLevel = startLevel;
+        this.startExperience = startExperience;
+        this.logs = logs;
     }
 
     @Override
@@ -27,7 +33,7 @@ public class Antiban extends Task<ClientContext> {
         antibanEnable = true;
         int rand = Random.nextInt(1, 4000);
         int sleepTime = Random.nextInt(500, 1000);
-        String antiban = "[ANTIBAN - " + ctx.controller.script().getTotalRuntime() + "] ";
+        String antiban = "[ANTIBAN - " + PaintMethods.formatTime(ctx.controller.script().getTotalRuntime()) + "] ";
         switch (rand) {
             case 1:
                 int x = Random.nextInt(0, 500);
@@ -77,6 +83,8 @@ public class Antiban extends Task<ClientContext> {
 //                break;
 //            case 10:
 //                break;
+            default:
+                break;
 
         }
     }

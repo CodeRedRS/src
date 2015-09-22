@@ -6,6 +6,8 @@ import org.powerbot.script.rt4.GameObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashSet;
 
 /**
@@ -19,12 +21,10 @@ public class Gui extends JFrame {
     final JCheckBox chkScreenshot = new JCheckBox("Save Screenshot");
 
     public Gui(final ClientContext ctx) {
-        if (isVisible())
-            Paint.status = "GUI";
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-        this.setTitle("org.crChop Gui");
+        this.setTitle("crChop Gui");
 
         this.add(cboTrees);
         this.add(cboMethod);
@@ -38,16 +38,21 @@ public class Gui extends JFrame {
         if (!ctx.objects.select().name("Bank booth", "Grand Exchange booth").isEmpty()) {
             for (GameObject g : ctx.objects.nearest()) {
                 HashSet<String> set = new HashSet<>();
-                if (!set.contains("Bank : " + g.name() + g.id())) {
+                if (!set.contains("Bank : " + g.name())) {
                     cboMethod.addItem("Bank : " + g.name() + " : " + (int) g.tile().distanceTo(ctx.players.local()));
-                    set.add("Bank : " + g.name() + g.id());
+                    set.add("Bank : " + g.name());
                 }
             }
         }
 
         cboTrees.setSelectedIndex(0);
 
-        btnStart.addActionListener(e -> dispose());
+        btnStart.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
     }
 
     public final String getMethod() {

@@ -30,7 +30,8 @@ public class Banking extends Task<ClientContext> {
     @Override
     public void execute() {
         String bankName = method.split("\\s:\\s")[1];
-        GameObject bank = ctx.objects.select().name(bankName).poll();
+        GameObject bank = ctx.objects.select().name(bankName).nearest().poll();
+
         if (!bank.inViewport()) {
             Paint.status = "Waking to bank : " + bankName;
             if (ctx.movement.step(bank)) {

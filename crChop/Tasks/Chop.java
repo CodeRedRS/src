@@ -3,9 +3,12 @@ package org.crChop.Tasks;
 import org.crChop.Enums.Tree;
 import org.crChop.Task;
 import org.crChop.Visual.Paint;
+import org.powerbot.script.Area;
 import org.powerbot.script.Condition;
 import org.powerbot.script.Random;
+import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientContext;
+import org.powerbot.script.rt4.Equipment;
 import org.powerbot.script.rt4.GameObject;
 
 import java.util.concurrent.Callable;
@@ -29,12 +32,13 @@ public class Chop extends Task<ClientContext> {
                 && !ctx.objects.select().name(tree.getName()).isEmpty()
                 && !ctx.players.local().inCombat() //TODO: Running from combat to bank temporary fix
                 && ctx.players.local().animation() == -1
-                && (ctx.inventory.id(axeId).count() == 1 || ctx.equipment.id(axeId).count() == 1);
+                && (ctx.inventory.id(axeId).count() == 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND) != null);
     }
 
     @Override
     public void execute() {
         GameObject tree = ctx.objects.nearest().poll();
+        Area treeArea = new Area(new Tile(tree.tile().x() - 1, tree.tile().y() - 1), new Tile(tree.tile().x() + 1, tree.tile().y() + 1));
 
         if (ctx.bank.opened()) {
             ctx.movement.step(tree);
@@ -48,6 +52,8 @@ public class Chop extends Task<ClientContext> {
                 if (ctx.movement.step(tree)) {
                     ctx.camera.turnTo(tree);
                     if (ctx.players.local().inMotion()) {
+                        System.out.println("Player: " + treeArea.contains(ctx.players.local()));
+                        System.out.println("Destination: " + treeArea.contains(ctx.movement.destination()));
                         Condition.wait(new Callable<Boolean>() {
                             @Override
                             public Boolean call() throws Exception {

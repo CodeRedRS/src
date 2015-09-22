@@ -15,6 +15,7 @@ import java.text.NumberFormat;
 public class PaintMethods extends ClientAccessor {
     // CONSTANTS
     final int woodcutting = Constants.SKILLS_WOODCUTTING;
+
     // FORMATTING
     public NumberFormat formatNumber = new DecimalFormat("###,###,###");
     DecimalFormat df = new DecimalFormat("#.0");
@@ -53,6 +54,18 @@ public class PaintMethods extends ClientAccessor {
     }
 
     // CALCULATIONS
+    public String getLongestString(String[] array) {
+        int maxLength = 0;
+        String longestString = null;
+        for (String s : array) {
+            if (s.length() > maxLength) {
+                maxLength = s.length();
+                longestString = s;
+            }
+        }
+        return longestString;
+    }
+
     public int experienceAt(int level) {
         double total = 0;
         for (int i = 1; i < level; i++) {
