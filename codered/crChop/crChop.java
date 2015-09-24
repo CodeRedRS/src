@@ -28,7 +28,7 @@ import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
  */
 @Script.Manifest(
         name = "crChop",
-        description = "AIO Woodcutter v1",
+        description = "AIO Woodcutter v1.1",
         properties = "topic=1283889;client=4;"
 )
 public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener {
@@ -43,8 +43,6 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     private BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
     public void savePaint(String name) {
-        JOptionPane.showMessageDialog(null, "Screenshot(" + name + ") saved at: " + ctx.controller.script().getStorageDirectory().getPath(), "Screenshot Saved", INFORMATION_MESSAGE);
-        System.out.println("Screenshot(" + name + ") saved at: " + ctx.controller.script().getStorageDirectory().getPath());
         repaint(img.createGraphics());
         img = img.getSubimage(2, 2, codered.crChop.Visual.Paint.width + 1, codered.crChop.Visual.Paint.height + 1);
 
@@ -52,8 +50,12 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
         try {
             ImageIO.write(img, "png", path);
+            JOptionPane.showMessageDialog(null, "Screenshot(" + name + ") saved at: " + ctx.controller.script().getStorageDirectory().getPath(), "Screenshot Saved", INFORMATION_MESSAGE);
+            System.out.println("Screenshot(" + name + ") saved at: " + ctx.controller.script().getStorageDirectory().getPath());
         } catch (Exception e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Screenshot failed to save", "Screenshot Error", ERROR_MESSAGE);
+            System.out.println("Screenshot Failed to save");
         }
     }
 
@@ -112,8 +114,12 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void repaint(Graphics g) {
         cursor.drawMouse(g);
         if (ctx.game.loggedIn()) {
-            Paint paint = new Paint(ctx, gui.getTree(), logs);
-            paint.repaint(g);
+            try {
+                Paint paint = new Paint(ctx, gui.getTree(), logs);
+                paint.repaint(g);
+            } catch (Exception ex) {
+
+            }
         }
     }
 

@@ -1,7 +1,7 @@
 package codered.crChop.Tasks;
 
-import codered.crChop.Visual.Paint;
 import codered.crChop.Enums.Tree;
+import codered.crChop.Visual.Paint;
 import codered.universal.Task;
 import org.powerbot.script.Area;
 import org.powerbot.script.Condition;
@@ -28,10 +28,13 @@ public class Chop extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
+        GameObject treeObject = ctx.objects.select().name(tree.getName()).nearest().poll();
+
         return ctx.inventory.select().count() < 28
                 && !ctx.objects.select().name(tree.getName()).isEmpty()
                 && !ctx.players.local().inCombat() //TODO: Running from combat to bank temporary fix
-                && (ctx.players.local().animation() == -1 && !ctx.players.local().inMotion())
+                && ctx.players.local().animation() == -1
+                && ctx.movement.destination().distanceTo(treeObject) > 5
                 && (ctx.inventory.id(axeId).count() == 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND) != null);
     }
 
@@ -55,9 +58,9 @@ public class Chop extends Task<ClientContext> {
                         Condition.wait(new Callable<Boolean>() {
                             @Override
                             public Boolean call() throws Exception {
-                                return !ctx.players.local().inMotion() && (ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(tree) < 10);
+                                return (ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(tree) < 10);
                             }
-                        }, 1000, 10);
+                        }, 250, 10);
                     }
                 }
             }
@@ -74,6 +77,11 @@ public class Chop extends Task<ClientContext> {
                     return !ctx.players.local().inMotion() && ctx.players.local().animation() != -1;
                 }
             }, 300, 10);
+        }
+
+        while (treeArea.contains(ctx.movement.destination())) {
+            System.out.println("Destination in treeArea");
+            Condition.sleep(100);
         }
     }
 }

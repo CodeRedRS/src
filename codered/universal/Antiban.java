@@ -1,8 +1,7 @@
-package codered.crChop.Tasks;
+package codered.universal;
 
 import codered.crChop.Visual.Paint;
 import codered.crChop.Visual.PaintMethods;
-import codered.universal.Task;
 import org.powerbot.script.Condition;
 import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
@@ -13,7 +12,7 @@ import org.powerbot.script.rt4.Component;
  */
 public class Antiban extends Task<ClientContext> {
     public Boolean antibanEnable = false;
-    private codered.crChop.Visual.PaintMethods PaintMethods = new PaintMethods(ctx);
+    private PaintMethods PaintMethods = new PaintMethods(ctx);
 
     public Antiban(ClientContext ctx) {
         super(ctx);
@@ -29,7 +28,7 @@ public class Antiban extends Task<ClientContext> {
         antibanEnable = true;
         int rand = Random.nextInt(1, 10000);
         int sleepTime = Random.nextInt(500, 1000);
-        String antiban = "[ANTIBAN - " + PaintMethods.formatTime(ctx.controller.script().getTotalRuntime()) + "] ";
+        String antiban = "[i][ANTIBAN - " + PaintMethods.formatTime(ctx.controller.script().getTotalRuntime()) + "] ";
         switch (rand) {
             case 1:
                 int x = Random.nextInt(0, 500);

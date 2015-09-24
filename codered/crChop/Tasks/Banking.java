@@ -32,16 +32,16 @@ public class Banking extends Task<ClientContext> {
         String bankName = method.split("\\s:\\s")[1];
         final GameObject bank = ctx.objects.select().name(bankName).nearest().poll();
 
-        if (!bank.inViewport()) {
+        if (!bank.inViewport() && bank.tile().matrix(ctx).reachable()) {
             Paint.status = "Waking to bank : " + bankName;
             if (ctx.movement.step(bank)) {
                 ctx.camera.turnTo(bank);
                 Condition.wait(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
-                        return !ctx.players.local().inMotion() && (ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(bank) < 10);
+                        return (ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(bank) < 10);
                     }
-                }, 1000, 10);
+                }, 250, 10);
             }
         }
 
