@@ -28,7 +28,7 @@ import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
  */
 @Script.Manifest(
         name = "crChop",
-        description = "AIO Woodcutter v1.1",
+        description = "AIO Woodcutter v1.2b",
         properties = "topic=1283889;client=4;"
 )
 public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener {
@@ -126,7 +126,6 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     @Override
     public void messaged(MessageEvent messageEvent) {
         String msg = messageEvent.text();
-
         if (msg.contains("You get some " + gui.getTree().getName().toLowerCase())) {
             logs++;
         } else if (msg.contains("You get some logs.")) {

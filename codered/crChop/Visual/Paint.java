@@ -46,26 +46,30 @@ public class Paint extends ClientAccessor implements PaintListener {
                 "Leveling in: " + PaintMethods.timeTillLevel(),
                 "Maxing in: " + PaintMethods.timeTillMax()
         };
-        PaintMethods.stringTitle("crChop - " + PaintMethods.formatTime(runtime), width + 1, g2);
+        PaintMethods.stringTitle(paintStrings[0], width + 1, g2);
 
-        // Level Information
-        g2.drawString("Level: " + ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + " (+" + PaintMethods.levelsGained() + ")", 5, textOffset * ++dataCount);
+        for (int i = 1; i != paintStrings.length; i++) {
+            g2.drawString(paintStrings[i], 5, textOffset * (i + 1));
+        }
 
-        // Experience Information
-        g2.drawString("Exp: " + PaintMethods.formatLetter(PaintMethods.experienceGained()) + " (" + PaintMethods.formatLetter(PaintMethods.hourlyExperience()) + " /hr)", 5, textOffset * ++dataCount);
-
-        // Logs Cut
-        g2.drawString(tree + "s: " + logs + " (" + PaintMethods.logsPerHour() + " /hr)", 5, textOffset * ++dataCount);
-
-        // Time Till Level
-        g2.drawString("Leveling in: " + PaintMethods.timeTillLevel(), 5, textOffset * ++dataCount);
-
-        // Time Till Max
-        g2.drawString("Maxing in: " + PaintMethods.timeTillMax(), 5, textOffset * ++dataCount);
+//        // Level Information
+//        g2.drawString(paintStrings[1], 5, textOffset * ++dataCount);
+//
+//        // Experience Information
+//        g2.drawString(paintStrings[2], 5, textOffset * ++dataCount);
+//
+//        // Logs Cut
+//        g2.drawString(paintStrings[3], 5, textOffset * ++dataCount);
+//
+//        // Time Till Level
+//        g2.drawString(paintStrings[4], 5, textOffset * ++dataCount);
+//
+//        // Time Till Max
+//        g2.drawString(paintStrings[5], 5, textOffset * ++dataCount);
 
 
         width = fm.stringWidth(PaintMethods.getLongestString(paintStrings, g2)) + 4;
-        height = (textOffset * dataCount) + 2;
+        height = (textOffset * paintStrings.length) + 2;
 
 //        for (GameObject t : ctx.objects.select().name(tree.getName()).within(PaintMethods.mapArea()).limit(10)) {
 //            Point p = t.tile().matrix(ctx).mapPoint();

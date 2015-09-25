@@ -4,8 +4,8 @@ package codered.crChop.Enums;
  * Created by Dakota on 9/7/2015.
  */
 public enum Tree {
-    NORMAL("Tree", 1511),
-    DEAD("Dead tree", 1511),
+    TREE("Tree", 1511),
+    DEAD_TREE("Dead tree", 1511),
     ACHEY("Achey", 2862),
     OAK("Oak", 1521),
     WILLOW("Willow", 1519),

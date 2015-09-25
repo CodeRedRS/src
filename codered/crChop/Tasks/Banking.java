@@ -1,7 +1,7 @@
 package codered.crChop.Tasks;
 
-import codered.universal.Task;
 import codered.crChop.Visual.Paint;
+import codered.universal.Task;
 import org.powerbot.script.Condition;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.GameObject;
@@ -22,8 +22,7 @@ public class Banking extends Task<ClientContext> {
     }
 
     public boolean activate() {
-        return ctx.inventory.count() == 28
-                || ctx.players.local().inCombat(); //TODO: Running from combat to bank temporary fix
+        return ctx.inventory.count() == 28;
     }
 
 
@@ -32,7 +31,7 @@ public class Banking extends Task<ClientContext> {
         String bankName = method.split("\\s:\\s")[1];
         final GameObject bank = ctx.objects.select().name(bankName).nearest().poll();
 
-        if (!bank.inViewport() && bank.tile().matrix(ctx).reachable()) {
+        if (!bank.inViewport()) {
             Paint.status = "Waking to bank : " + bankName;
             if (ctx.movement.step(bank)) {
                 ctx.camera.turnTo(bank);

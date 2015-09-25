@@ -18,12 +18,12 @@ public class Run extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
-        return ctx.movement.energyLevel() > Random.nextInt(25, 35) && widget.runButtonStateWidget.textureId() == 1064
+        return ctx.movement.energyLevel() > Random.nextInt(25, 35) && Widget.runButtonStateWidget.textureId() == 1064
                 && !ctx.bank.opened();
     }
 
     @Override
     public void execute() {
-        widget.runButtonWidget.click();
+        Widget.runButtonWidget.click();
     }
 }

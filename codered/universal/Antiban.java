@@ -25,6 +25,7 @@ public class Antiban extends Task<ClientContext> {
 
     @Override
     public void execute() {
+        String temp = Paint.status;
         antibanEnable = true;
         int rand = Random.nextInt(1, 10000);
         int sleepTime = Random.nextInt(500, 1000);
@@ -37,7 +38,7 @@ public class Antiban extends Task<ClientContext> {
                 System.out.println(antiban + "Moving Mouse (" + x + ", " + y + ")");
                 ctx.input.move(x, y);
                 Condition.sleep(sleepTime);
-                Paint.status = "Antiban Done";
+                Paint.status = temp;
                 antibanEnable = false;
                 break;
             case 2:
@@ -45,7 +46,7 @@ public class Antiban extends Task<ClientContext> {
                 Paint.status = antiban + "AFK " + (a / 1000.0) + "s";
                 System.out.println(antiban + "AFK " + (a / 1000.0) + "s");
                 Condition.sleep(sleepTime * 10);
-                Paint.status = "Antiban Done";
+                Paint.status = temp;
                 antibanEnable = false;
                 break;
             case 3:
@@ -54,7 +55,7 @@ public class Antiban extends Task<ClientContext> {
                 System.out.println(antiban + "Opening Random Tab");
                 randWidget.click();
                 Condition.sleep(sleepTime);
-                Paint.status = "Antiban Done";
+                Paint.status = temp;
                 antibanEnable = false;
                 break;
             case 4:
@@ -63,7 +64,7 @@ public class Antiban extends Task<ClientContext> {
                 System.out.println(antiban + "Setting Angle to: " + rAngle);
                 ctx.camera.angle(rAngle);
                 Condition.sleep(sleepTime);
-                Paint.status = "Antiban Done";
+                Paint.status = temp;
                 antibanEnable = false;
                 break;
 //            case 5:
