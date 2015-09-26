@@ -65,8 +65,7 @@ public class Banking extends Task<ClientContext> {
                 }, 1000, 10);
             }
         }
-        if (this.axeId > 1) {
+        if (ctx.inventory.id(this.axeId).count() < 1)
             ctx.bank.withdraw(this.axeId, 1);
-        }
     }
 }
