@@ -4,6 +4,7 @@ import codered.crChop.Enums.Tree;
 import codered.crChop.Tasks.*;
 import codered.crChop.crChop;
 import codered.universal.Antiban;
+import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.GameObject;
 import org.powerbot.script.rt4.Item;
@@ -19,6 +20,7 @@ import java.util.HashSet;
  * Created by Dakota on 9/24/2015.
  */
 public class Gui extends JFrame {
+    final JButton btnScan;
     final JButton btnStart;
     final JButton btnCancel;
     final JComboBox cboMethod;
@@ -28,14 +30,14 @@ public class Gui extends JFrame {
     final JCheckBox chkRunFromCombat;
 
     private int axeId;
-    private String method;
     private Tree tree;
-    private Boolean mousehop, avoidCombat;
+    private Boolean mousehop;
 
     public Gui(final ClientContext ctx) {
         JPanel panelCenter = new JPanel();
         JPanel panelLineEnd = new JPanel();
         JPanel panelPageEnd = new JPanel();
+        btnScan = new JButton("Rescan for Trees & Banks");
         btnStart = new JButton("Start Script");
         btnCancel = new JButton("Cancel");
         cboMethod = new JComboBox(new String[]{"Drop"});
@@ -59,36 +61,74 @@ public class Gui extends JFrame {
         this.add(panelLineEnd, BorderLayout.LINE_END);
         panelLineEnd.add(chkScreenshot);
         panelLineEnd.add(chkMouseHop);
-        //panelLineEnd.add(chkRunFromCombat);
+        panelLineEnd.add(chkRunFromCombat);
 
         // PAGE_END
         panelPageEnd.setLayout(new FlowLayout());
         this.add(panelPageEnd, BorderLayout.PAGE_END);
         panelPageEnd.add(btnStart);
+        panelPageEnd.add(btnScan);
         panelPageEnd.add(btnCancel);
 
-        if (!ctx.objects.select().name("Bank booth", "Grand Exchange booth").isEmpty()) {
-            HashSet<String> set = new HashSet<String>();
-            for (GameObject b : ctx.objects) {
-                if (!set.contains("Bank : " + b.name())) {
-                    cboMethod.addItem("Bank : " + b.name() + " : " + (int) b.tile().distanceTo(ctx.players.local()));
-                    set.add("Bank : " + b.name());
-                }
-            }
+        if (!ctx.objects.select().action("Bank").isEmpty()) {
+            cboMethod.addItem("Bank");
         }
 
         if (!ctx.objects.select().action("Chop down").isEmpty()) {
             HashSet<Tree> set = new HashSet<Tree>();
             for (GameObject t : ctx.objects) {
-                if (!set.contains(Tree.valueOf(t.name().toUpperCase().replace(" ", "_")))) {
-                    cboTrees.addItem(Tree.valueOf(t.name().toUpperCase().replace(" ", "_")));
-                    set.add(Tree.valueOf(t.name().toUpperCase().replace(" ", "_")));
+                try {
+                    if (!set.contains(Tree.valueOf(t.name().toUpperCase().replace(" ", "_")))) {
+                        cboTrees.addItem(Tree.valueOf(t.name().toUpperCase().replace(" ", "_")));
+                        set.add(Tree.valueOf(t.name().toUpperCase().replace(" ", "_")));
+                    }
+                } catch (Exception ex) {
                 }
-
             }
         }
 
         this.pack();
+
+        // Method Action
+        cboMethod.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (cboMethod.getSelectedItem().toString().toLowerCase().contains("drop")) {
+                    chkMouseHop.setEnabled(true);
+                } else {
+                    chkMouseHop.setEnabled(false);
+                }
+            }
+        });
+
+        btnScan.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                cboTrees.removeAll();
+                cboMethod.removeAll();
+                cboMethod.addItem("Drop");
+
+                if (!ctx.objects.select().action("Bank").isEmpty()) {
+                    cboMethod.addItem("Bank");
+                }
+
+                if (!ctx.objects.select().action("Chop down").isEmpty()) {
+                    HashSet<Tree> set = new HashSet<Tree>();
+                    for (GameObject t : ctx.objects) {
+                        try {
+                            if (!set.contains(Tree.valueOf(t.name().toUpperCase().replace(" ", "_")))) {
+                                cboTrees.addItem(Tree.valueOf(t.name().toUpperCase().replace(" ", "_")));
+                                set.add(Tree.valueOf(t.name().toUpperCase().replace(" ", "_")));
+                            }
+                        } catch (Exception ex) {
+                        }
+                    }
+                }
+
+                pack();
+            }
+        });
 
         // START BUTTON ACTION
         btnStart.addActionListener(new ActionListener() {
@@ -102,20 +142,23 @@ public class Gui extends JFrame {
                     }
                 }
 
-                method = cboMethod.getSelectedItem().toString();
                 tree = Tree.valueOf(cboTrees.getSelectedItem().toString());
                 mousehop = chkMouseHop.isSelected();
-                avoidCombat = chkRunFromCombat.isSelected();
 
-                if (avoidCombat) {
+                Tile bankTile = ctx.objects.select().action("Bank").nearest().poll().tile();
+
+                if (cboMethod.getSelectedItem().toString().toLowerCase().contains("bank")) {
+                    crChop.taskList.add(new Banking(ctx, bankTile, axeId));
+                    System.out.println(bankTile);
+                } else if (cboMethod.getSelectedItem().toString().toLowerCase().contains("drop")) {
+                    crChop.taskList.add(new Drop(ctx, mousehop));
+                }
+
+                if (chkRunFromCombat.isSelected()) {
                     crChop.taskList.add(new Combat(ctx));
                 }
 
-                if (cboMethod.getSelectedItem().toString().toLowerCase().contains("bank")) {
-                    crChop.taskList.addAll(Arrays.asList(new Banking(ctx, method, axeId), new Inventory(ctx), new Chop(ctx, tree, axeId, avoidCombat), new Antiban(ctx)));
-                } else if (cboMethod.getSelectedItem().toString().toLowerCase().contains("drop")) {
-                    crChop.taskList.addAll(Arrays.asList(new Drop(ctx, mousehop), new Inventory(ctx), new Chop(ctx, tree, axeId, avoidCombat), new Antiban(ctx)));
-                }
+                crChop.taskList.addAll(Arrays.asList(new Inventory(ctx), new Chop(ctx, tree, axeId, chkRunFromCombat.isSelected()), new Antiban(ctx), new Randoms(ctx)));
 
                 dispose();
             }

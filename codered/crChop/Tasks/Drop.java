@@ -2,6 +2,7 @@ package codered.crChop.Tasks;
 
 import codered.crChop.Visual.Paint;
 import codered.universal.Task;
+import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Item;
 
@@ -20,8 +21,7 @@ public class Drop extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
-        return ctx.inventory.select().count() == 28
-                && !ctx.players.local().inCombat();
+        return ctx.inventory.select().count() == 28;
     }
 
     @Override
@@ -29,13 +29,18 @@ public class Drop extends Task<ClientContext> {
         Paint.status = "Dropping logs";
 
         if (mousehop) {
-            for (Item i : ctx.inventory.items()) {
-                if (i.name().toLowerCase().contains("logs")) {
-                    ctx.input.hop(i.centerPoint());
+            Point p;
+            ctx.input.move(572 + Random.nextInt(0, 13), 224 + Random.nextInt(0, 11));
+            for (int rows = 0; rows < 4; rows++) {
+                for (int columns = 0; columns < 6; columns++) {
                     ctx.input.click(false);
-                    Point mouse = ctx.input.getLocation();
-                    ctx.input.hop(mouse.x, mouse.y + 38);
+                    p = ctx.input.getLocation();
+                    ctx.input.hop(p.x, p.y + 38);
                     ctx.input.click(true);
+                }
+                if (rows != 3) {
+                    p = ctx.input.getLocation();
+                    ctx.input.hop(p.x + 43, p.y - 228);
                 }
             }
         } else {

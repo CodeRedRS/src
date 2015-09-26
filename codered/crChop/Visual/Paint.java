@@ -52,32 +52,7 @@ public class Paint extends ClientAccessor implements PaintListener {
             g2.drawString(paintStrings[i], 5, textOffset * (i + 1));
         }
 
-//        // Level Information
-//        g2.drawString(paintStrings[1], 5, textOffset * ++dataCount);
-//
-//        // Experience Information
-//        g2.drawString(paintStrings[2], 5, textOffset * ++dataCount);
-//
-//        // Logs Cut
-//        g2.drawString(paintStrings[3], 5, textOffset * ++dataCount);
-//
-//        // Time Till Level
-//        g2.drawString(paintStrings[4], 5, textOffset * ++dataCount);
-//
-//        // Time Till Max
-//        g2.drawString(paintStrings[5], 5, textOffset * ++dataCount);
-
-
         width = fm.stringWidth(PaintMethods.getLongestString(paintStrings, g2)) + 4;
         height = (textOffset * paintStrings.length) + 2;
-
-//        for (GameObject t : ctx.objects.select().name(tree.getName()).within(PaintMethods.mapArea()).limit(10)) {
-//            Point p = t.tile().matrix(ctx).mapPoint();
-//            g2.setColor(bg);
-//            g2.fillRect(p.x + 8, p.y - 2, fm.stringWidth(t.name() + " (" + (int) ctx.players.local().tile().distanceTo(t.tile()) + ")") + 2, textOffset - 2);
-//            PaintMethods.shadowString(t.name() + " (" + (int) ctx.players.local().tile().distanceTo(t.tile()) + ")", p.x + 10, p.y + (textOffset / 2 + 1), Color.cyan, g2);
-//            g2.setColor(Color.cyan);
-//            g2.fillOval(p.x, p.y, 10, 10);
-//        }
     }
 }

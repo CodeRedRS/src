@@ -15,7 +15,7 @@ public class Randoms extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
-        return !ctx.npcs.select().action("Dismiss").isEmpty();
+        return ctx.npcs.select().action("Dismiss").poll().interacting().name().equals(ctx.players.local().name());
     }
 
     @Override
