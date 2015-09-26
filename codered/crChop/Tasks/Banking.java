@@ -38,7 +38,7 @@ public class Banking extends Task<ClientContext> {
             ctx.camera.turnTo(bank);
             Paint.status = "Waking to bank : " + bank.name();
             if (!bank.inViewport()) {
-                if (ctx.movement.findPath(bankTile).traverse()) {
+                if (ctx.movement.step(bankTile)) {
                     ctx.camera.turnTo(bank);
                     if (ctx.players.local().inMotion()) {
                         Condition.wait(new Callable<Boolean>() {
