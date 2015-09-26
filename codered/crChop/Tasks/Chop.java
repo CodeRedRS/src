@@ -33,11 +33,13 @@ public class Chop extends Task<ClientContext> {
                     && !ctx.players.local().inCombat()
                     && !ctx.objects.select().name(tree.getName()).isEmpty()
                     && ctx.players.local().animation() == -1
+                    && ctx.inventory.id(axeId).count() > 0
                     && (ctx.inventory.id(axeId).count() == 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND) != null);
         }
         return ctx.inventory.select().count() < 28
                 && !ctx.objects.select().name(tree.getName()).isEmpty()
                 && ctx.players.local().animation() == -1
+                && ctx.inventory.id(axeId).count() > 0
                 && (ctx.inventory.id(axeId).count() == 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND) != null);
     }
 

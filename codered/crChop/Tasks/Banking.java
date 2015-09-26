@@ -31,8 +31,6 @@ public class Banking extends Task<ClientContext> {
     @Override
     public void execute() {
         final GameObject bank = ctx.objects.select().action("Bank").nearest().poll();
-        System.out.println(bankTile);
-
         if (!bank.inViewport()) {
             ctx.camera.pitch(Random.nextInt(0, 15));
             ctx.camera.turnTo(bank);
@@ -67,6 +65,8 @@ public class Banking extends Task<ClientContext> {
                 }, 1000, 10);
             }
         }
-        ctx.bank.withdraw(this.axeId, 1);
+        if (this.axeId > 1) {
+            ctx.bank.withdraw(this.axeId, 1);
+        }
     }
 }

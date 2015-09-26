@@ -29,7 +29,7 @@ public class Drop extends Task<ClientContext> {
         Paint.status = "Dropping logs";
 
         if (mousehop) {
-            int dropStyle = Random.nextInt(1, 5);
+            int dropStyle = Random.nextInt(1, 10);
 
             switch (dropStyle) {
                 case 1:
@@ -39,6 +39,30 @@ public class Drop extends Task<ClientContext> {
                         ctx.input.click(false);
                         ctx.input.hop(ctx.input.getLocation().x, ctx.input.getLocation().y + 38);
                         ctx.input.click(true);
+                    }
+                    break;
+                case 2:
+                    for (Item i : ctx.inventory.items()) {
+                        Item log = ctx.inventory.shuffle().poll();
+                        if (i.name().toLowerCase().contains("log")) {
+                            Point p = new Point(log.centerPoint().x + Random.nextInt(0, 10), log.centerPoint().y + Random.nextInt(0, 10));
+                            ctx.input.hop(p);
+                            ctx.input.click(false);
+                            ctx.input.hop(ctx.input.getLocation().x, ctx.input.getLocation().y + 38);
+                            ctx.input.click(true);
+                        }
+                    }
+                    break;
+                case 3:
+                    for (Item i : ctx.inventory.items()) {
+                        Item log = ctx.inventory.shuffle().reverse().poll();
+                        if (i.name().toLowerCase().contains("log")) {
+                            Point p = new Point(log.centerPoint().x + Random.nextInt(0, 10), log.centerPoint().y + Random.nextInt(0, 10));
+                            ctx.input.hop(p);
+                            ctx.input.click(false);
+                            ctx.input.hop(ctx.input.getLocation().x, ctx.input.getLocation().y + 38);
+                            ctx.input.click(true);
+                        }
                     }
                     break;
                 default:

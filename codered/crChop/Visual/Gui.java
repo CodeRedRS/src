@@ -158,7 +158,7 @@ public class Gui extends JFrame {
                     crChop.taskList.add(new Combat(ctx));
                 }
 
-                crChop.taskList.addAll(Arrays.asList(new Inventory(ctx), new Chop(ctx, tree, axeId, chkRunFromCombat.isSelected()), new Antiban(ctx), new Randoms(ctx)));
+                crChop.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new Chop(ctx, tree, axeId, chkRunFromCombat.isSelected()), new Antiban(ctx), new Randoms(ctx)));
 
                 dispose();
             }
