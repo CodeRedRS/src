@@ -33,13 +33,11 @@ public class Chop extends Task<ClientContext> {
                     && !ctx.players.local().inCombat()
                     && !ctx.objects.select().name(tree.getName()).isEmpty()
                     && ctx.players.local().animation() == -1
-                    && ctx.inventory.id(axeId).count() > 0
                     && (ctx.inventory.id(axeId).count() == 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND) != null);
         }
         return ctx.inventory.select().count() < 28
                 && !ctx.objects.select().name(tree.getName()).isEmpty()
                 && ctx.players.local().animation() == -1
-                && ctx.inventory.id(axeId).count() > 0
                 && (ctx.inventory.id(axeId).count() == 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND) != null);
     }
 
@@ -48,7 +46,11 @@ public class Chop extends Task<ClientContext> {
         final GameObject tree = ctx.objects.nearest().poll();
 
         if (ctx.bank.opened()) {
-            ctx.movement.step(tree);
+            if (ctx.inventory.id(this.axeId).count() < 1) {
+                ctx.bank.withdraw(this.axeId, 1);
+            } else {
+                ctx.movement.step(tree);
+            }
         }
 
         if (!tree.inViewport()) {
