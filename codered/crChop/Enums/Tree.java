@@ -10,12 +10,12 @@ public enum Tree {
     OAK("Oak", 1521),
     WILLOW("Willow", 1519),
     TEAK("Teak", 6333),
-    MAPLE("Maple", 1517),
+    MAPLE_TREE("Maple tree", 1517),
     HOLLOW("Hollow", 0),
     MAHOGANY("Mahogany", 6332),
     ARCTIC("Arctic", 10810),
     YEW("Yew", 1515),
-    MAGIC("Magic", 1513);
+    MAGIC_TREE("Magic tree", 1513);
 
     private final String treeName;
     private final int logId;
