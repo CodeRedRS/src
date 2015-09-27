@@ -1,6 +1,7 @@
 package codered.crChop.Tasks;
 
 import codered.crChop.Enums.Tree;
+import codered.crChop.Visual.Gui;
 import codered.crChop.Visual.Paint;
 import codered.universal.Task;
 import org.powerbot.script.Condition;
@@ -8,6 +9,7 @@ import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Equipment;
 import org.powerbot.script.rt4.GameObject;
+import org.powerbot.script.rt4.TilePath;
 
 import java.util.concurrent.Callable;
 
@@ -15,9 +17,11 @@ import java.util.concurrent.Callable;
  * Created by Dakota on 9/7/2015.
  */
 public class Chop extends Task<ClientContext> {
+    private TilePath path;
     private Tree tree;
     private int axeId;
     private boolean avoidCombat;
+    Gui gui = new Gui(ctx);
 
     public Chop(ClientContext ctx, Tree tree, int axeId, Boolean avoidCombat) {
         super(ctx);
@@ -35,6 +39,12 @@ public class Chop extends Task<ClientContext> {
                     && ctx.players.local().animation() == -1
                     && (ctx.inventory.id(axeId).count() == 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND) != null);
         }
+//        if (gui.getPreset() >= 0) {
+//            System.out.println("PRESET");
+//            return ctx.inventory.select().count() < 28
+//                    && ctx.players.local().animation() == -1
+//                    && (ctx.inventory.id(axeId).count() == 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND) != null);
+//        }
         return ctx.inventory.select().count() < 28
                 && !ctx.objects.select().name(tree.getName()).isEmpty()
                 && ctx.players.local().animation() == -1
@@ -53,7 +63,15 @@ public class Chop extends Task<ClientContext> {
             }
         }
 
-        if (!tree.inViewport()) {
+//        if (gui.getPreset() >= 0) {
+//            Presets p = Presets.presets[gui.getPreset()];
+//            path = ctx.movement.newTilePath(p.path).reverse();
+//            if (!p.area.contains(ctx.players.local())) {
+//                ctx.movement.newTilePath(p.path).randomize(0, 5).reverse();
+//            }
+//        }
+
+        if (!tree.inViewport() && !ctx.bank.opened()) {
             ctx.camera.pitch(Random.nextInt(0, 15));
             ctx.camera.turnTo(tree);
             Paint.status = "Going to " + tree.name();
@@ -72,7 +90,7 @@ public class Chop extends Task<ClientContext> {
             }
         }
 
-        if (tree.interact(true, "Chop down")) {
+        if (tree.interact(true, "Chop down") && !ctx.bank.opened()) {
             Paint.status = "Chopping " + tree.name();
             if (ctx.camera.pitch() <= 15) {
                 ctx.camera.pitch(Random.nextInt(25, 75));
