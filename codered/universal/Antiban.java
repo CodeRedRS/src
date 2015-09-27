@@ -25,7 +25,7 @@ public class Antiban extends Task<ClientContext> {
 
     @Override
     public void execute() {
-        String temp = Paint.status;
+        String temp = Paint.getStatus();
         antibanEnable = true;
         int rand = Random.nextInt(1, 10000);
         int sleepTime = Random.nextInt(500, 1000);
@@ -34,37 +34,37 @@ public class Antiban extends Task<ClientContext> {
             case 1:
                 int x = Random.nextInt(0, 500);
                 int y = Random.nextInt(0, 500);
-                Paint.status = antiban + "Moving Mouse (" + x + ", " + y + ")";
+                Paint.paintStatus(antiban + "Moving Mouse (" + x + ", " + y + ")");
                 System.out.println(antiban + "Moving Mouse (" + x + ", " + y + ")");
                 ctx.input.move(x, y);
                 Condition.sleep(sleepTime);
-                Paint.status = temp;
+                Paint.paintStatus(temp);
                 antibanEnable = false;
                 break;
             case 2:
                 int a = sleepTime * 10;
-                Paint.status = antiban + "AFK " + (a / 1000.0) + "s";
+                Paint.paintStatus(antiban + "AFK " + (a / 1000.0) + "s");
                 System.out.println(antiban + "AFK " + (a / 1000.0) + "s");
                 Condition.sleep(sleepTime * 10);
-                Paint.status = temp;
+                Paint.paintStatus(temp);
                 antibanEnable = false;
                 break;
             case 3:
                 Component randWidget = ctx.widgets.widget(548).component(Random.nextInt(27, 57));
-                Paint.status = antiban + "Opening Random Tab";
+                Paint.paintStatus(antiban + "Opening Random Tab");
                 System.out.println(antiban + "Opening Random Tab");
                 randWidget.click();
                 Condition.sleep(sleepTime);
-                Paint.status = temp;
+                Paint.paintStatus(temp);
                 antibanEnable = false;
                 break;
             case 4:
                 int rAngle = Random.nextInt(0, 100);
-                Paint.status = antiban + "Setting Angle to: " + rAngle;
+                Paint.paintStatus(antiban + "Setting Angle to: " + rAngle);
                 System.out.println(antiban + "Setting Angle to: " + rAngle);
                 ctx.camera.angle(rAngle);
                 Condition.sleep(sleepTime);
-                Paint.status = temp;
+                Paint.paintStatus(temp);
                 antibanEnable = false;
                 break;
 //            case 5:

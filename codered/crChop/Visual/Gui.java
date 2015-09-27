@@ -2,6 +2,7 @@ package codered.crChop.Visual;
 
 import codered.crChop.Enums.Tree;
 import codered.crChop.Tasks.*;
+import codered.crChop.Variables.Presets;
 import codered.crChop.crChop;
 import codered.universal.Antiban;
 import org.powerbot.script.Tile;
@@ -23,8 +24,11 @@ public class Gui extends JFrame {
     final JButton btnScan;
     final JButton btnStart;
     final JButton btnCancel;
+
     final JComboBox cboMethod;
     final JComboBox cboTrees;
+    final JComboBox cboPresets;
+
     final JCheckBox chkScreenshot;
     final JCheckBox chkMouseHop;
     final JCheckBox chkRunFromCombat;
@@ -40,8 +44,11 @@ public class Gui extends JFrame {
         btnScan = new JButton("Rescan for Trees & Banks");
         btnStart = new JButton("Start Script");
         btnCancel = new JButton("Cancel");
+
         cboMethod = new JComboBox(new String[]{"Drop"});
         cboTrees = new JComboBox();
+        cboPresets = new JComboBox(Presets.getNames());
+
         chkScreenshot = new JCheckBox("Save Screenshot");
         chkMouseHop = new JCheckBox("Mouse Hop Drop");
         chkRunFromCombat = new JCheckBox("Run From Combat");
@@ -51,7 +58,7 @@ public class Gui extends JFrame {
         this.setLayout(new BorderLayout());
 
         // CENTER
-        panelCenter.setLayout(new FlowLayout());
+        panelCenter.setLayout(new BoxLayout(panelCenter, BoxLayout.PAGE_AXIS));
         this.add(panelCenter, BorderLayout.CENTER);
         panelCenter.add(cboTrees);
         panelCenter.add(cboMethod);
@@ -89,6 +96,20 @@ public class Gui extends JFrame {
 
         this.pack();
 
+        // Preset Action
+        cboPresets.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (cboPresets.getSelectedIndex() == 0) {
+                    cboMethod.setEnabled(true);
+                    chkMouseHop.setEnabled(true);
+                } else {
+                    cboMethod.setEnabled(false);
+                    chkMouseHop.setEnabled(false);
+                }
+            }
+        });
+
         // Method Action
         cboMethod.addActionListener(new ActionListener() {
             @Override
@@ -105,8 +126,7 @@ public class Gui extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                cboTrees.removeAll();
-                cboMethod.removeAll();
+                cboTrees.removeAllItems();
                 cboMethod.addItem("Drop");
 
                 if (!ctx.objects.select().action("Bank").isEmpty()) {
@@ -158,7 +178,7 @@ public class Gui extends JFrame {
                     crChop.taskList.add(new Combat(ctx));
                 }
 
-                crChop.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new Chop(ctx, tree, axeId, chkRunFromCombat.isSelected()), new Antiban(ctx), new Randoms(ctx)));
+                crChop.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new Chop(ctx, tree, axeId, chkRunFromCombat.isSelected()), new Antiban(ctx)));
 
                 dispose();
             }

@@ -31,41 +31,47 @@ public class Banking extends Task<ClientContext> {
     @Override
     public void execute() {
         final GameObject bank = ctx.objects.select().action("Bank").nearest().poll();
-        if (!bank.inViewport()) {
-            ctx.camera.pitch(Random.nextInt(0, 15));
-            ctx.camera.turnTo(bank);
-            Paint.status = "Waking to bank : " + bank.name();
+        if (bank.tile().matrix(ctx).reachable()) {
             if (!bank.inViewport()) {
-                if (ctx.movement.step(bankTile)) {
-                    ctx.camera.turnTo(bank);
-                    if (ctx.players.local().inMotion()) {
-                        Condition.wait(new Callable<Boolean>() {
-                            @Override
-                            public Boolean call() throws Exception {
-                                return (ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(bank) < 10);
-                            }
-                        }, 250, 10);
+                ctx.camera.pitch(Random.nextInt(0, 15));
+                ctx.camera.turnTo(bank);
+                Paint.paintStatus("Waking to bank : " + bank.name());
+                if (!bank.inViewport()) {
+                    if (ctx.movement.step(bankTile)) {
+                        ctx.camera.turnTo(bank);
+                        if (ctx.players.local().inMotion()) {
+                            Condition.wait(new Callable<Boolean>() {
+                                @Override
+                                public Boolean call() throws Exception {
+                                    return (ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(bank) < 10);
+                                }
+                            }, 250, 10);
+                        }
                     }
                 }
             }
+
+            if (ctx.bank.opened()) {
+                if (ctx.inventory.count() > 1) {
+                    ctx.bank.depositInventory();
+                }
+            } else {
+                if (bank.interact(false, "Bank")) {
+                    Paint.paintStatus("Banking");
+                    Condition.wait(new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            return !ctx.players.local().inMotion();
+                        }
+                    }, 1000, 10);
+                }
+            }
+            if (ctx.inventory.id(this.axeId).count() < 1)
+                ctx.bank.withdraw(this.axeId, 1);
+        } else {
+            System.out.println("Bank not reachable");
+            Paint.paintStatus("[i]" + bank.name() + " " + bank.tile() + ", is not reachable");
         }
 
-        if (ctx.bank.opened()) {
-            if (ctx.inventory.count() > 1) {
-                ctx.bank.depositInventory();
-            }
-        } else {
-            if (bank.interact("Bank")) {
-                Paint.status = "Banking";
-                Condition.wait(new Callable<Boolean>() {
-                    @Override
-                    public Boolean call() throws Exception {
-                        return !ctx.players.local().inMotion();
-                    }
-                }, 1000, 10);
-            }
-        }
-        if (ctx.inventory.id(this.axeId).count() < 1)
-            ctx.bank.withdraw(this.axeId, 1);
     }
 }

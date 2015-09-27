@@ -9,6 +9,7 @@ import org.powerbot.script.rt4.Constants;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.List;
 
 /**
  * Created by Dakota on 9/7/2015.
@@ -53,7 +54,7 @@ public class PaintMethods extends ClientAccessor {
     }
 
     // CALCULATIONS
-    public String getLongestString(String[] array, Graphics g) {
+    public String getLongestString(List<String> array, Graphics g) {
         FontMetrics fm = g.getFontMetrics();
         int maxLength = 0;
         String longestString = null;

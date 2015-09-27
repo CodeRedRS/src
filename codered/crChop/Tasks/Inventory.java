@@ -23,7 +23,7 @@ public class Inventory extends Task<ClientContext> {
 
     @Override
     public void execute() {
-        Paint.status = "Opening inventory";
+        Paint.paintStatus("Opening inventory");
 
         widget.inventoryButtonWidget.click();
     }

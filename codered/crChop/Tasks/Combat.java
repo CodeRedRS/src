@@ -26,7 +26,7 @@ public class Combat extends Task<ClientContext> {
     public void execute() {
         Tile currentTile = ctx.players.local().tile();
         Tile randomTile = new Tile((currentTile.x() + Random.nextInt(-150, 150)), (currentTile.y() + Random.nextInt(-150, 150)));
-        Paint.status = "Running from combat " + randomTile;
+        Paint.paintStatus("Running from combat " + randomTile);
         if (ctx.movement.step(randomTile)) {
             Condition.wait(new Callable<Boolean>() {
                 @Override

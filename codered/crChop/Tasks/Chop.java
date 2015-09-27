@@ -1,7 +1,6 @@
 package codered.crChop.Tasks;
 
 import codered.crChop.Enums.Tree;
-import codered.crChop.Visual.Gui;
 import codered.crChop.Visual.Paint;
 import codered.universal.Task;
 import org.powerbot.script.Condition;
@@ -21,7 +20,6 @@ public class Chop extends Task<ClientContext> {
     private Tree tree;
     private int axeId;
     private boolean avoidCombat;
-    Gui gui = new Gui(ctx);
 
     public Chop(ClientContext ctx, Tree tree, int axeId, Boolean avoidCombat) {
         super(ctx);
@@ -63,19 +61,11 @@ public class Chop extends Task<ClientContext> {
             }
         }
 
-//        if (gui.getPreset() >= 0) {
-//            Presets p = Presets.presets[gui.getPreset()];
-//            path = ctx.movement.newTilePath(p.path).reverse();
-//            if (!p.area.contains(ctx.players.local())) {
-//                ctx.movement.newTilePath(p.path).randomize(0, 5).reverse();
-//            }
-//        }
-
         if (!tree.inViewport() && !ctx.bank.opened()) {
             ctx.camera.pitch(Random.nextInt(0, 15));
             ctx.camera.turnTo(tree);
-            Paint.status = "Going to " + tree.name();
-            if (!tree.inViewport()) {
+            Paint.paintStatus("Going to " + tree.name());
+            if (!tree.inViewport() || ctx.players.local().tile().distanceTo(tree) > 15) {
                 if (ctx.movement.step(tree)) {
                     ctx.camera.turnTo(tree);
                     if (ctx.players.local().inMotion()) {
@@ -90,8 +80,8 @@ public class Chop extends Task<ClientContext> {
             }
         }
 
-        if (tree.interact(true, "Chop down") && !ctx.bank.opened()) {
-            Paint.status = "Chopping " + tree.name();
+        if (tree.interact(false, "Chop down") && !ctx.bank.opened() && ctx.players.local().tile().distanceTo(tree) < 15) {
+            Paint.paintStatus("Chopping " + tree.name());
             if (ctx.camera.pitch() <= 15) {
                 ctx.camera.pitch(Random.nextInt(25, 75));
             }

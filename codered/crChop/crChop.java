@@ -67,7 +67,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
             startExperience = ctx.skills.experience(Constants.SKILLS_WOODCUTTING);
             startLevel = ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING);
 
-            codered.crChop.Visual.Paint.status = "[i]Setting up script";
+            Paint.paintStatus("[i]Setting up script");
             Widget.initiateWidgets(ctx);
 
             if (!Widget.settingsWidget.visible()) {
