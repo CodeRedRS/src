@@ -7,6 +7,7 @@ import org.powerbot.script.Random;
 import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.GameObject;
+import org.powerbot.script.rt4.TilePath;
 
 import java.util.concurrent.Callable;
 
@@ -14,12 +15,12 @@ import java.util.concurrent.Callable;
  * Created by Dakota on 9/8/2015.
  */
 public class Banking extends Task<ClientContext> {
-    private Tile bankTile;
+    private Tile[] path;
     private final int axeId;
 
-    public Banking(ClientContext ctx, Tile bankTile, int axeId) {
+    public Banking(ClientContext ctx, Tile[] path, int axeId) {
         super(ctx);
-        this.bankTile = bankTile;
+        this.path = path;
         this.axeId = axeId;
     }
 
@@ -30,14 +31,16 @@ public class Banking extends Task<ClientContext> {
 
     @Override
     public void execute() {
-        final GameObject bank = ctx.objects.select().action("Bank").nearest().poll();
-        if (bank.tile().matrix(ctx).reachable()) {
+        final GameObject bank = ctx.objects.select().action("Bank").poll();
+        final TilePath p;
+
+        if (path == null) {
             if (!bank.inViewport()) {
                 ctx.camera.pitch(Random.nextInt(0, 15));
                 ctx.camera.turnTo(bank);
                 Paint.paintStatus("Waking to bank : " + bank.name());
                 if (!bank.inViewport()) {
-                    if (ctx.movement.step(bankTile)) {
+                    if (ctx.movement.step(bank)) {
                         ctx.camera.turnTo(bank);
                         if (ctx.players.local().inMotion()) {
                             Condition.wait(new Callable<Boolean>() {
@@ -50,28 +53,38 @@ public class Banking extends Task<ClientContext> {
                     }
                 }
             }
-
-            if (ctx.bank.opened()) {
-                if (ctx.inventory.count() > 1) {
-                    ctx.bank.depositInventory();
-                }
-            } else {
-                if (bank.interact(false, "Bank")) {
-                    Paint.paintStatus("Banking");
-                    Condition.wait(new Callable<Boolean>() {
-                        @Override
-                        public Boolean call() throws Exception {
-                            return !ctx.players.local().inMotion();
-                        }
-                    }, 1000, 10);
+        } else {
+            p  = ctx.movement.newTilePath(path);
+            if (!bank.inViewport()) {
+                Paint.paintStatus("Waking to bank : " + bank.name());
+                ctx.camera.pitch(Random.nextInt(0, 15));
+                ctx.camera.turnTo(bank);
+                if (!bank.inViewport()) {
+                    if (p.traverse()) {
+                        ctx.camera.turnTo(bank);
+                    }
                 }
             }
-            if (ctx.inventory.id(this.axeId).count() < 1)
-                ctx.bank.withdraw(this.axeId, 1);
-        } else {
-            System.out.println("Bank not reachable");
-            Paint.paintStatus("[i]" + bank.name() + " " + bank.tile() + ", is not reachable");
         }
+
+
+        if (ctx.bank.opened()) {
+            if (ctx.inventory.count() > 1) {
+                ctx.bank.depositInventory();
+            }
+        } else {
+            if (bank.interact(false, "Bank")) {
+                Paint.paintStatus("Banking");
+                Condition.wait(new Callable<Boolean>() {
+                    @Override
+                    public Boolean call() throws Exception {
+                        return !ctx.players.local().inMotion();
+                    }
+                }, 1000, 10);
+            }
+        }
+        if (ctx.inventory.id(this.axeId).count() < 1)
+            ctx.bank.withdraw(this.axeId, 1);
 
     }
 }

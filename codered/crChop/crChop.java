@@ -6,6 +6,7 @@ import codered.crChop.Visual.Gui;
 import codered.crChop.Visual.Paint;
 import codered.universal.Task;
 import org.powerbot.script.*;
+import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Constants;
 
@@ -16,9 +17,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
+import java.util.Timer;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
@@ -28,7 +29,7 @@ import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
  */
 @Script.Manifest(
         name = "crChop",
-        description = "AIO Woodcutter v1.2",
+        description = "AIO Woodcutter v1.3",
         properties = "topic=1283889;client=4;"
 )
 public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener {
@@ -37,6 +38,8 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public static List<Task> taskList = new ArrayList<Task>();
     public static int logs;
     private final int width = ctx.game.dimensions().width, height = ctx.game.dimensions().height;
+    private int delay;
+    private final int delaySeconds = 60;
     private Gui gui;
 
     private CursorPaint cursor = new CursorPaint(ctx);
@@ -62,29 +65,16 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     @Override
     public void start() {
         gui = new Gui(ctx);
+        Paint.paintStatus("[i]Setting up script");
         if (ctx.game.loggedIn()) {
 
             startExperience = ctx.skills.experience(Constants.SKILLS_WOODCUTTING);
             startLevel = ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING);
 
-            Paint.paintStatus("[i]Setting up script");
             Widget.initiateWidgets(ctx);
-
-            if (!Widget.settingsWidget.visible()) {
-                Widget.settingsButtonWidget.click();
-                Widget.zoomWidget.interact("Restore Default Zoom");
-                if (!Widget.inventoryWidget.visible()) {
-                    Widget.inventoryButtonWidget.click();
-                }
-            }
 
             ctx.camera.pitch(50);
             gui.setVisible(true);
-
-            while (gui.isVisible()) {
-                Condition.sleep(100);
-            }
-
 
         } else {
             JOptionPane.showMessageDialog(null, "Please login then start the script.\nThank you!", "Start Logged In", ERROR_MESSAGE);
@@ -123,12 +113,56 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
         }
     }
 
+
     @Override
     public void messaged(MessageEvent messageEvent) {
+        final Timer timer = new Timer();
         String msg = messageEvent.text();
+        if (gui.chatResponder()) {
+            String recivedMsg = msg.toLowerCase();
+            if ((recivedMsg.contains("lvl") || recivedMsg.contains("level")) && !recivedMsg.contains(ctx.players.local().name()) && delay < 1) {
+                ctx.input.sendln(String.valueOf(ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING)));
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        delay--;
+                        if (delay < 1) {
+                            timer.cancel();
+                        }
+                    }
+                }, 0, 1000);
+
+                delay = this.delaySeconds;
+            }
+            if ((recivedMsg.contains("nice") || recivedMsg.contains("cool") || recivedMsg.contains("sweet")) && delay < (this.delaySeconds / 2)) {
+                switch (Random.nextInt(1, 2)) {
+                    case 1:
+                    default:
+                        ctx.input.sendln("Thanks");
+                        break;
+                    case 2:
+                        ctx.input.sendln("You?");
+                        break;
+
+                }
+
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        delay--;
+                        if (delay < 1) {
+                            timer.cancel();
+                        }
+                    }
+                }, 0, 1000);
+
+                delay = this.delaySeconds;
+            }
+        }
+
         if (msg.contains("You get some " + gui.getTree().getName().toLowerCase())) {
             logs++;
-        } else if (msg.contains("You get some logs.")) {
+        } else if (msg.contains("You get some logs")) {
             logs++;
         }
     }

@@ -26,12 +26,11 @@ public class Drop extends Task<ClientContext> {
 
     @Override
     public void execute() {
-
+        Paint.paintStatus("Dropping logs");
         if (mousehop) {
             int dropStyle = Random.nextInt(1, 10);
             switch (dropStyle) {
                 case 1:
-                    Paint.paintStatus("Dropping logs (left to right)");
                     for (Item i : ctx.inventory.items()) {
                         Point p = new Point(i.centerPoint().x + Random.nextInt(0, 10), i.centerPoint().y + Random.nextInt(0, 10));
                         ctx.input.hop(p);
@@ -41,7 +40,6 @@ public class Drop extends Task<ClientContext> {
                     }
                     break;
                 case 2:
-                    Paint.paintStatus("Dropping logs (random)");
                     for (Item i : ctx.inventory.items()) {
                         Item log = ctx.inventory.shuffle().poll();
                         if (i.name().toLowerCase().contains("log")) {
@@ -54,7 +52,6 @@ public class Drop extends Task<ClientContext> {
                     }
                     break;
                 case 3:
-                    Paint.paintStatus("Dropping logs (random reverse)");
                     for (Item i : ctx.inventory.items()) {
                         Item log = ctx.inventory.shuffle().reverse().poll();
                         if (i.name().toLowerCase().contains("log")) {
@@ -67,7 +64,6 @@ public class Drop extends Task<ClientContext> {
                     }
                     break;
                 default:
-                    Paint.paintStatus("Dropping logs (top to bottom)");
                     Point p;
                     ctx.input.move(572 + Random.nextInt(0, 13), 224 + Random.nextInt(0, 11));
                     for (int rows = 0; rows < 4; rows++) {
@@ -85,7 +81,6 @@ public class Drop extends Task<ClientContext> {
                     break;
             }
         } else {
-            Paint.paintStatus("Dropping logs (normal)");
             for (Item i : ctx.inventory.items()) {
                 if (i.name().toLowerCase().contains("logs")) {
                     i.interact("Drop");

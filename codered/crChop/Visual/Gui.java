@@ -5,7 +5,6 @@ import codered.crChop.Tasks.*;
 import codered.crChop.Variables.Presets;
 import codered.crChop.crChop;
 import codered.universal.Antiban;
-import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.GameObject;
 import org.powerbot.script.rt4.Item;
@@ -32,15 +31,16 @@ public class Gui extends JFrame {
     final JCheckBox chkScreenshot;
     final JCheckBox chkMouseHop;
     final JCheckBox chkRunFromCombat;
+    final JCheckBox chkChatResponder;
 
     private int axeId;
     private Tree tree;
     private Boolean mousehop;
 
     public Gui(final ClientContext ctx) {
-        JPanel panelCenter = new JPanel();
-        JPanel panelLineEnd = new JPanel();
-        JPanel panelPageEnd = new JPanel();
+        JPanel pnlCenter = new JPanel();
+        JPanel pnlLineEnd = new JPanel();
+        JPanel pnlPageEnd = new JPanel();
         btnScan = new JButton("Rescan for Trees & Banks");
         btnStart = new JButton("Start Script");
         btnCancel = new JButton("Cancel");
@@ -52,30 +52,34 @@ public class Gui extends JFrame {
         chkScreenshot = new JCheckBox("Save Screenshot");
         chkMouseHop = new JCheckBox("Mouse Hop Drop");
         chkRunFromCombat = new JCheckBox("Run From Combat");
+        chkChatResponder = new JCheckBox("Basic Chat Responder (BETA)");
 
         this.setTitle("crChop Gui");
+        this.setAlwaysOnTop(true);
         this.setLocationRelativeTo(Frame.getFrames()[0]);
         this.setLayout(new BorderLayout());
 
         // CENTER
-        panelCenter.setLayout(new BoxLayout(panelCenter, BoxLayout.PAGE_AXIS));
-        this.add(panelCenter, BorderLayout.CENTER);
-        panelCenter.add(cboTrees);
-        panelCenter.add(cboMethod);
+        pnlCenter.setLayout(new BoxLayout(pnlCenter, BoxLayout.PAGE_AXIS));
+        this.add(pnlCenter, BorderLayout.CENTER);
+        pnlCenter.add(cboPresets);
+        pnlCenter.add(cboTrees);
+        pnlCenter.add(cboMethod);
 
         // LINE_END
-        panelLineEnd.setLayout(new BoxLayout(panelLineEnd, BoxLayout.Y_AXIS));
-        this.add(panelLineEnd, BorderLayout.LINE_END);
-        panelLineEnd.add(chkScreenshot);
-        panelLineEnd.add(chkMouseHop);
-        panelLineEnd.add(chkRunFromCombat);
+        pnlLineEnd.setLayout(new BoxLayout(pnlLineEnd, BoxLayout.Y_AXIS));
+        this.add(pnlLineEnd, BorderLayout.LINE_END);
+        pnlLineEnd.add(chkScreenshot);
+        pnlLineEnd.add(chkMouseHop);
+        pnlLineEnd.add(chkRunFromCombat);
+        pnlLineEnd.add(chkChatResponder);
 
         // PAGE_END
-        panelPageEnd.setLayout(new FlowLayout());
-        this.add(panelPageEnd, BorderLayout.PAGE_END);
-        panelPageEnd.add(btnStart);
-        panelPageEnd.add(btnScan);
-        panelPageEnd.add(btnCancel);
+        pnlPageEnd.setLayout(new FlowLayout());
+        this.add(pnlPageEnd, BorderLayout.PAGE_END);
+        pnlPageEnd.add(btnStart);
+        pnlPageEnd.add(btnScan);
+        pnlPageEnd.add(btnCancel);
 
         if (!ctx.objects.select().action("Bank").isEmpty()) {
             cboMethod.addItem("Bank");
@@ -100,12 +104,14 @@ public class Gui extends JFrame {
         cboPresets.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (cboPresets.getSelectedIndex() == 0) {
+                if (getPreset() >= 0) {
+                    presetChange();
+                    btnScan.setEnabled(false);
                     cboMethod.setEnabled(true);
                     chkMouseHop.setEnabled(true);
                 } else {
-                    cboMethod.setEnabled(false);
-                    chkMouseHop.setEnabled(false);
+                    btnScan.setEnabled(true);
+                    btnScan.doClick();
                 }
             }
         });
@@ -122,12 +128,12 @@ public class Gui extends JFrame {
             }
         });
 
+        // Scan Action
         btnScan.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 cboTrees.removeAllItems();
-                cboMethod.addItem("Drop");
+                cboMethod.removeItem("Bank");
 
                 if (!ctx.objects.select().action("Bank").isEmpty()) {
                     cboMethod.addItem("Bank");
@@ -165,11 +171,12 @@ public class Gui extends JFrame {
                 tree = Tree.valueOf(cboTrees.getSelectedItem().toString());
                 mousehop = chkMouseHop.isSelected();
 
-                Tile bankTile = ctx.objects.select().action("Bank").nearest().poll().tile();
-
                 if (cboMethod.getSelectedItem().toString().toLowerCase().contains("bank")) {
-                    crChop.taskList.add(new Banking(ctx, bankTile, axeId));
-                    System.out.println(bankTile);
+                    if (getPreset() >= 0) {
+                        crChop.taskList.add(new Banking(ctx, Presets.presets[getPreset()].path, axeId));
+                    } else {
+                        crChop.taskList.add(new Banking(ctx, null, axeId));
+                    }
                 } else if (cboMethod.getSelectedItem().toString().toLowerCase().contains("drop")) {
                     crChop.taskList.add(new Drop(ctx, mousehop));
                 }
@@ -178,7 +185,13 @@ public class Gui extends JFrame {
                     crChop.taskList.add(new Combat(ctx));
                 }
 
-                crChop.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new Chop(ctx, tree, axeId, chkRunFromCombat.isSelected()), new Antiban(ctx)));
+                if (getPreset() >= 0) {
+                    crChop.taskList.add(new Chop(ctx, tree, axeId, chkRunFromCombat.isSelected(), Presets.presets[getPreset()].path, Presets.presets[getPreset()].area));
+                } else {
+                    crChop.taskList.add(new Chop(ctx, tree, axeId, chkRunFromCombat.isSelected(), null, null));
+                }
+
+                crChop.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new Antiban(ctx)));
 
                 dispose();
             }
@@ -204,5 +217,24 @@ public class Gui extends JFrame {
 
     public boolean saveScreenshot() {
         return chkScreenshot.isSelected();
+    }
+
+    public boolean chatResponder() {
+        return chkChatResponder.isSelected();
+    }
+
+    public int getPreset() {
+        return cboPresets.getSelectedIndex() - 1; // -1 for no preset
+    }
+
+    private void presetChange() {
+        int p = getPreset();
+        if (p >= 0) {
+            Presets presets = Presets.presets[p];
+            cboTrees.removeAllItems();
+            for (String s : presets.trees) {
+                cboTrees.addItem(s.toUpperCase());
+            }
+        }
     }
 }
