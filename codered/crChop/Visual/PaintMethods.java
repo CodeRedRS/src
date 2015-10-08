@@ -34,10 +34,10 @@ public class PaintMethods extends ClientAccessor {
         long hours = minutes / 60;
         long days = hours / 24;
         if (days > 0) {
-            return (days < 10 ? "0" + days : days) + ":"
-                    + (hours % 24 < 10 ? "0" + hours % 24 : hours % 24) + ":"
-                    + (minutes % 60 < 10 ? "0" + minutes % 60 : minutes % 60) + ":"
-                    + (seconds % 60 < 10 ? "0" + seconds % 60 : seconds % 60);
+            return (days < 10 ? "0" + days : days) + "d "
+                    + (hours % 24 < 10 ? "0" + hours % 24 : hours % 24) + "h "
+                    + (minutes % 60 < 10 ? "0" + minutes % 60 : minutes % 60) + "m "
+                    + (seconds % 60 < 10 ? "0" + seconds % 60 : seconds % 60) + "s";
         }
         return (hours % 24 < 10 ? "0" + hours % 24 : hours % 24) + ":"
                 + (minutes % 60 < 10 ? "0" + minutes % 60 : minutes % 60) + ":"
@@ -72,7 +72,6 @@ public class PaintMethods extends ClientAccessor {
         for (int i = 1; i < level; i++) {
             total += Math.floor(i + 300 * Math.pow(2, i / 7.0));
         }
-
         return (int) Math.floor(total / 4);
     }
 

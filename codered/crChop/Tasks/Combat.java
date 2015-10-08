@@ -16,23 +16,24 @@ public class Combat extends Task<ClientContext> {
     public Combat(ClientContext ctx) {
         super(ctx);
     }
-    private Tile player, random;
+
+    private Tile rand;
 
     @Override
     public boolean activate() {
+        Tile player = ctx.players.local().tile();
+        rand = new Tile((player.x() + Random.nextInt(100, 150)), (player.y() + Random.nextInt(100, 150)));
         return ctx.players.local().inCombat() && ctx.inventory.count() != 28;
     }
 
     @Override
     public void execute() {
-        player = ctx.players.local().tile();
-        random = new Tile((player.x() + Random.nextInt(-150, 150)), (player.y() + Random.nextInt(-150, 150)));
-        Paint.paintStatus("Running from combat " + random);
-        if (ctx.movement.step(random)) {
+        Paint.paintStatus("Running from combat " + rand);
+        if (ctx.movement.step(rand)) {
             Condition.wait(new Callable<Boolean>() {
                 @Override
                 public Boolean call() throws Exception {
-                    return (ctx.movement.destination().distanceTo(ctx.players.local()) < 10);
+                    return ctx.players.local().tile().distanceTo(ctx.movement.destination()) < 1;
                 }
             }, 250, 10);
         }

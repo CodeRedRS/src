@@ -1,7 +1,14 @@
 package codered.crChop.Visual;
 
 import codered.crChop.Enums.Tree;
-import codered.crChop.Tasks.*;
+import codered.crChop.Tasks.Combat;
+import codered.crChop.Tasks.Drop;
+import codered.crChop.Tasks.Interact.BankDeposit;
+import codered.crChop.Tasks.Interact.ChopDown;
+import codered.crChop.Tasks.Inventory;
+import codered.crChop.Tasks.Movement.ToBank;
+import codered.crChop.Tasks.Movement.ToTree;
+import codered.crChop.Tasks.Run;
 import codered.crChop.Variables.Presets;
 import codered.crChop.crChop;
 import codered.universal.Antiban;
@@ -20,6 +27,7 @@ import java.util.HashSet;
  * Created by Dakota on 9/24/2015.
  */
 public class Gui extends JFrame {
+    private double range;
     final JButton btnScan;
     final JButton btnStart;
     final JButton btnCancel;
@@ -32,6 +40,9 @@ public class Gui extends JFrame {
     final JCheckBox chkMouseHop;
     final JCheckBox chkRunFromCombat;
     final JCheckBox chkChatResponder;
+    final JCheckBox chkRadius;
+
+    final JSpinner spnRadius;
 
     private int axeId;
     private Tree tree;
@@ -53,8 +64,12 @@ public class Gui extends JFrame {
         chkMouseHop = new JCheckBox("Mouse Hop Drop");
         chkRunFromCombat = new JCheckBox("Run From Combat");
         chkChatResponder = new JCheckBox("Basic Chat Responder (BETA)");
+        chkRadius = new JCheckBox("Radius");
 
-        this.setTitle("crChop Gui");
+        spnRadius = new JSpinner();
+        spnRadius.setVisible(false);
+
+        this.setTitle("crChop " + crChop.version + " Gui");
         this.setAlwaysOnTop(true);
         this.setLocationRelativeTo(Frame.getFrames()[0]);
         this.setLayout(new BorderLayout());
@@ -65,6 +80,7 @@ public class Gui extends JFrame {
         pnlCenter.add(cboPresets);
         pnlCenter.add(cboTrees);
         pnlCenter.add(cboMethod);
+        pnlCenter.add(spnRadius);
 
         // LINE_END
         pnlLineEnd.setLayout(new BoxLayout(pnlLineEnd, BoxLayout.Y_AXIS));
@@ -73,6 +89,7 @@ public class Gui extends JFrame {
         pnlLineEnd.add(chkMouseHop);
         pnlLineEnd.add(chkRunFromCombat);
         pnlLineEnd.add(chkChatResponder);
+//        pnlLineEnd.add(chkRadius);
 
         // PAGE_END
         pnlPageEnd.setLayout(new FlowLayout());
@@ -99,6 +116,19 @@ public class Gui extends JFrame {
         }
 
         this.pack();
+
+        chkRadius.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (chkRadius.isSelected()) {
+                    spnRadius.setVisible(true);
+                    pack();
+                } else {
+                    spnRadius.setVisible(false);
+                    pack();
+                }
+            }
+        });
 
         // Preset Action
         cboPresets.addActionListener(new ActionListener() {
@@ -171,11 +201,12 @@ public class Gui extends JFrame {
                 tree = Tree.valueOf(cboTrees.getSelectedItem().toString());
                 mousehop = chkMouseHop.isSelected();
 
+                // METHOD SELECTION
                 if (cboMethod.getSelectedItem().toString().toLowerCase().contains("bank")) {
                     if (getPreset() >= 0) {
-                        crChop.taskList.add(new Banking(ctx, Presets.presets[getPreset()].path, axeId));
+                        crChop.taskList.addAll(Arrays.asList(new BankDeposit(ctx, tree, axeId), new ToBank(ctx, Presets.presets[getPreset()].path)));
                     } else {
-                        crChop.taskList.add(new Banking(ctx, null, axeId));
+                        crChop.taskList.addAll(Arrays.asList(new BankDeposit(ctx, tree, axeId), new ToBank(ctx, null)));
                     }
                 } else if (cboMethod.getSelectedItem().toString().toLowerCase().contains("drop")) {
                     crChop.taskList.add(new Drop(ctx, mousehop));
@@ -185,10 +216,11 @@ public class Gui extends JFrame {
                     crChop.taskList.add(new Combat(ctx));
                 }
 
+                // USING PRESETS
                 if (getPreset() >= 0) {
-                    crChop.taskList.add(new Chop(ctx, tree, axeId, chkRunFromCombat.isSelected(), Presets.presets[getPreset()].path, Presets.presets[getPreset()].area));
+                    crChop.taskList.addAll(Arrays.asList(new ChopDown(ctx, tree, axeId, Presets.presets[getPreset()].area, chkRunFromCombat.isSelected()), new ToTree(ctx, Presets.presets[getPreset()].path, Presets.presets[getPreset()].area, tree, axeId)));
                 } else {
-                    crChop.taskList.add(new Chop(ctx, tree, axeId, chkRunFromCombat.isSelected(), null, null));
+                    crChop.taskList.addAll(Arrays.asList(new ChopDown(ctx, tree, axeId, null, chkRunFromCombat.isSelected()), new ToTree(ctx, null, null, tree, axeId)));
                 }
 
                 crChop.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new Antiban(ctx)));
@@ -223,8 +255,12 @@ public class Gui extends JFrame {
         return chkChatResponder.isSelected();
     }
 
+    public int treeRadius() {
+        return Integer.parseInt(spnRadius.getValue().toString());
+    }
+
     public int getPreset() {
-        return cboPresets.getSelectedIndex() - 1; // -1 for no preset
+        return cboPresets.getSelectedIndex() - 1;
     }
 
     private void presetChange() {
@@ -232,6 +268,9 @@ public class Gui extends JFrame {
         if (p >= 0) {
             Presets presets = Presets.presets[p];
             cboTrees.removeAllItems();
+            if (cboMethod.getItemCount() == 1) {
+                cboMethod.addItem("Bank");
+            }
             for (String s : presets.trees) {
                 cboTrees.addItem(s.toUpperCase());
             }

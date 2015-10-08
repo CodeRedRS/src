@@ -83,7 +83,7 @@ public class Drop extends Task<ClientContext> {
         } else {
             for (Item i : ctx.inventory.items()) {
                 if (i.name().toLowerCase().contains("logs")) {
-                    i.interact("Drop");
+                    i.interact("Drop", i.name());
                 }
             }
         }
