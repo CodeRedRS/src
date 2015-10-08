@@ -13,6 +13,7 @@ import codered.crChop.Variables.Presets;
 import codered.crChop.crChop;
 import codered.universal.Antiban;
 import org.powerbot.script.rt4.ClientContext;
+import org.powerbot.script.rt4.Equipment;
 import org.powerbot.script.rt4.GameObject;
 import org.powerbot.script.rt4.Item;
 
@@ -196,6 +197,11 @@ public class Gui extends JFrame {
                         System.out.println(i.name() + "(" + i.id() + ")");
                         axeId = i.id();
                     }
+                }
+
+                if (axeId < 1) {
+                    axeId = ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id();
+                    System.out.println(ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).name() + "(" + axeId + ")");
                 }
 
                 tree = Tree.valueOf(cboTrees.getSelectedItem().toString());

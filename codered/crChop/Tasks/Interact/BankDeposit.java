@@ -5,6 +5,7 @@ import codered.crChop.Visual.Paint;
 import codered.universal.Task;
 import org.powerbot.script.Condition;
 import org.powerbot.script.rt4.ClientContext;
+import org.powerbot.script.rt4.Equipment;
 
 import java.util.concurrent.Callable;
 
@@ -39,11 +40,11 @@ public class BankDeposit extends Task<ClientContext> {
             }, 100, 10);
         }
 
-        if (ctx.inventory.select().id(axe).count() != 1 && ctx.inventory.count() == 0) {
+        if (ctx.inventory.id(axe).count() != 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() != axe) {
             Paint.paintStatus("Withdrawing axe");
             ctx.bank.withdraw(axe, 1);
         }
-        if (ctx.inventory.select().id(axe).count() == 1 && ctx.inventory.count() == 1) {
+        if (ctx.inventory.id(axe).count() == 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() == axe) {
             Paint.paintStatus("Closing bank");
             ctx.bank.close();
         }

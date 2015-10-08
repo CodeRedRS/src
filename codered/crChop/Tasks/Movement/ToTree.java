@@ -4,6 +4,7 @@ import codered.crChop.Enums.Tree;
 import codered.crChop.Visual.Paint;
 import codered.universal.Task;
 import org.powerbot.script.Area;
+import org.powerbot.script.Random;
 import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Equipment;
@@ -30,17 +31,26 @@ public class ToTree extends Task<ClientContext> {
     public boolean activate() {
         if (area != null) {
             return ctx.inventory.count() < 28 &&
+                    !ctx.bank.opened() &&
+                    !ctx.players.local().inMotion() &&
                     (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() == axe || ctx.inventory.id(this.axe).count() == 1) &&
-                    !ctx.objects.select().name(tree.getName()).poll().inViewport() &&
+                    !ctx.objects.select().name(tree.getName()).within(new Area(this.area)).poll().inViewport() &&
+                    (ctx.players.local().animation() == -1 || ctx.objects.nearest().poll().orientation() == ctx.players.local().orientation()) &&
+                    !ctx.objects.isEmpty() &&
                     new Area(area).contains(ctx.players.local());
         }
         return ctx.inventory.count() < 28 &&
+                !ctx.bank.opened() &&
+                !ctx.players.local().inMotion() &&
                 (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() == axe || ctx.inventory.id(this.axe).count() == 1) &&
-                !ctx.objects.select().name(tree.getName()).poll().inViewport();
+                !ctx.objects.select().name(tree.getName()).poll().inViewport() &&
+                (ctx.players.local().animation() == -1 || ctx.objects.nearest().poll().orientation() == ctx.players.local().orientation()) &&
+                !ctx.objects.isEmpty();
     }
 
     @Override
     public void execute() {
+        System.out.println("ToTree (" + ctx.players.local().animation() + ")");
         final TilePath p;
         boolean preset = this.path != null && this.area != null;
 
@@ -60,8 +70,17 @@ public class ToTree extends Task<ClientContext> {
         } else {
             final GameObject t = ctx.objects.nearest().poll();
             if (!t.inViewport()) {
-                ctx.movement.step(t);
-                Paint.paintStatus("Walking to nearest " + tree.getName());
+                if (ctx.movement.step(t)) {
+                    Paint.paintStatus("Walking to " + tree.getName());
+                    if (!t.inViewport()) {
+                        Paint.paintStatus("Looking for " + tree.getName());
+                        ctx.camera.turnTo(t);
+                        if (!t.inViewport()) {
+                            Paint.paintStatus("Adjusting camera");
+                            ctx.camera.pitch(Random.nextInt(25, 50));
+                        }
+                    }
+                }
             }
         }
     }

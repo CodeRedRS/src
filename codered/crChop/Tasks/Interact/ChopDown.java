@@ -18,12 +18,6 @@ import java.util.concurrent.Callable;
  * Created by Dakota on 10/4/2015.
  */
 public class ChopDown extends Task<ClientContext> {
-    private Tree tree;
-    private int axe;
-    private Tile[] area;
-    private GameObject treeObject;
-    private boolean avoidCombat;
-
     public ChopDown(ClientContext ctx, Tree tree, int axe, Tile[] area, boolean avoidCombat) {
         super(ctx);
         this.tree = tree;
@@ -32,21 +26,27 @@ public class ChopDown extends Task<ClientContext> {
         this.avoidCombat = avoidCombat;
     }
 
+    private Tree tree;
+    private int axe;
+    private Tile[] area;
+    private GameObject treeObject;
+    private boolean avoidCombat;
+
     @Override
     public boolean activate() {
         if (avoidCombat) {
             return ctx.inventory.select().count() < 28 &&
-                    !ctx.players.local().inCombat() &&
-                    ctx.players.local().animation() == -1 &&
                     !ctx.objects.select().name(tree.getName()).isEmpty() &&
-                    (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() == axe || ctx.inventory.id(axe).count() > 0) ||
-                    (area != null && new Area(area).contains(ctx.players.local()));
+                    (ctx.players.local().animation() == -1 || ctx.objects.nearest().poll().orientation() == ctx.players.local().orientation()) &&
+                    !ctx.bank.opened() &&
+                    (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() == axe || ctx.inventory.id(axe).count() > 0) &&
+                    !ctx.players.local().inCombat();
         }
         return ctx.inventory.select().count() < 28 &&
-                ctx.players.local().animation() == -1 &&
                 !ctx.objects.select().name(tree.getName()).isEmpty() &&
-                (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() == axe || ctx.inventory.id(axe).count() > 0) ||
-                (area != null && new Area(area).contains(ctx.players.local()));
+                (ctx.players.local().animation() == -1 || ctx.objects.nearest().poll().orientation() == ctx.players.local().orientation()) &&
+                !ctx.bank.opened() &&
+                (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() == axe || ctx.inventory.id(axe).count() > 0);
     }
 
     @Override
@@ -82,16 +82,21 @@ public class ChopDown extends Task<ClientContext> {
         }
 
         if (treeObject.inViewport()) {
-            if (treeObject.interact("Chop down", treeObject.name())) {
+            if (treeObject.interact(false, "Chop down", treeObject.name())) {
+//                Condition.wait(new Callable<Boolean>() {
+//                    @Override
+//                    public Boolean call() throws Exception {
+//                        return ctx.players.local().animation() != -1;
+//                    }
+//                }, 250, 10);
                 Paint.paintStatus("Chopping " + treeObject.name());
                 if (ctx.camera.pitch() <= 50) {
-                    Paint.paintStatus("Fixing camera pitch");
                     ctx.camera.pitch(Random.nextInt(50, 75));
                 }
                 Condition.wait(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
-                        return !ctx.players.local().inMotion() || !ctx.players.local().inCombat();
+                        return !ctx.players.local().inMotion() && !ctx.players.local().inCombat();
                     }
                 }, 1000, 10);
             }

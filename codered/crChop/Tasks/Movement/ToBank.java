@@ -3,6 +3,7 @@ package codered.crChop.Tasks.Movement;
 import codered.crChop.Visual.Paint;
 import codered.universal.Task;
 import org.powerbot.script.Condition;
+import org.powerbot.script.Random;
 import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.GameObject;
@@ -58,7 +59,17 @@ public class ToBank extends Task<ClientContext> {
             }
         } else {
             if (!bankObject.inViewport()) {
-                ctx.movement.step(bankObject);
+                    if (ctx.movement.step(bankObject)) {
+                        Paint.paintStatus("Walking to bank");
+                        if (!bankObject.inViewport()) {
+                            Paint.paintStatus("Looking for bank");
+                            ctx.camera.turnTo(bankObject);
+                            if (!bankObject.inViewport()) {
+                                Paint.paintStatus("Adjusting camera");
+                                ctx.camera.pitch(Random.nextInt(25, 50));
+                            }
+                        }
+                    }
                 Paint.paintStatus("Walking to nearest " + bankObject.name());
             } else {
                 if (bankObject.interact("Bank")) {
