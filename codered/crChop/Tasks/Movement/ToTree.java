@@ -35,7 +35,7 @@ public class ToTree extends Task<ClientContext> {
                     !ctx.players.local().inMotion() &&
                     (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() == axe || ctx.inventory.id(this.axe).count() == 1) &&
                     !ctx.objects.select().name(tree.getName()).within(new Area(this.area)).poll().inViewport() &&
-                    (ctx.players.local().animation() == -1 || ctx.objects.nearest().poll().orientation() == ctx.players.local().orientation()) &&
+                    ctx.players.local().animation() == -1 &&
                     !ctx.objects.isEmpty() &&
                     new Area(area).contains(ctx.players.local());
         }
@@ -44,7 +44,7 @@ public class ToTree extends Task<ClientContext> {
                 !ctx.players.local().inMotion() &&
                 (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() == axe || ctx.inventory.id(this.axe).count() == 1) &&
                 !ctx.objects.select().name(tree.getName()).poll().inViewport() &&
-                (ctx.players.local().animation() == -1 || ctx.objects.nearest().poll().orientation() == ctx.players.local().orientation()) &&
+                ctx.players.local().animation() == -1 &&
                 !ctx.objects.isEmpty();
     }
 
@@ -64,7 +64,10 @@ public class ToTree extends Task<ClientContext> {
                 } else if (p.next().matrix(ctx).reachable()) {
                     p.traverse();
                 } else {
-                    ctx.objects.select().action("Open").name("Door").nearest().poll().interact("Open");
+                    GameObject door = ctx.objects.select().action("Open", "Door").nearest().poll();
+                    if (!door.inViewport()) {
+                        door.interact(false, "Open", "Door");
+                    }
                 }
             }
         } else {

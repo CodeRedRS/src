@@ -37,21 +37,21 @@ public class ChopDown extends Task<ClientContext> {
         if (avoidCombat) {
             return ctx.inventory.select().count() < 28 &&
                     !ctx.objects.select().name(tree.getName()).isEmpty() &&
-                    (ctx.players.local().animation() == -1 || ctx.objects.nearest().poll().orientation() == ctx.players.local().orientation()) &&
+                    ctx.players.local().animation() == -1 &&
                     !ctx.bank.opened() &&
                     (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() == axe || ctx.inventory.id(axe).count() > 0) &&
                     !ctx.players.local().inCombat();
         }
         return ctx.inventory.select().count() < 28 &&
                 !ctx.objects.select().name(tree.getName()).isEmpty() &&
-                (ctx.players.local().animation() == -1 || ctx.objects.nearest().poll().orientation() == ctx.players.local().orientation()) &&
+                ctx.players.local().animation() == -1 &&
                 !ctx.bank.opened() &&
                 (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() == axe || ctx.inventory.id(axe).count() > 0);
     }
 
     @Override
     public void execute() {
-        System.out.println("ChopDown");
+        System.out.println("ChopDown - " + ctx.objects.nearest().poll().orientation() + " : " + ctx.players.local().orientation());
 
         if (this.area != null) {
             treeObject = ctx.objects.select().name(tree.getName()).each(Interactive.doSetBounds(tree.getBounds())).within(new Area(area)).nearest().poll();

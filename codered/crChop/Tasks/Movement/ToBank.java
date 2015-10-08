@@ -45,7 +45,10 @@ public class ToBank extends Task<ClientContext> {
                 } else if (p.next().matrix(ctx).reachable()) {
                     p.traverse();
                 } else {
-                    ctx.objects.select().action("Open").name("Door").nearest().poll().interact("Open");
+                    GameObject door = ctx.objects.select().action("Open", "Door").nearest().poll();
+                    if (!door.inViewport()) {
+                        door.interact(false, "Open", "Door");
+                    }
                 }
             } else if (bankObject.inViewport()) {
                 if (bankObject.interact("Bank")) {
@@ -59,17 +62,17 @@ public class ToBank extends Task<ClientContext> {
             }
         } else {
             if (!bankObject.inViewport()) {
-                    if (ctx.movement.step(bankObject)) {
-                        Paint.paintStatus("Walking to bank");
+                if (ctx.movement.step(bankObject)) {
+                    Paint.paintStatus("Walking to bank");
+                    if (!bankObject.inViewport()) {
+                        Paint.paintStatus("Looking for bank");
+                        ctx.camera.turnTo(bankObject);
                         if (!bankObject.inViewport()) {
-                            Paint.paintStatus("Looking for bank");
-                            ctx.camera.turnTo(bankObject);
-                            if (!bankObject.inViewport()) {
-                                Paint.paintStatus("Adjusting camera");
-                                ctx.camera.pitch(Random.nextInt(25, 50));
-                            }
+                            Paint.paintStatus("Adjusting camera");
+                            ctx.camera.pitch(Random.nextInt(25, 50));
                         }
                     }
+                }
                 Paint.paintStatus("Walking to nearest " + bankObject.name());
             } else {
                 if (bankObject.interact("Bank")) {
