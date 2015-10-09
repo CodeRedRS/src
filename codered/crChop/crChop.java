@@ -30,11 +30,11 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
  */
 @Script.Manifest(
         name = "crChop",
-        description = "AIO Woodcutter v1.4",
+        description = "AIO Woodcutter v1.5",
         properties = "topic=1283889;client=4;"
 )
 public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener {
-    public static double version = 1.4;
+    public static double version = 1.5;
 
     public static int startExperience, startLevel;
     public static List<Task> taskList = new ArrayList<Task>();
@@ -49,7 +49,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
     public void savePaint(String name) {
         repaint(img.createGraphics());
-        img = img.getSubimage(2, 2, codered.crChop.Visual.Paint.width + 1, codered.crChop.Visual.Paint.height + 1);
+        img = img.getSubimage(2, 2, Paint.width + 1, Paint.height + 1);
 
         final File path = new File(ctx.controller.script().getStorageDirectory().getPath(), name + ".png");
 
@@ -77,7 +77,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
             startLevel = ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING);
 
 
-            ctx.camera.pitch(50);
+            ctx.camera.pitch(Random.nextInt(50, 75));
             gui.setVisible(true);
 
         } else {
@@ -127,8 +127,8 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void messaged(MessageEvent messageEvent) {
         final Timer timer = new Timer();
         String msg = messageEvent.text();
+        String recivedMsg = msg.toLowerCase();
         if (gui.chatResponder()) {
-            String recivedMsg = msg.toLowerCase();
             int delaySeconds = 60;
             if ((recivedMsg.contains("lvl") || recivedMsg.contains("level")) && !recivedMsg.contains(ctx.players.local().name()) && delay < 1) {
                 ctx.input.sendln(String.valueOf(ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING)));
@@ -170,7 +170,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
             }
         }
 
-        if (msg.contains("You get some " + gui.getTree().getName().toLowerCase())) {
+        if (msg.contains("You get some " + gui.getTree().getName().toLowerCase().replace("tree", ""))) {
             logs++;
         } else if (msg.contains("You get some logs")) {
             logs++;

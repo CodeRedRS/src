@@ -51,7 +51,7 @@ public class ChopDown extends Task<ClientContext> {
 
     @Override
     public void execute() {
-        System.out.println("ChopDown - " + ctx.objects.nearest().poll().orientation() + " : " + ctx.players.local().orientation());
+//        System.out.println("ChopDown - " + ctx.objects.nearest().poll().orientation() + " : " + ctx.players.local().orientation());
 
         if (this.area != null) {
             treeObject = ctx.objects.select().name(tree.getName()).each(Interactive.doSetBounds(tree.getBounds())).within(new Area(area)).nearest().poll();
@@ -67,7 +67,7 @@ public class ChopDown extends Task<ClientContext> {
                     ctx.camera.turnTo(treeObject);
                     if (!treeObject.inViewport()) {
                         Paint.paintStatus("Adjusting camera");
-                        ctx.camera.pitch(Random.nextInt(25, 50));
+                        ctx.camera.pitch(Random.nextInt(50, 75));
                     }
                 }
                 if (ctx.players.local().inMotion()) {

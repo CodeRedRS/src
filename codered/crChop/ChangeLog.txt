@@ -1,24 +1,34 @@
+Version: 1.5
+============
+Remade paths to be overall better
+Minor tweaks for better efficiency
+Added Sorcerers' Tower Preset
+
 Version: 1.4
 ============
 Redesigned banking and chopping methods
+Now will open door at Edgeville if closed, going to and from bank
 Added bounding boxes for better clicking
+    Only added for Normal, Oak, Willow, and Yew trees
+    All others will be hot patched soon
 Painting area for preset locations
 Changed long time format
+    Now shows a "11d 22h 33m 44s"
 Fixed issue where player wouldn't withdraw axe while banking
 
 Version: 1.3
 ============
 Added Preset locations
-Varrock Castle Yews
-Edgeville Yews (Still needs door handling)
+    Varrock Castle Yews
+    Edgeville Yews (Still needs door handling)
 Added a Basic chat response (BETA, use at own risk)
-?Only replys once every 60sec to avoid spamming if someone says something repeatedly
-Will reply back with woodcutting level if someone asks "lvl" or "level"
-Will reply back "Thanks" or "You?" if someone says "nice", "cool", or "sweet"
+    Only replys once every 60sec to avoid spamming if someone says something repeatedly
+    Will reply back with woodcutting level if someone asks "lvl" or "level"
+    Will reply back "Thanks" or "You?" if someone says "nice", "cool", or "sweet"
 Lag issues should be fixed now
 Some banking locations don't work because of a client bug, nothing I can fix
-Falador is the only one I'm aware of currently
-To check if a banking location is working, check the object name by hitting: View > Objects, if the name is correct the bank location will work
+    Falador is the only one I'm aware of currently
+    To check if a banking location is working, check the object name by hitting: View > Objects, if the name is correct the bank location will work
 
 Version: 1.2
 ============
