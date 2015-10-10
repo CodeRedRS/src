@@ -14,12 +14,14 @@ import java.util.concurrent.Callable;
  * Created by Dakota on 10/4/2015.
  */
 public class ToBank extends Task<ClientContext> {
-    public ToBank(ClientContext ctx, Tile[] path) {
+    public ToBank(ClientContext ctx, Tile[] path, Tile interactive) {
         super(ctx);
         this.path = path;
+        this.interactive = interactive;
     }
 
     private Tile[] path;
+    private Tile interactive;
 
     @Override
     public boolean activate() {
@@ -36,6 +38,7 @@ public class ToBank extends Task<ClientContext> {
 //        System.out.println("ToBank");
         Paint.paintStatus("Going to bank");
         if (preset) {
+            GameObject door = ctx.objects.select().name("Door").action("Open").nearest().poll();
             Paint.paintStatus("Walking path to " + bankObject.name());
             p = ctx.movement.newTilePath(path);
             if (!bankObject.inViewport()) {
@@ -43,14 +46,15 @@ public class ToBank extends Task<ClientContext> {
                     ctx.movement.step(p.start());
                 } else if (p.next().matrix(ctx).reachable()) {
                     p.traverse();
-                } else {
-                    GameObject door = ctx.objects.select().action("Open", "Door").nearest().poll();
-                    if (!door.inViewport()) {
-                        door.interact(false, "Open", "Door");
-                    }
+                } else if (this.interactive != null) {
+                    ctx.movement.step(interactive);
+                }
+
+                if (door.inViewport()) {
+                    door.interact(false, "Open", "Door");
                 }
             } else if (bankObject.inViewport()) {
-                if (bankObject.interact("Bank")) {
+                if (bankObject.interact(false, "Bank", "Bank booth")) {
                     Condition.wait(new Callable<Boolean>() {
                         @Override
                         public Boolean call() throws Exception {

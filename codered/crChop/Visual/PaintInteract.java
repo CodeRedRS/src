@@ -10,9 +10,13 @@ import java.awt.*;
  * Created by Dakota on 10/5/2015.
  */
 public class PaintInteract extends ClientAccessor implements PaintListener {
-    int width = Paint.width;
-    PaintMethods pm = new PaintMethods(ctx);
+    private int height = Paint.height;
+    private int width = Paint.width;
+    private PaintMethods pm = new PaintMethods(ctx);
     private Color bg = new Color(0, 0, 0, 175);
+
+    public Rectangle btnScreenshot;
+
     public PaintInteract(ClientContext ctx) {
         super(ctx);
     }
@@ -21,7 +25,9 @@ public class PaintInteract extends ClientAccessor implements PaintListener {
         final Graphics2D g2 = (Graphics2D) g;
         FontMetrics fm = g2.getFontMetrics();
 
-        pm.borderedRect(width + 2, 2, fm.stringWidth("Screenshot") + 4, fm.getHeight() + 4, Color.white, bg, g2);
-        pm.centerString("Screenshot", fm.stringWidth("Screenshot") + 4, width + 2, 2, g2);
+        btnScreenshot = new Rectangle(width + 4, 2, fm.stringWidth("Screenshot") + 4, fm.getHeight());
+        pm.borderedRect(width + 4, 2, fm.stringWidth("Screenshot") + 4, fm.getHeight(), Color.white, bg, g2);
+        g2.setColor(Color.white);
+        pm.centerString("Screenshot", fm.stringWidth("Screenshot"), width + 4, fm.getHeight() - 1, g2);
     }
 }

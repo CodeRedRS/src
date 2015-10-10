@@ -12,22 +12,26 @@ import org.powerbot.script.rt4.Component;
  */
 public class Antiban extends Task<ClientContext> {
     public Boolean antibanEnable = false;
+    private int frequency;
     private PaintMethods PaintMethods = new PaintMethods(ctx);
 
-    public Antiban(ClientContext ctx) {
+    public Antiban(ClientContext ctx, int frequency) {
         super(ctx);
+        this.frequency = frequency;
     }
 
     @Override
     public boolean activate() {
-        return ctx.players.local().animation() > -1;
+        return ctx.players.local().animation() != -1 &&
+                !ctx.players.local().inMotion() &&
+                !ctx.players.local().inCombat();
     }
 
     @Override
     public void execute() {
         String temp = Paint.getStatus();
         antibanEnable = true;
-        int rand = Random.nextInt(1, 10000);
+        int rand = Random.nextInt(1, frequency);
         int sleepTime = Random.nextInt(500, 1000);
         String antiban = "[i][ANTIBAN - " + PaintMethods.formatTime(ctx.controller.script().getTotalRuntime()) + "] ";
         switch (rand) {

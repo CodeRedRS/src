@@ -1,8 +1,15 @@
+Version: 1.6
+============
+Added Seers' Village Yews Preset
+Added Dragon/Infernal Axe special
+Fixed Edgeville door
+Hopefully fixed the logging out issue with Magic Trees
+
 Version: 1.5
 ============
 Remade paths to be overall better
 Minor tweaks for better efficiency
-Added Sorcerers' Tower Preset
+Fixed Sorcerers' Tower Preset
 
 Version: 1.4
 ============

@@ -42,7 +42,7 @@ public class Paint extends ClientAccessor implements PaintListener {
         }
         g.setColor(areaC);
         g.fillPolygon(polygon);
-        g.setColor(Color.white);
+        g.setColor(paint);
         g.drawPolygon(polygon);
     }
 

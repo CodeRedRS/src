@@ -54,51 +54,95 @@ public class ChopDown extends Task<ClientContext> {
 //        System.out.println("ChopDown - " + ctx.objects.nearest().poll().orientation() + " : " + ctx.players.local().orientation());
 
         if (this.area != null) {
-            treeObject = ctx.objects.select().name(tree.getName()).each(Interactive.doSetBounds(tree.getBounds())).within(new Area(area)).nearest().poll();
-        } else {
-            treeObject = ctx.objects.select().name(tree.getName()).each(Interactive.doSetBounds(tree.getBounds())).nearest().poll();
-        }
+            Area area = new Area(this.area);
+            treeObject = ctx.objects.select().name(tree.getName()).each(Interactive.doSetBounds(tree.getBounds())).within(area).nearest().poll();
 
-        if (!treeObject.inViewport()) {
-            if (ctx.movement.step(treeObject)) {
-                Paint.paintStatus("Walking to " + tree.getName());
-                if (!treeObject.inViewport()) {
-                    Paint.paintStatus("Looking for " + tree.getName());
-                    ctx.camera.turnTo(treeObject);
+            if (!treeObject.inViewport() && area.contains(ctx.players.local())) {
+                if (ctx.movement.step(treeObject)) {
+                    Paint.paintStatus("Walking to " + tree.getName());
                     if (!treeObject.inViewport()) {
-                        Paint.paintStatus("Adjusting camera");
-                        ctx.camera.pitch(Random.nextInt(50, 75));
+                        Paint.paintStatus("Looking for " + tree.getName());
+                        ctx.camera.turnTo(treeObject);
+                        if (!treeObject.inViewport()) {
+                            Paint.paintStatus("Adjusting camera");
+                            ctx.camera.pitch(Random.nextInt(50, 75));
+                        }
+                    }
+                    if (ctx.players.local().inMotion()) {
+                        Condition.wait(new Callable<Boolean>() {
+                            @Override
+                            public Boolean call() throws Exception {
+                                return (ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(treeObject) < 10);
+                            }
+                        }, 250, 10);
                     }
                 }
-                if (ctx.players.local().inMotion()) {
-                    Condition.wait(new Callable<Boolean>() {
-                        @Override
-                        public Boolean call() throws Exception {
-                            return (ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(treeObject) < 10);
-                        }
-                    }, 250, 10);
-                }
             }
-        }
 
-        if (treeObject.inViewport()) {
-            if (treeObject.interact(false, "Chop down", treeObject.name())) {
+            if (treeObject.inViewport() && area.contains(ctx.players.local())) {
+                if (treeObject.interact(false, "Chop down", treeObject.name())) {
 //                Condition.wait(new Callable<Boolean>() {
 //                    @Override
 //                    public Boolean call() throws Exception {
 //                        return ctx.players.local().animation() != -1;
 //                    }
 //                }, 250, 10);
-                Paint.paintStatus("Chopping " + treeObject.name());
-                if (ctx.camera.pitch() <= 50) {
-                    ctx.camera.pitch(Random.nextInt(50, 75));
-                }
-                Condition.wait(new Callable<Boolean>() {
-                    @Override
-                    public Boolean call() throws Exception {
-                        return !ctx.players.local().inMotion() && !ctx.players.local().inCombat();
+                    Paint.paintStatus("Chopping " + treeObject.name());
+                    if (ctx.camera.pitch() <= 50) {
+                        ctx.camera.pitch(Random.nextInt(50, 75));
                     }
-                }, 1000, 10);
+                    Condition.wait(new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            return !ctx.players.local().inMotion() && !ctx.players.local().inCombat();
+                        }
+                    }, 1000, 10);
+                }
+            }
+        } else {
+            treeObject = ctx.objects.select().name(tree.getName()).each(Interactive.doSetBounds(tree.getBounds())).nearest().poll();
+
+            if (!treeObject.inViewport()) {
+                if (ctx.movement.step(treeObject)) {
+                    Paint.paintStatus("Walking to " + tree.getName());
+                    if (!treeObject.inViewport()) {
+                        Paint.paintStatus("Looking for " + tree.getName());
+                        ctx.camera.turnTo(treeObject);
+                        if (!treeObject.inViewport()) {
+                            Paint.paintStatus("Adjusting camera");
+                            ctx.camera.pitch(Random.nextInt(50, 75));
+                        }
+                    }
+                    if (ctx.players.local().inMotion()) {
+                        Condition.wait(new Callable<Boolean>() {
+                            @Override
+                            public Boolean call() throws Exception {
+                                return (ctx.movement.destination().distanceTo(ctx.players.local()) < 10 || ctx.players.local().tile().distanceTo(treeObject) < 10);
+                            }
+                        }, 250, 10);
+                    }
+                }
+            }
+
+            if (treeObject.inViewport()) {
+                if (treeObject.interact(false, "Chop down", treeObject.name())) {
+//                Condition.wait(new Callable<Boolean>() {
+//                    @Override
+//                    public Boolean call() throws Exception {
+//                        return ctx.players.local().animation() != -1;
+//                    }
+//                }, 250, 10);
+                    Paint.paintStatus("Chopping " + treeObject.name());
+                    if (ctx.camera.pitch() <= 50) {
+                        ctx.camera.pitch(Random.nextInt(50, 75));
+                    }
+                    Condition.wait(new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            return !ctx.players.local().inMotion() && !ctx.players.local().inCombat();
+                        }
+                    }, 1000, 10);
+                }
             }
         }
     }

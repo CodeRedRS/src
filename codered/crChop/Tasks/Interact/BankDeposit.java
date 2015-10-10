@@ -40,11 +40,10 @@ public class BankDeposit extends Task<ClientContext> {
             }, 100, 10);
         }
 
-        if (ctx.inventory.id(axe).count() != 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND) == null) {
+        if (ctx.inventory.id(axe).count() != 1 && ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() < 1) {
             Paint.paintStatus("Withdrawing axe");
             ctx.bank.withdraw(axe, 1);
-        }
-        if (ctx.inventory.id(axe).count() == 1 || ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND) != null) {
+        } else {
             Paint.paintStatus("Closing bank");
             ctx.bank.close();
         }

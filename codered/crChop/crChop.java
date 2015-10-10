@@ -11,10 +11,14 @@ import org.powerbot.script.*;
 import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Constants;
+import org.powerbot.script.rt4.Equipment;
+import org.powerbot.script.rt4.Item;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.DateFormat;
@@ -33,7 +37,7 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
         description = "AIO Woodcutter v1.5",
         properties = "topic=1283889;client=4;"
 )
-public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener {
+public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener, MouseListener {
     public static double version = 1.5;
 
     public static int startExperience, startLevel;
@@ -43,9 +47,13 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     private int delay;
     private Gui gui;
 
+    private int axeId;
+
     private CursorPaint cursor = new CursorPaint(ctx);
-    private PaintInteract paintInteract = new PaintInteract(ctx);
+    private PaintInteract paintInteract;
     private BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd hh-mm-ssaaa");
+    private Date date = new Date();
 
     public void savePaint(String name) {
         repaint(img.createGraphics());
@@ -66,10 +74,25 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     @Override
     public void start() {
         Widget.initiateWidgets(ctx);
+        // GET AXE ID
+        for (Item i : ctx.inventory.items()) {
+            if (i.name().toLowerCase().contains("axe")) {
+                System.out.println(i.name() + "(" + i.id() + ")");
+                axeId = i.id();
+            }
+        }
+
+        if (axeId < 1) {
+            if (Widget.equipmentButtonWidget.click())
+                Condition.sleep(100);
+            axeId = ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id();
+            System.out.println("Axe: " + ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).name() + "(" + axeId + ")");
+            Widget.inventoryButtonWidget.click();
+        }
         if (!Widget.inventoryWidget.visible())
             Widget.inventoryButtonWidget.click();
 
-        gui = new Gui(ctx);
+        gui = new Gui(ctx, this.axeId);
         Paint.paintStatus("[i]Setting up script");
         if (ctx.game.loggedIn()) {
 
@@ -89,8 +112,6 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
     @Override
     public void stop() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd hh-mm-ssaaa");
-        Date date = new Date();
         if (gui.saveScreenshot())
             savePaint(dateFormat.format(date));
     }
@@ -112,8 +133,12 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
             try {
                 if (gui.getPreset() >= 0) {
                     paint = new Paint(ctx, gui.getTree(), logs, Presets.presets[gui.getPreset()].area);
+                    paintInteract = new PaintInteract(ctx);
+                    paintInteract.repaint(g);
                 } else {
                     paint = new Paint(ctx, gui.getTree(), logs, null);
+                    paintInteract = new PaintInteract(ctx);
+                    paintInteract.repaint(g);
                 }
                 paint.repaint(g);
             } catch (Exception ex) {
@@ -175,5 +200,60 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
         } else if (msg.contains("You get some logs")) {
             logs++;
         }
+    }
+
+    /**
+     * Invoked when the mouse button has been clicked (pressed
+     * and released) on a component.
+     *
+     * @param e
+     */
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        Point mouse = e.getPoint();
+
+        if (paintInteract.btnScreenshot.contains(mouse)) {
+            savePaint(dateFormat.format(date));
+        }
+    }
+
+    /**
+     * Invoked when a mouse button has been pressed on a component.
+     *
+     * @param e
+     */
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    /**
+     * Invoked when a mouse button has been released on a component.
+     *
+     * @param e
+     */
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    /**
+     * Invoked when the mouse enters a component.
+     *
+     * @param e
+     */
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    /**
+     * Invoked when the mouse exits a component.
+     *
+     * @param e
+     */
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }

@@ -9,7 +9,8 @@ import org.powerbot.script.rt4.Component;
 public class Widget {
 
     public static Component inventoryWidget, inventoryButtonWidget, runButtonWidget, runButtonStateWidget,
-            zoomWidget, settingsWidget, settingsButtonWidget, nameWidget;
+            zoomWidget, settingsWidget, settingsButtonWidget, nameWidget, specialAttackButtonWidget, combatButtonWidget,
+            equipmentButtonWidget;
 
     public static void initiateWidgets(ClientContext ctx) {
         inventoryWidget = ctx.widgets.widget(548).component(65);
@@ -20,5 +21,8 @@ public class Widget {
         settingsWidget = ctx.widgets.widget(261).component(0);
         settingsButtonWidget = ctx.widgets.widget(548).component(38);
         nameWidget = ctx.widgets.widget(162).component(42);
+        equipmentButtonWidget = ctx.widgets.widget(548).component(48);
+        combatButtonWidget = ctx.widgets.widget(548).component(44);
+        specialAttackButtonWidget = ctx.widgets.widget(593).component(34);
     }
 }

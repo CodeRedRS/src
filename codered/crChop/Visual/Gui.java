@@ -1,21 +1,16 @@
 package codered.crChop.Visual;
 
 import codered.crChop.Enums.Tree;
-import codered.crChop.Tasks.Combat;
-import codered.crChop.Tasks.Drop;
+import codered.crChop.Tasks.*;
 import codered.crChop.Tasks.Interact.BankDeposit;
 import codered.crChop.Tasks.Interact.ChopDown;
-import codered.crChop.Tasks.Inventory;
 import codered.crChop.Tasks.Movement.ToBank;
 import codered.crChop.Tasks.Movement.ToTree;
-import codered.crChop.Tasks.Run;
 import codered.crChop.Variables.Presets;
 import codered.crChop.crChop;
 import codered.universal.Antiban;
 import org.powerbot.script.rt4.ClientContext;
-import org.powerbot.script.rt4.Equipment;
 import org.powerbot.script.rt4.GameObject;
-import org.powerbot.script.rt4.Item;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,7 +44,8 @@ public class Gui extends JFrame {
     private Tree tree;
     private Boolean mousehop;
 
-    public Gui(final ClientContext ctx) {
+    public Gui(final ClientContext ctx, final int axeId) {
+        this.axeId = axeId;
         JPanel pnlCenter = new JPanel();
         JPanel pnlLineEnd = new JPanel();
         JPanel pnlPageEnd = new JPanel();
@@ -191,28 +187,16 @@ public class Gui extends JFrame {
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // GET AXE ID
-                for (Item i : ctx.inventory.items()) {
-                    if (i.name().toLowerCase().contains("axe")) {
-                        System.out.println(i.name() + "(" + i.id() + ")");
-                        axeId = i.id();
-                    }
-                }
-
-                if (axeId < 1) {
-                    axeId = ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id();
-                    System.out.println(ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).name() + "(" + axeId + ")");
-                }
 
                 tree = Tree.valueOf(cboTrees.getSelectedItem().toString());
                 mousehop = chkMouseHop.isSelected();
 
-                // METHOD SELECTION
+                //METHOD SELECTION
                 if (cboMethod.getSelectedItem().toString().toLowerCase().contains("bank")) {
                     if (getPreset() >= 0) {
-                        crChop.taskList.addAll(Arrays.asList(new BankDeposit(ctx, tree, axeId), new ToBank(ctx, Presets.presets[getPreset()].path)));
+                        crChop.taskList.addAll(Arrays.asList(new BankDeposit(ctx, tree, axeId), new ToBank(ctx, Presets.presets[getPreset()].path, Presets.presets[getPreset()].interactive)));
                     } else {
-                        crChop.taskList.addAll(Arrays.asList(new BankDeposit(ctx, tree, axeId), new ToBank(ctx, null)));
+                        crChop.taskList.addAll(Arrays.asList(new BankDeposit(ctx, tree, axeId), new ToBank(ctx, null, null)));
                     }
                 } else if (cboMethod.getSelectedItem().toString().toLowerCase().contains("drop")) {
                     crChop.taskList.add(new Drop(ctx, mousehop));
@@ -224,12 +208,18 @@ public class Gui extends JFrame {
 
                 // USING PRESETS
                 if (getPreset() >= 0) {
-                    crChop.taskList.addAll(Arrays.asList(new ChopDown(ctx, tree, axeId, Presets.presets[getPreset()].area, chkRunFromCombat.isSelected()), new ToTree(ctx, Presets.presets[getPreset()].path, Presets.presets[getPreset()].area, tree, axeId)));
+                    crChop.taskList.addAll(Arrays.asList(new ChopDown(ctx, tree, axeId, Presets.presets[getPreset()].area, chkRunFromCombat.isSelected()), new ToTree(ctx, Presets.presets[getPreset()].path, Presets.presets[getPreset()].area, tree, Presets.presets[getPreset()].interactive, axeId)));
                 } else {
-                    crChop.taskList.addAll(Arrays.asList(new ChopDown(ctx, tree, axeId, null, chkRunFromCombat.isSelected()), new ToTree(ctx, null, null, tree, axeId)));
+                    crChop.taskList.addAll(Arrays.asList(new ChopDown(ctx, tree, axeId, null, chkRunFromCombat.isSelected()), new ToTree(ctx, null, null, tree, null, axeId)));
                 }
 
-                crChop.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new Antiban(ctx)));
+                if (cboTrees.getSelectedItem().toString().toLowerCase().contains("magic")) {
+                    crChop.taskList.add(new Antiban(ctx, 1000));
+                } else {
+                    crChop.taskList.add(new Antiban(ctx, 10000));
+                }
+
+                crChop.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new Special(ctx)));
 
                 dispose();
             }
