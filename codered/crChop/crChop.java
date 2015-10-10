@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
+import java.util.concurrent.Callable;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
@@ -48,6 +49,8 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     private Gui gui;
 
     private int axeId;
+
+    public static final String[] news = {"Coming soon!"};
 
     private CursorPaint cursor = new CursorPaint(ctx);
     private PaintInteract paintInteract;
@@ -86,6 +89,14 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
             if (Widget.equipmentButtonWidget.click())
                 Condition.sleep(100);
             axeId = ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id();
+            if (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).name().equals("")) {
+                Condition.wait(new Callable<Boolean>() {
+                    @Override
+                    public Boolean call() throws Exception {
+                        return !ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).name().equals("");
+                    }
+                }, 100, 10);
+            }
             System.out.println("Axe: " + ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).name() + "(" + axeId + ")");
             Widget.inventoryButtonWidget.click();
         }
@@ -214,6 +225,10 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
         if (paintInteract.btnScreenshot.contains(mouse)) {
             savePaint(dateFormat.format(date));
+        }
+        if (paintInteract.btnGui.contains(mouse)) {
+            gui.setVisible(true);
+            ctx.controller.suspend();
         }
     }
 

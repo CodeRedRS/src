@@ -9,6 +9,7 @@ import codered.crChop.Tasks.Movement.ToTree;
 import codered.crChop.Variables.Presets;
 import codered.crChop.crChop;
 import codered.universal.Antiban;
+import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.GameObject;
 
@@ -46,6 +47,8 @@ public class Gui extends JFrame {
 
     public Gui(final ClientContext ctx, final int axeId) {
         this.axeId = axeId;
+        JPanel pnlNorth = new JPanel();
+        JPanel pnlLineStart = new JPanel();
         JPanel pnlCenter = new JPanel();
         JPanel pnlLineEnd = new JPanel();
         JPanel pnlPageEnd = new JPanel();
@@ -112,6 +115,12 @@ public class Gui extends JFrame {
             }
         }
 
+        this.pack();
+
+        // NORTH
+        pnlNorth.setLayout(new BoxLayout(pnlNorth, BoxLayout.Y_AXIS));
+        this.add(pnlNorth, BorderLayout.NORTH);
+        pnlNorth.add(new JLabel("<html><body style='width:" +  this.getWidth() + "px'><h3 style='padding: 0; margin: 0;'>News & Announcements: </h3><p style='text-indent: 15px;'>" + crChop.news[Random.nextInt(0, crChop.news.length)] + "</p></body></html>"));
         this.pack();
 
         chkRadius.addActionListener(new ActionListener() {
@@ -187,6 +196,8 @@ public class Gui extends JFrame {
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                crChop.taskList.clear();
+                ctx.controller.resume();
 
                 tree = Tree.valueOf(cboTrees.getSelectedItem().toString());
                 mousehop = chkMouseHop.isSelected();
