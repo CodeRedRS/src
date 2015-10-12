@@ -1,7 +1,13 @@
 Version: 1.7
 ============
 Expanded paint to include more information
-Added End conditions
+Added end conditions
+    End Time (min)
+        Script ends and logs out once the runtime is the specified end time
+    End Level
+        Script ends and logs out once the specified level is reached
+    End Logs
+        Script ends and logs out once the specified amount of logs have been cut
 
 Version: 1.6
 ============

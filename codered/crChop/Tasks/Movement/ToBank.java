@@ -33,7 +33,7 @@ public class ToBank extends Task<ClientContext> {
     public void execute() {
         final TilePath p;
         boolean preset = this.path != null;
-        GameObject bankObject = ctx.objects.select().action("Bank").name("Bank booth").nearest().poll();
+        GameObject bankObject = ctx.objects.select().name("Bank booth", "Grand Exchange booth").nearest().poll();
         ctx.camera.turnTo(bankObject);
 //        System.out.println("ToBank");
         if (preset) {
@@ -45,15 +45,14 @@ public class ToBank extends Task<ClientContext> {
                     ctx.movement.step(p.start());
                 } else if (p.next().matrix(ctx).reachable()) {
                     p.randomize(1, 3).traverse();
-                } else if (this.interactive != null) {
+                } else if (this.interactive != null && !p.next().matrix(ctx).reachable()) {
                     ctx.movement.step(interactive);
-                }
-
-                if (door.inViewport()) {
-                    door.interact(false, "Open", "Door");
+                    if (door.inViewport()) {
+                        door.interact(false, "Open", "Door");
+                    }
                 }
             } else if (bankObject.inViewport()) {
-                if (bankObject.interact(false, "Bank", "Bank booth")) {
+                if (bankObject.interact(false, "Bank")) {
                     Condition.wait(new Callable<Boolean>() {
                         @Override
                         public Boolean call() throws Exception {

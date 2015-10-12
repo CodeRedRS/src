@@ -62,12 +62,11 @@ public class ToTree extends Task<ClientContext> {
                     ctx.movement.step(p.start());
                 } else if (p.next().matrix(ctx).reachable()) {
                     p.traverse();
-                } else if (this.interactive != null) {
+                } else if (this.interactive != null && !p.next().matrix(ctx).reachable()) {
                     ctx.movement.step(interactive);
-                }
-
-                if (door.inViewport()) {
-                    door.interact(false, "Open", "Door");
+                    if (door.inViewport()) {
+                        door.interact(false, "Open", "Door");
+                    }
                 }
             }
         } else {
