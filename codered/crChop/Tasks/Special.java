@@ -4,6 +4,7 @@ import codered.crChop.Variables.Widget;
 import codered.crChop.Visual.Paint;
 import codered.universal.Task;
 import org.powerbot.script.Condition;
+import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Equipment;
 
@@ -27,6 +28,10 @@ public class Special extends Task<ClientContext> {
 
     @Override
     public void execute() {
+        if (ctx.players.local().animation() != -1) {
+            Condition.sleep(Random.nextInt(0, 1000));
+        }
+
         Paint.paintStatus("Activating Special");
         Widget.combatButtonWidget.click();
         Condition.wait(new Callable<Boolean>() {

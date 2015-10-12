@@ -33,10 +33,9 @@ public class ToBank extends Task<ClientContext> {
     public void execute() {
         final TilePath p;
         boolean preset = this.path != null;
-        GameObject bankObject = ctx.objects.select().action("Bank").nearest().poll();
+        GameObject bankObject = ctx.objects.select().action("Bank").name("Bank booth").nearest().poll();
         ctx.camera.turnTo(bankObject);
 //        System.out.println("ToBank");
-        Paint.paintStatus("Going to bank");
         if (preset) {
             GameObject door = ctx.objects.select().name("Door").action("Open").nearest().poll();
             Paint.paintStatus("Walking path to " + bankObject.name());
@@ -45,7 +44,7 @@ public class ToBank extends Task<ClientContext> {
                 if (p.next() == null) {
                     ctx.movement.step(p.start());
                 } else if (p.next().matrix(ctx).reachable()) {
-                    p.traverse();
+                    p.randomize(1, 3).traverse();
                 } else if (this.interactive != null) {
                     ctx.movement.step(interactive);
                 }

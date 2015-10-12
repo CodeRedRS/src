@@ -34,18 +34,18 @@ public class PaintMethods extends ClientAccessor {
         long hours = minutes / 60;
         long days = hours / 24;
         if (days > 0) {
-            return (days < 10 ? "0" + days : days) + "d "
+            return (days) + "d "
                     + (hours % 24 < 10 ? "0" + hours % 24 : hours % 24) + "h "
                     + (minutes % 60 < 10 ? "0" + minutes % 60 : minutes % 60) + "m "
                     + (seconds % 60 < 10 ? "0" + seconds % 60 : seconds % 60) + "s";
         }
-        return (hours % 24 < 10 ? "0" + hours % 24 : hours % 24) + ":"
-                + (minutes % 60 < 10 ? "0" + minutes % 60 : minutes % 60) + ":"
-                + (seconds % 60 < 10 ? "0" + seconds % 60 : seconds % 60);
+        return (hours % 24) + "h "
+                + (minutes % 60 < 10 ? "0" + minutes % 60 : minutes % 60) + "m "
+                + (seconds % 60 < 10 ? "0" + seconds % 60 : seconds % 60)+ "s";
     }
 
     public String formatLetter(int n) {
-        if (n > 10000) {
+        if (n > 10000 && n < 1000000) {
             return df.format(n / 1000.0) + "k";
         } else if (n > 1000000) {
             return df.format(n / 1000000.0) + "m";
@@ -53,7 +53,20 @@ public class PaintMethods extends ClientAccessor {
         return formatNumber.format(n);
     }
 
+    public int experienceAt(int level) {
+        double total = 0;
+        for (int i = 1; i < level; i++) {
+            total += Math.floor(i + 300 * Math.pow(2, i / 7.0));
+
+        }
+        return (int) Math.floor(total / 4);
+    }
+
     // CALCULATIONS
+    public int averageExperiencePerLog() {
+        return experienceGained() / logs;
+    }
+
     public String getLongestString(List<String> array, Graphics g) {
         FontMetrics fm = g.getFontMetrics();
         int maxLength = 0;
@@ -67,14 +80,6 @@ public class PaintMethods extends ClientAccessor {
         return longestString;
     }
 
-    public int experienceAt(int level) {
-        double total = 0;
-        for (int i = 1; i < level; i++) {
-            total += Math.floor(i + 300 * Math.pow(2, i / 7.0));
-        }
-        return (int) Math.floor(total / 4);
-    }
-
     public long logsPerHour() {
         if (this.logs < 1) {
             return 0;
@@ -84,16 +89,38 @@ public class PaintMethods extends ClientAccessor {
 
     public String timeTillLevel() {
         if (experienceGained() < 1) {
-            return formatTime(0L);
+            return "N/A";
         }
         return formatTime((long) ((experienceAt(ctx.skills.realLevel(woodcutting) + 1) - ctx.skills.experience(woodcutting)) * 3600000D / hourlyExperience()));
     }
 
+    public String experienceTillLevel() {
+        return formatLetter(experienceAt(ctx.skills.realLevel(woodcutting) + 1) - ctx.skills.experience(woodcutting));
+    }
+
+    public String logsTillLevel() {
+        if (experienceGained() < 1) {
+            return "N/A";
+        }
+        return formatLetter((experienceAt(ctx.skills.realLevel(woodcutting) + 1) - ctx.skills.experience(woodcutting)) / averageExperiencePerLog());
+    }
+
     public String timeTillMax() {
         if (experienceGained() < 1) {
-            return formatTime(0L);
+            return "N/A";
         }
         return formatTime((long) ((experienceAt(99) - ctx.skills.experience(woodcutting)) * 3600000D / hourlyExperience()));
+    }
+
+    public String experienceTillMax() {
+        return formatLetter(experienceAt(99) - ctx.skills.experience(woodcutting));
+    }
+
+    public String logsTillMax() {
+        if (experienceGained() < 1) {
+            return "N/A";
+        }
+        return formatLetter((experienceAt(99) - ctx.skills.experience(woodcutting)) / averageExperiencePerLog());
     }
 
     public int hourlyExperience() {

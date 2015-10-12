@@ -11,14 +11,18 @@ import codered.crChop.crChop;
 import codered.universal.Antiban;
 import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
+import org.powerbot.script.rt4.Constants;
 import org.powerbot.script.rt4.GameObject;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Dakota on 9/24/2015.
@@ -40,12 +44,16 @@ public class Gui extends JFrame {
     final JCheckBox chkRadius;
 
     final JSpinner spnRadius;
+    final JSpinner spnEndTime;
+    final JSpinner spnEndLevel;
+    final JSpinner spnEndLogs;
 
     private int axeId;
     private Tree tree;
     private Boolean mousehop;
 
     public Gui(final ClientContext ctx, final int axeId) {
+
         this.axeId = axeId;
         JPanel pnlNorth = new JPanel();
         JPanel pnlLineStart = new JPanel();
@@ -69,10 +77,75 @@ public class Gui extends JFrame {
         spnRadius = new JSpinner();
         spnRadius.setVisible(false);
 
+        spnEndTime = new JSpinner(new SpinnerNumberModel(15, 15, 990, 15));
+        ((JSpinner.DefaultEditor) spnEndTime.getEditor()).getTextField().setEditable(false);
+        ((JSpinner.DefaultEditor) spnEndTime.getEditor()).getTextField().setColumns(5);
+        spnEndLevel = new JSpinner(new SpinnerNumberModel(ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + 1, ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + 1, null, 1));
+        ((JSpinner.DefaultEditor) spnEndLevel.getEditor()).getTextField().setEditable(false);
+        ((JSpinner.DefaultEditor) spnEndLevel.getEditor()).getTextField().setColumns(5);
+        spnEndLogs = new JSpinner(new SpinnerNumberModel(100, 0, null, 100));
+        ((JSpinner.DefaultEditor) spnEndLogs.getEditor()).getTextField().setColumns(5);
+
         this.setTitle("crChop " + crChop.version + " Gui");
         this.setAlwaysOnTop(true);
         this.setLocationRelativeTo(Frame.getFrames()[0]);
         this.setLayout(new BorderLayout());
+
+        // LINE_START
+        pnlLineStart.setLayout(new BoxLayout(pnlLineStart, BoxLayout.Y_AXIS));
+        pnlLineStart.setToolTipText("End Events");
+        this.add(pnlLineStart, BorderLayout.LINE_START);
+
+        // TIME
+        JPanel pnlTime = new JPanel(new FlowLayout());
+        final JCheckBox chkEndTime = new JCheckBox("Time: ");
+        pnlTime.add(chkEndTime);
+        chkEndTime.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (chkEndTime.isSelected()) {
+                    spnEndTime.setEnabled(true);
+                } else {
+                    spnEndTime.setEnabled(false);
+                }
+            }
+        });
+        pnlTime.add(spnEndTime).setEnabled(false);
+
+        // LEVEL
+        JPanel pnlLevel = new JPanel(new FlowLayout());
+        final JCheckBox chkEndLevel = new JCheckBox("Level: ");
+        pnlLevel.add(chkEndLevel);
+        chkEndLevel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (chkEndLevel.isSelected()) {
+                    spnEndLevel.setEnabled(true);
+                } else {
+                    spnEndLevel.setEnabled(false);
+                }
+            }
+        });
+        pnlLevel.add(spnEndLevel).setEnabled(false);
+
+        JPanel pnlLog = new JPanel(new FlowLayout());
+        final JCheckBox chkEndLog = new JCheckBox("Logs: ");
+        pnlLog.add(chkEndLog);
+        chkEndLog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (chkEndLog.isSelected()) {
+                    spnEndLogs.setEnabled(true);
+                } else {
+                    spnEndLogs.setEnabled(false);
+                }
+            }
+        });
+        pnlLog.add(spnEndLogs).setEnabled(false);
+
+        pnlLineStart.add(pnlTime);
+        pnlLineStart.add(pnlLevel);
+        pnlLineStart.add(pnlLog);
 
         // CENTER
         pnlCenter.setLayout(new BoxLayout(pnlCenter, BoxLayout.PAGE_AXIS));
@@ -120,19 +193,26 @@ public class Gui extends JFrame {
         // NORTH
         pnlNorth.setLayout(new BoxLayout(pnlNorth, BoxLayout.Y_AXIS));
         this.add(pnlNorth, BorderLayout.NORTH);
-        pnlNorth.add(new JLabel("<html><body style='width:" +  this.getWidth() + "px'><h3 style='padding: 0; margin: 0;'>News & Announcements: </h3><p style='text-indent: 15px;'>" + crChop.news[Random.nextInt(0, crChop.news.length)] + "</p></body></html>"));
+        pnlNorth.add(new JLabel("<html><body style='width:" + this.getWidth() + "px'><h3 style='padding: 0; margin: 0;'>News & Announcements: </h3><p style='text-indent: 15px;'>" + crChop.news[Random.nextInt(0, crChop.news.length)] + "</p></body></html>"));
         this.pack();
 
-        chkRadius.addActionListener(new ActionListener() {
+//        chkRadius.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                if (chkRadius.isSelected()) {
+//                    spnRadius.setVisible(true);
+//                    pack();
+//                } else {
+//                    spnRadius.setVisible(false);
+//                    pack();
+//                }
+//            }
+//        });
+
+        spnEndTime.addChangeListener(new ChangeListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                if (chkRadius.isSelected()) {
-                    spnRadius.setVisible(true);
-                    pack();
-                } else {
-                    spnRadius.setVisible(false);
-                    pack();
-                }
+            public void stateChanged(ChangeEvent e) {
+                pack();
             }
         });
 
@@ -230,7 +310,22 @@ public class Gui extends JFrame {
                     crChop.taskList.add(new Antiban(ctx, 10000));
                 }
 
-                crChop.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new Special(ctx)));
+                if ((Integer) spnEndTime.getValue() > 0 && chkEndTime.isSelected()) {
+                    crChop.taskList.add(new GoalStop(ctx, -1, TimeUnit.MINUTES.toMillis((Integer) spnEndTime.getValue()), -1));
+                }
+
+                if ((Integer) spnEndLevel.getValue() > ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) && chkEndLevel.isSelected()) {
+                    crChop.taskList.add(new GoalStop(ctx, (Integer) spnEndLevel.getValue(), -1, -1));
+                }
+                if (chkEndLog.isSelected()) {
+                    crChop.taskList.add(new GoalStop(ctx, -1, -1, (Integer) spnEndLogs.getValue()));
+                }
+
+                if (ctx.inventory.id(axeId).count() == 0) {
+                    crChop.taskList.add(new Special(ctx));
+                }
+
+                crChop.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx)));
 
                 dispose();
             }
@@ -278,9 +373,8 @@ public class Gui extends JFrame {
             if (cboMethod.getItemCount() == 1) {
                 cboMethod.addItem("Bank");
             }
-            for (String s : presets.trees) {
-                cboTrees.addItem(s.toUpperCase());
-            }
+            cboTrees.addItem(presets.trees);
+
         }
     }
 }

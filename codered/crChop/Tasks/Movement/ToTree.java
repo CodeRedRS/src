@@ -62,7 +62,7 @@ public class ToTree extends Task<ClientContext> {
                     ctx.movement.step(p.start());
                 } else if (p.next().matrix(ctx).reachable()) {
                     p.traverse();
-                } else if (this.interactive != null){
+                } else if (this.interactive != null) {
                     ctx.movement.step(interactive);
                 }
 

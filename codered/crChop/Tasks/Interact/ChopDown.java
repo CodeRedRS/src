@@ -81,12 +81,12 @@ public class ChopDown extends Task<ClientContext> {
 
             if (treeObject.inViewport() && area.contains(ctx.players.local())) {
                 if (treeObject.interact(false, "Chop down", treeObject.name())) {
-//                Condition.wait(new Callable<Boolean>() {
-//                    @Override
-//                    public Boolean call() throws Exception {
-//                        return ctx.players.local().animation() != -1;
-//                    }
-//                }, 250, 10);
+                    Condition.wait(new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            return ctx.players.local().animation() == -1;
+                        }
+                    }, 250, 10);
                     Paint.paintStatus("Chopping " + treeObject.name());
                     if (ctx.camera.pitch() <= 50) {
                         ctx.camera.pitch(Random.nextInt(50, 75));

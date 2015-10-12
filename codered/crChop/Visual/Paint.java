@@ -22,9 +22,12 @@ public class Paint extends ClientAccessor implements PaintListener {
         this.tree = tree.getName();
         this.logs = logs;
         this.area = area;
+//        this.goalLevel = goalLevel;
     }
 
     PaintMethods PaintMethods = new PaintMethods(ctx);
+    private int goalLevel;
+    private boolean paintOffset;
     private Tile[] area;
     private static String status;
     public static int width, height;
@@ -60,24 +63,40 @@ public class Paint extends ClientAccessor implements PaintListener {
         // Paint Title
         String[] paintStrings = {"crChop " + crChop.version + " - " + PaintMethods.formatTime(runtime),
                 "Level: " + ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + " (+" + PaintMethods.levelsGained() + ")",
-                "Exp: " + PaintMethods.formatLetter(PaintMethods.experienceGained()) + " (" + PaintMethods.formatLetter(PaintMethods.hourlyExperience()) + " /hr)",
+                "Exp gained: " + PaintMethods.formatLetter(PaintMethods.experienceGained()) + " (" + PaintMethods.formatLetter(PaintMethods.hourlyExperience()) + " /hr)",
                 tree + "s: " + PaintMethods.formatLetter(logs) + " (" + PaintMethods.logsPerHour() + " /hr)",
-                "Leveling in: " + PaintMethods.timeTillLevel(),
-                "Maxing in: " + PaintMethods.timeTillMax()
+                "Leveling up: ",
+                "[t]Exp: " + PaintMethods.experienceTillLevel(),
+                "[t]Time: " + PaintMethods.timeTillLevel(),
+                "[t]Logs: " + PaintMethods.logsTillLevel(),
+                "Maxing in: ",
+                "[t]Exp: " + PaintMethods.experienceTillMax(),
+                "[t]Time: " + PaintMethods.timeTillMax(),
+                "[t]Logs: " + PaintMethods.logsTillMax()
         };
         List<String> strings = new ArrayList<String>(Arrays.asList(paintStrings));
+
+//        String[] goals = { "Goal reached in: ",
+//                "[t]Exp: "
+//        };
 
         PaintMethods.stringTitle(String.valueOf(strings.toArray()[0]), width + 1, g2);
 
         for (int i = 1; i != paintStrings.length; i++) {
-            g2.drawString(paintStrings[i], 5, textOffset * (i + 1));
+            if (paintStrings[i].contains("[t]")) {
+                String s = paintStrings[i].replace("[t]", "");
+                g2.drawString(s, 25, textOffset * (i + 1));
+                paintOffset = true;
+            } else {
+                g2.drawString(paintStrings[i], 5, textOffset * (i + 1));
+            }
         }
 
         if (area != null && area.length > 2) {
             drawArea(this.area, g2);
         }
 
-        width = fm.stringWidth(PaintMethods.getLongestString(strings, g2)) + 4;
+        width = fm.stringWidth(PaintMethods.getLongestString(strings, g2)) + 5;
         height = (textOffset * paintStrings.length) + 2;
     }
 

@@ -35,11 +35,11 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
  */
 @Script.Manifest(
         name = "crChop",
-        description = "AIO Woodcutter v1.6",
+        description = "AIO Woodcutter v1.7",
         properties = "topic=1283889;client=4;"
 )
 public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener, MouseListener {
-    public static double version = 1.6;
+    public static double version = 1.7;
 
     public static int startExperience, startLevel;
     public static List<Task> taskList = new ArrayList<Task>();
@@ -48,7 +48,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     private int delay;
     private Gui gui;
 
-    private int axeId;
+    private int axeId, i;
 
     public static final String[] news = {"Coming soon!"};
 
@@ -77,15 +77,19 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     @Override
     public void start() {
         Widget.initiateWidgets(ctx);
+        if (!Widget.inventoryWidget.visible())
+            Widget.inventoryButtonWidget.click();
+
         // GET AXE ID
         for (Item i : ctx.inventory.items()) {
             if (i.name().toLowerCase().contains("axe")) {
-                System.out.println(i.name() + "(" + i.id() + ")");
+                System.out.println("Inventory: " + i.name() + "(" + i.id() + ")");
                 axeId = i.id();
             }
+            this.i++;
         }
 
-        if (axeId < 1) {
+        if (axeId < 1 && this.i == 28) {
             if (Widget.equipmentButtonWidget.click())
                 Condition.sleep(100);
             axeId = ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id();
@@ -97,11 +101,9 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
                     }
                 }, 100, 10);
             }
-            System.out.println("Axe: " + ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).name() + "(" + axeId + ")");
+            System.out.println("Equipped: " + ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).name() + "(" + axeId + ")");
             Widget.inventoryButtonWidget.click();
         }
-        if (!Widget.inventoryWidget.visible())
-            Widget.inventoryButtonWidget.click();
 
         gui = new Gui(ctx, this.axeId);
         Paint.paintStatus("[i]Setting up script");
@@ -112,7 +114,8 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
 
             ctx.camera.pitch(Random.nextInt(50, 75));
-            gui.setVisible(true);
+            if (axeId > -1)
+                gui.setVisible(true);
 
         } else {
             JOptionPane.showMessageDialog(null, "Please login then start the script.\nThank you!", "Start Logged In", ERROR_MESSAGE);
@@ -230,6 +233,9 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
             gui.setVisible(true);
             ctx.controller.suspend();
         }
+//        if (paintInteract.btnScreenshot.contains(mouse)) {
+//
+//        }
     }
 
     /**

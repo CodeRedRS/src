@@ -1,3 +1,8 @@
+Version: 1.7
+============
+Expanded paint to include more information
+Added End conditions
+
 Version: 1.6
 ============
 Added Seers' Village Yews Preset
