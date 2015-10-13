@@ -76,6 +76,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
     @Override
     public void start() {
+
         Widget.initiateWidgets(ctx);
         if (!Widget.inventoryWidget.visible())
             Widget.inventoryButtonWidget.click();
@@ -228,11 +229,8 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void mouseClicked(MouseEvent e) {
         Point mouse = e.getPoint();
 
-        if (paintInteract.btnScreenshot.contains(mouse)) {
-            boolean temp = Paint.hidden;
-            Paint.hidden = false;
+        if (paintInteract.btnScreenshot.contains(mouse) && !Paint.hidden) {
             savePaint(dateFormat.format(date));
-            Paint.hidden = temp;
         }
         if (paintInteract.btnGui.contains(mouse)) {
             gui.setVisible(true);

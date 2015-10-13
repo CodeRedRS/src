@@ -10,7 +10,7 @@ public class Widget {
 
     public static Component inventoryWidget, inventoryButtonWidget, runButtonWidget, runButtonStateWidget,
             zoomWidget, settingsWidget, settingsButtonWidget, nameWidget, specialAttackButtonWidget, combatButtonWidget,
-            equipmentButtonWidget, logoutButton, logoutButton2;
+            equipmentButtonWidget, logoutButton, logoutButton2, reportCloseButtonWidget, collectionBoxCloseButtonWidget;
 
     public static void initiateWidgets(ClientContext ctx) {
         inventoryWidget = ctx.widgets.widget(548).component(65);
@@ -26,5 +26,8 @@ public class Widget {
         specialAttackButtonWidget = ctx.widgets.widget(593).component(34);
         logoutButton = ctx.widgets.widget(548).component(30);
         logoutButton2 = ctx.widgets.widget(182).component(10);
+
+        reportCloseButtonWidget = ctx.widgets.widget(553).component(10);
+        collectionBoxCloseButtonWidget = ctx.widgets.widget(402).component(2).component(11);
     }
 }

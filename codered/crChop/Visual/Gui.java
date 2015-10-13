@@ -159,6 +159,7 @@ public class Gui extends JFrame {
         // LINE_END
         pnlLineEnd.setLayout(new BoxLayout(pnlLineEnd, BoxLayout.Y_AXIS));
         this.add(pnlLineEnd, BorderLayout.LINE_END);
+        chkScreenshot.setSelected(true);
         pnlLineEnd.add(chkScreenshot);
         pnlLineEnd.add(chkMouseHop);
         pnlLineEnd.add(chkRunFromCombat);
@@ -326,7 +327,7 @@ public class Gui extends JFrame {
                     crChop.taskList.add(new Special(ctx));
                 }
 
-                crChop.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx)));
+                crChop.taskList.addAll(Arrays.asList(new Run(ctx), new Inventory(ctx), new CloseBadWidgets(ctx)));
 
                 dispose();
             }
