@@ -26,6 +26,7 @@ public class Paint extends ClientAccessor implements PaintListener {
     }
 
     PaintMethods PaintMethods = new PaintMethods(ctx);
+    public static boolean hidden;
     private int goalLevel;
     private boolean paintOffset;
     private Tile[] area;
@@ -58,27 +59,32 @@ public class Paint extends ClientAccessor implements PaintListener {
         // SCRIPT PAINT
         // ============
         PaintMethods.borderedRect(2, 2, width, height, paint, bg, g2);
-        g2.setColor(paint);
 
         // Paint Title
         String[] paintStrings = {"crChop " + crChop.version + " - " + PaintMethods.formatTime(runtime),
+                status.replace("[i]", ""),
                 "Level: " + ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + " (+" + PaintMethods.levelsGained() + ")",
                 "Exp gained: " + PaintMethods.formatLetter(PaintMethods.experienceGained()) + " (" + PaintMethods.formatLetter(PaintMethods.hourlyExperience()) + " /hr)",
                 tree + "s: " + PaintMethods.formatLetter(logs) + " (" + PaintMethods.logsPerHour() + " /hr)",
-                "Leveling up: ",
+                "To " + (ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + 1) + ": ",
                 "[t]Exp: " + PaintMethods.experienceTillLevel(),
                 "[t]Time: " + PaintMethods.timeTillLevel(),
                 "[t]Logs: " + PaintMethods.logsTillLevel(),
-                "Maxing in: ",
+                "To 99: ",
                 "[t]Exp: " + PaintMethods.experienceTillMax(),
                 "[t]Time: " + PaintMethods.timeTillMax(),
-                "[t]Logs: " + PaintMethods.logsTillMax()
+                "[t]Logs: " + PaintMethods.logsTillMax(),
+                "To goal: ",
+                "[t]Coming soon!"
         };
         List<String> strings = new ArrayList<String>(Arrays.asList(paintStrings));
-
-//        String[] goals = { "Goal reached in: ",
-//                "[t]Exp: "
-//        };
+        if (!hidden) {
+            width = PaintMethods.getLongestStringLength(strings, g2) + 4;
+            g2.setColor(Color.white);
+        } else {
+            width = -1;
+            g2.setColor(new Color(0, 0, 0, 0));
+        }
 
         PaintMethods.stringTitle(String.valueOf(strings.toArray()[0]), width + 1, g2);
 
@@ -96,7 +102,6 @@ public class Paint extends ClientAccessor implements PaintListener {
             drawArea(this.area, g2);
         }
 
-        width = fm.stringWidth(PaintMethods.getLongestString(strings, g2)) + 5;
         height = (textOffset * paintStrings.length) + 2;
     }
 

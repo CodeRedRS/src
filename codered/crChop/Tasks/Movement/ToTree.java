@@ -4,6 +4,7 @@ import codered.crChop.Enums.Tree;
 import codered.crChop.Visual.Paint;
 import codered.universal.Task;
 import org.powerbot.script.Area;
+import org.powerbot.script.Random;
 import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Equipment;
@@ -48,25 +49,25 @@ public class ToTree extends Task<ClientContext> {
 
     @Override
     public void execute() {
-        System.out.println("ToTree");
-        final TilePath p;
         boolean preset = this.path != null && this.area != null;
 
         if (preset) {
+            TilePath p = ctx.movement.newTilePath(path).reverse().randomize(2, 2);
             GameObject door = ctx.objects.select().name("Door").action("Open").nearest().poll();
             Paint.paintStatus("Walking path to " + tree.getName());
-            p = ctx.movement.newTilePath(path).reverse();
             Area a = new Area(this.area);
             if (!a.contains(ctx.players.local())) {
-                if (p.next() == null) {
-                    ctx.movement.step(p.start());
-                } else if (p.next().matrix(ctx).reachable()) {
-                    p.traverse();
-                } else if (this.interactive != null && !p.next().matrix(ctx).reachable()) {
-                    ctx.movement.step(interactive);
-                    if (door.inViewport()) {
-                        door.interact(false, "Open", "Door");
+                if (p.next() != null) {
+                    if (p.next().matrix(ctx).reachable()) {
+                        p.traverse();
+                    } else if (this.interactive != null && !p.next().matrix(ctx).reachable()) {
+                        ctx.movement.step(interactive);
+                        if (door.inViewport()) {
+                            door.interact(false, "Open", "Door");
+                        }
                     }
+                } else {
+                    p.randomize(2, 2);
                 }
             }
         } else {
@@ -76,7 +77,7 @@ public class ToTree extends Task<ClientContext> {
                     Paint.paintStatus("Walking to " + tree.getName());
                     if (!t.inViewport()) {
                         Paint.paintStatus("Looking for " + tree.getName());
-                        ctx.camera.turnTo(t);
+                        ctx.camera.turnTo(t, Random.nextInt(5, 10));
                     }
                 }
             }

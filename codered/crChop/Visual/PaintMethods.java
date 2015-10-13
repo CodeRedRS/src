@@ -67,14 +67,15 @@ public class PaintMethods extends ClientAccessor {
         return experienceGained() / logs;
     }
 
-    public String getLongestString(List<String> array, Graphics g) {
+    public int getLongestStringLength(List<String> array, Graphics g) {
         FontMetrics fm = g.getFontMetrics();
         int maxLength = 0;
-        String longestString = null;
+        int longestString = 0;
         for (String s : array) {
-            if (fm.stringWidth(s) > maxLength) {
-                maxLength = fm.stringWidth(s);
-                longestString = s;
+            int w = s.contains("[t]") ? fm.stringWidth(s) + 12 : fm.stringWidth(s);
+            if (w > maxLength) {
+                maxLength = w;
+                longestString = w;
             }
         }
         return longestString;

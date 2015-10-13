@@ -51,18 +51,16 @@ public class ChopDown extends Task<ClientContext> {
 
     @Override
     public void execute() {
-//        System.out.println("ChopDown - " + ctx.objects.nearest().poll().orientation() + " : " + ctx.players.local().orientation());
-
         if (this.area != null) {
             Area area = new Area(this.area);
-            treeObject = ctx.objects.select().name(tree.getName()).each(Interactive.doSetBounds(tree.getBounds())).within(area).nearest().poll();
+            treeObject = ctx.objects.each(Interactive.doSetBounds(tree.getBounds())).within(area).limit(2).shuffle().nearest().poll();
 
             if (!treeObject.inViewport() && area.contains(ctx.players.local())) {
                 if (ctx.movement.step(treeObject)) {
                     Paint.paintStatus("Walking to " + tree.getName());
                     if (!treeObject.inViewport()) {
                         Paint.paintStatus("Looking for " + tree.getName());
-                        ctx.camera.turnTo(treeObject);
+                        ctx.camera.turnTo(treeObject, Random.nextInt(5, 10));
                         if (!treeObject.inViewport()) {
                             Paint.paintStatus("Adjusting camera");
                             ctx.camera.pitch(Random.nextInt(50, 75));
@@ -100,14 +98,14 @@ public class ChopDown extends Task<ClientContext> {
                 }
             }
         } else {
-            treeObject = ctx.objects.select().name(tree.getName()).each(Interactive.doSetBounds(tree.getBounds())).nearest().poll();
+            treeObject = ctx.objects.each(Interactive.doSetBounds(tree.getBounds())).nearest().poll();
 
             if (!treeObject.inViewport()) {
                 if (ctx.movement.step(treeObject)) {
                     Paint.paintStatus("Walking to " + tree.getName());
                     if (!treeObject.inViewport()) {
                         Paint.paintStatus("Looking for " + tree.getName());
-                        ctx.camera.turnTo(treeObject);
+                        ctx.camera.turnTo(treeObject, Random.nextInt(5, 10));
                         if (!treeObject.inViewport()) {
                             Paint.paintStatus("Adjusting camera");
                             ctx.camera.pitch(Random.nextInt(50, 75));

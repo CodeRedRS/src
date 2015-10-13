@@ -10,9 +10,7 @@ import codered.universal.Task;
 import org.powerbot.script.*;
 import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
-import org.powerbot.script.rt4.Constants;
-import org.powerbot.script.rt4.Equipment;
-import org.powerbot.script.rt4.Item;
+import org.powerbot.script.rt4.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -43,10 +41,12 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
     public static int startExperience, startLevel;
     public static List<Task> taskList = new ArrayList<Task>();
+    private List<Player> players = new ArrayList<Player>();
     public static int logs, radius;
     private final int width = ctx.game.dimensions().width, height = ctx.game.dimensions().height;
     private int delay;
     private Gui gui;
+    private boolean axeEquiped;
 
     private int axeId, i;
 
@@ -90,6 +90,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
         }
 
         if (axeId < 1 && this.i == 28) {
+            axeEquiped = true;
             if (Widget.equipmentButtonWidget.click())
                 Condition.sleep(100);
             axeId = ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id();
@@ -105,7 +106,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
             Widget.inventoryButtonWidget.click();
         }
 
-        gui = new Gui(ctx, this.axeId);
+        gui = new Gui(ctx, this.axeId, this.axeEquiped);
         Paint.paintStatus("[i]Setting up script");
         if (ctx.game.loggedIn()) {
 
@@ -166,10 +167,11 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void messaged(MessageEvent messageEvent) {
         final Timer timer = new Timer();
         String msg = messageEvent.text();
-        String recivedMsg = msg.toLowerCase();
+        String receivedMsg = msg.toLowerCase();
+
         if (gui.chatResponder()) {
             int delaySeconds = 60;
-            if ((recivedMsg.contains("lvl") || recivedMsg.contains("level")) && !recivedMsg.contains(ctx.players.local().name()) && delay < 1) {
+            if ((receivedMsg.contains("lvl") || receivedMsg.contains("level")) && !receivedMsg.contains(ctx.players.local().name()) && delay < 1) {
                 ctx.input.sendln(String.valueOf(ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING)));
                 timer.scheduleAtFixedRate(new TimerTask() {
                     @Override
@@ -183,7 +185,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
                 delay = delaySeconds;
             }
-            if ((recivedMsg.contains("nice") || recivedMsg.contains("cool") || recivedMsg.contains("sweet")) && delay < (delaySeconds / 2)) {
+            if ((receivedMsg.contains("nice") || receivedMsg.contains("cool") || receivedMsg.contains("sweet")) && delay < (delaySeconds / 2)) {
                 switch (Random.nextInt(1, 2)) {
                     case 1:
                     default:
@@ -227,15 +229,18 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
         Point mouse = e.getPoint();
 
         if (paintInteract.btnScreenshot.contains(mouse)) {
+            boolean temp = Paint.hidden;
+            Paint.hidden = false;
             savePaint(dateFormat.format(date));
+            Paint.hidden = temp;
         }
         if (paintInteract.btnGui.contains(mouse)) {
             gui.setVisible(true);
             ctx.controller.suspend();
         }
-//        if (paintInteract.btnScreenshot.contains(mouse)) {
-//
-//        }
+        if (paintInteract.btnHidePaint.contains(mouse)) {
+            Paint.hidden = !Paint.hidden;
+        }
     }
 
     /**

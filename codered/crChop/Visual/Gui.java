@@ -50,11 +50,12 @@ public class Gui extends JFrame {
 
     private int axeId;
     private Tree tree;
-    private Boolean mousehop;
+    private Boolean mousehop, axeEquiped;
 
-    public Gui(final ClientContext ctx, final int axeId) {
-
+    public Gui(final ClientContext ctx, final int axeId, final boolean axeEquiped) {
         this.axeId = axeId;
+        this.axeEquiped = axeEquiped;
+
         JPanel pnlNorth = new JPanel();
         JPanel pnlLineStart = new JPanel();
         JPanel pnlCenter = new JPanel();
@@ -285,9 +286,9 @@ public class Gui extends JFrame {
                 //METHOD SELECTION
                 if (cboMethod.getSelectedItem().toString().toLowerCase().contains("bank")) {
                     if (getPreset() >= 0) {
-                        crChop.taskList.addAll(Arrays.asList(new BankDeposit(ctx, tree, axeId), new ToBank(ctx, Presets.presets[getPreset()].path, Presets.presets[getPreset()].interactive)));
+                        crChop.taskList.addAll(Arrays.asList(new BankDeposit(ctx, axeId, axeEquiped), new ToBank(ctx, Presets.presets[getPreset()].path, Presets.presets[getPreset()].interactive)));
                     } else {
-                        crChop.taskList.addAll(Arrays.asList(new BankDeposit(ctx, tree, axeId), new ToBank(ctx, null, null)));
+                        crChop.taskList.addAll(Arrays.asList(new BankDeposit(ctx, axeId, axeEquiped), new ToBank(ctx, null, null)));
                     }
                 } else if (cboMethod.getSelectedItem().toString().toLowerCase().contains("drop")) {
                     crChop.taskList.add(new Drop(ctx, mousehop));
@@ -305,7 +306,7 @@ public class Gui extends JFrame {
                 }
 
                 if (cboTrees.getSelectedItem().toString().toLowerCase().contains("magic")) {
-                    crChop.taskList.add(new Antiban(ctx, 1000));
+                    crChop.taskList.add(new Antiban(ctx, 100));
                 } else {
                     crChop.taskList.add(new Antiban(ctx, 10000));
                 }
