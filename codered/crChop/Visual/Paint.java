@@ -17,15 +17,18 @@ import java.util.List;
  * Created by Dakota on 9/7/2015.
  */
 public class Paint extends ClientAccessor implements PaintListener {
-    public Paint(ClientContext ctx, Tree tree, int logs, Tile[] area) {
+    public Paint(ClientContext ctx, Tree tree, int logs, Tile[] area, int radius, Tile startTile) {
         super(ctx);
         this.tree = tree.getName();
         this.logs = logs;
         this.area = area;
+        this.radius = radius;
+        this.startTile = startTile;
 //        this.goalLevel = goalLevel;
     }
 
     PaintMethods PaintMethods = new PaintMethods(ctx);
+    private Tile startTile;
     public static boolean hidden;
     private int goalLevel;
     private boolean paintOffset;
@@ -35,20 +38,6 @@ public class Paint extends ClientAccessor implements PaintListener {
     private int logs, radius;
     private String tree = "";
     private Color bg = new Color(0, 0, 0, 175), paint = Color.white, areaC = new Color(255, 255, 255, 100);
-
-
-    private void drawArea(Tile[] area, Graphics g) {
-        Polygon polygon = new Polygon();
-        Point point;
-        for (Tile t : area) {
-            point = t.matrix(ctx).mapPoint();
-            polygon.addPoint(point.x, point.y);
-        }
-        g.setColor(areaC);
-        g.fillPolygon(polygon);
-        g.setColor(paint);
-        g.drawPolygon(polygon);
-    }
 
     public void repaint(Graphics g) {
         long runtime = ctx.controller.script().getTotalRuntime();
@@ -62,7 +51,6 @@ public class Paint extends ClientAccessor implements PaintListener {
 
         // Paint Title
         String[] paintStrings = {"crChop " + crChop.version + " - " + PaintMethods.formatTime(runtime),
-                status.replace("[i]", ""),
                 "Level: " + ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + " (+" + PaintMethods.levelsGained() + ")",
                 "Exp gained: " + PaintMethods.formatLetter(PaintMethods.experienceGained()) + " (" + PaintMethods.formatLetter(PaintMethods.hourlyExperience()) + " /hr)",
                 tree + "s: " + PaintMethods.formatLetter(logs) + " (" + PaintMethods.logsPerHour() + " /hr)",
@@ -96,10 +84,6 @@ public class Paint extends ClientAccessor implements PaintListener {
             } else {
                 g2.drawString(paintStrings[i], 5, textOffset * (i + 1));
             }
-        }
-
-        if (area != null && area.length > 2) {
-            drawArea(this.area, g2);
         }
 
         height = (textOffset * paintStrings.length) + 2;

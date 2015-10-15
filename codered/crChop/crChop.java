@@ -1,5 +1,6 @@
 package codered.crChop;
 
+import codered.crChop.Enums.Axe;
 import codered.crChop.Variables.Presets;
 import codered.crChop.Variables.Widget;
 import codered.crChop.Visual.CursorPaint;
@@ -10,7 +11,9 @@ import codered.universal.Task;
 import org.powerbot.script.*;
 import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
-import org.powerbot.script.rt4.*;
+import org.powerbot.script.rt4.Constants;
+import org.powerbot.script.rt4.Equipment;
+import org.powerbot.script.rt4.Player;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -24,7 +27,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
-import java.util.concurrent.Callable;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
@@ -48,7 +50,7 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     private Gui gui;
     private boolean axeEquiped;
 
-    private int axeId, i;
+    private int axeId = -1;
 
     public static final String[] news = {"Coming soon!"};
 
@@ -74,42 +76,32 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
         }
     }
 
+    private int getAxeId() {
+        Widget.inventoryButtonWidget.click();
+        for (int i = 0; i < Axe.values().length; i++) {
+            if (ctx.inventory.select().id(Axe.values()[i].getAxeId()).count() >= 1) {
+                axeEquiped = false;
+                System.out.println("Inventory: '" + Axe.values()[i].getAxeName() + "'(" + Axe.values()[i].getAxeId() + ")");
+                return Axe.values()[i].getAxeId();
+            }
+        }
+        Widget.equipmentButtonWidget.click();
+        System.out.println("Equipped: '" + ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).name() + "'(" + ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() + ")");
+        return ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id();
+    }
+
     @Override
     public void start() {
 
         Widget.initiateWidgets(ctx);
-        if (!Widget.inventoryWidget.visible())
-            Widget.inventoryButtonWidget.click();
-
-        // GET AXE ID
-        for (Item i : ctx.inventory.items()) {
-            if (i.name().toLowerCase().contains("axe")) {
-                System.out.println("Inventory: " + i.name() + "(" + i.id() + ")");
-                axeId = i.id();
-            }
-            this.i++;
-        }
-
-        if (axeId < 1 && this.i == 28) {
-            axeEquiped = true;
-            if (Widget.equipmentButtonWidget.click())
-                Condition.sleep(100);
-            axeId = ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id();
-            if (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).name().equals("")) {
-                Condition.wait(new Callable<Boolean>() {
-                    @Override
-                    public Boolean call() throws Exception {
-                        return !ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).name().equals("");
-                    }
-                }, 100, 10);
-            }
-            System.out.println("Equipped: " + ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).name() + "(" + axeId + ")");
-            Widget.inventoryButtonWidget.click();
-        }
+        axeId = getAxeId();
 
         gui = new Gui(ctx, this.axeId, this.axeEquiped);
+
         Paint.paintStatus("[i]Setting up script");
-        if (ctx.game.loggedIn()) {
+        if (ctx.game.loggedIn())
+
+        {
 
             startExperience = ctx.skills.experience(Constants.SKILLS_WOODCUTTING);
             startLevel = ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING);
@@ -119,11 +111,14 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
             if (axeId > -1)
                 gui.setVisible(true);
 
-        } else {
+        } else
+
+        {
             JOptionPane.showMessageDialog(null, "Please login then start the script.\nThank you!", "Start Logged In", ERROR_MESSAGE);
             System.out.println("Please login then start.");
             ctx.controller.stop();
         }
+
     }
 
     @Override
@@ -136,6 +131,9 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void poll() {
         for (Task t : taskList) {
             if (t.activate()) {
+//                if (t.getClass() != Antiban.class) {
+//                    gui.updateInfo();
+//                }
                 t.execute();
             }
         }
@@ -143,23 +141,27 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
 
     @Override
     public void repaint(Graphics g) {
-        Paint paint;
-        cursor.drawMouse(g);
-        if (ctx.game.loggedIn()) {
-            try {
-                if (gui.getPreset() >= 0) {
-                    paint = new Paint(ctx, gui.getTree(), logs, Presets.presets[gui.getPreset()].area);
-                    paintInteract = new PaintInteract(ctx);
-                    paintInteract.repaint(g);
-                } else {
-                    paint = new Paint(ctx, gui.getTree(), logs, null);
-                    paintInteract = new PaintInteract(ctx);
-                    paintInteract.repaint(g);
-                }
-                paint.repaint(g);
-            } catch (Exception ex) {
+        try {
+            gui.repaint(g);
+            Paint paint;
+            cursor.drawMouse(g);
+            if (ctx.game.loggedIn()) {
+                try {
+                    if (gui.getPreset() >= 0) {
+                        paint = new Paint(ctx, gui.getTree(), logs, Presets.presets[gui.getPreset()].area, gui.treeRadius(), gui.getStartTile());
+                        paintInteract = new PaintInteract(ctx);
+                        paintInteract.repaint(g);
+                    } else {
+                        paint = new Paint(ctx, gui.getTree(), logs, null, gui.treeRadius(), gui.getStartTile());
+                        paintInteract = new PaintInteract(ctx);
+                        paintInteract.repaint(g);
+                    }
+                    paint.repaint(g);
+                } catch (Exception ex) {
 
+                }
             }
+        } catch (Exception ex) {
         }
     }
 

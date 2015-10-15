@@ -6,10 +6,7 @@ import codered.universal.Task;
 import org.powerbot.script.Area;
 import org.powerbot.script.Random;
 import org.powerbot.script.Tile;
-import org.powerbot.script.rt4.ClientContext;
-import org.powerbot.script.rt4.Equipment;
-import org.powerbot.script.rt4.GameObject;
-import org.powerbot.script.rt4.TilePath;
+import org.powerbot.script.rt4.*;
 
 /**
  * Created by Dakota on 10/4/2015.
@@ -17,16 +14,18 @@ import org.powerbot.script.rt4.TilePath;
 public class ToTree extends Task<ClientContext> {
     private Tile[] path, area;
     private Tree tree;
-    private int axe;
-    private Tile interactive;
+    private int axe, radius;
+    private Tile interactive, startTile;
 
-    public ToTree(ClientContext ctx, Tile[] path, Tile[] area, Tree tree, Tile interactive, int axe) {
+    public ToTree(ClientContext ctx, Tile[] path, Tile[] area, Tree tree, Tile interactive, int axe, int radius, Tile startTile) {
         super(ctx);
         this.path = path;
         this.area = area;
         this.tree = tree;
         this.interactive = interactive;
         this.axe = axe;
+        this.radius = radius;
+        this.startTile = startTile;
     }
 
     @Override
@@ -71,13 +70,18 @@ public class ToTree extends Task<ClientContext> {
                 }
             }
         } else {
-            final GameObject t = ctx.objects.nearest().poll();
-            if (!t.inViewport()) {
-                if (ctx.movement.step(t)) {
+            final GameObject treeObject;
+            if (radius != -1) {
+                treeObject = ctx.objects.within(startTile, radius).each(Interactive.doSetBounds(tree.getBounds())).nearest().poll();
+            } else {
+                treeObject = ctx.objects.each(Interactive.doSetBounds(tree.getBounds())).nearest().poll();
+            }
+            if (!treeObject.inViewport()) {
+                if (ctx.movement.step(treeObject)) {
                     Paint.paintStatus("Walking to " + tree.getName());
-                    if (!t.inViewport()) {
+                    if (!treeObject.inViewport()) {
                         Paint.paintStatus("Looking for " + tree.getName());
-                        ctx.camera.turnTo(t, Random.nextInt(5, 10));
+                        ctx.camera.turnTo(treeObject, Random.nextInt(5, 10));
                     }
                 }
             }

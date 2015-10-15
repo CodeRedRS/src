@@ -18,19 +18,22 @@ import java.util.concurrent.Callable;
  * Created by Dakota on 10/4/2015.
  */
 public class ChopDown extends Task<ClientContext> {
-    public ChopDown(ClientContext ctx, Tree tree, int axe, Tile[] area, boolean avoidCombat) {
+    public ChopDown(ClientContext ctx, Tree tree, int axe, Tile[] area, boolean avoidCombat, int radius, Tile startTile) {
         super(ctx);
         this.tree = tree;
         this.axe = axe;
         this.area = area;
         this.avoidCombat = avoidCombat;
+        this.radius = radius;
+        this.startTile = startTile;
     }
 
     private Tree tree;
-    private int axe;
+    private int axe, radius;
     private Tile[] area;
     private GameObject treeObject;
     private boolean avoidCombat;
+    private Tile startTile;
 
     @Override
     public boolean activate() {
@@ -98,7 +101,11 @@ public class ChopDown extends Task<ClientContext> {
                 }
             }
         } else {
-            treeObject = ctx.objects.each(Interactive.doSetBounds(tree.getBounds())).nearest().poll();
+            if (radius != -1) {
+                treeObject = ctx.objects.within(startTile, radius).each(Interactive.doSetBounds(tree.getBounds())).nearest().poll();
+            } else {
+                treeObject = ctx.objects.each(Interactive.doSetBounds(tree.getBounds())).nearest().poll();
+            }
 
             if (!treeObject.inViewport()) {
                 if (ctx.movement.step(treeObject)) {
