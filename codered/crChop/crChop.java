@@ -35,11 +35,11 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
  */
 @Script.Manifest(
         name = "crChop",
-        description = "AIO Woodcutter v1.7",
+        description = "AIO Woodcutter v1.8",
         properties = "topic=1283889;client=4;"
 )
 public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener, MouseListener {
-    public static double version = 1.7;
+    public static final double version = 1.8;
 
     public static int startExperience, startLevel;
     public static List<Task> taskList = new ArrayList<Task>();
