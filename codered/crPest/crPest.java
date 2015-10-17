@@ -11,11 +11,8 @@ import codered.universal.Task;
 import org.powerbot.script.*;
 import org.powerbot.script.rt4.ClientContext;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
-
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 /**
  * Created by Dakota on 10/16/2015.
@@ -35,15 +32,16 @@ public class crPest extends PollingScript<ClientContext> implements PaintListene
         PestVariables.user = ctx.properties.getProperty("user.name");
         PestVariables.startTime = System.currentTimeMillis();
 
-        if (Arrays.asList(PestConstants.validUsers).contains(PestVariables.user)) {
-            System.out.println("Welcome, " + PestVariables.user + ", to crPest " + PestConstants.scriptVersion + "!");
+        System.out.println("Welcome, " + PestVariables.user + ", to crPest " + PestConstants.scriptVersion + "!");
 
-            PestWidgets.initiateWidgets(PestVariables.ctx);
-            PestVariables.taskList.addAll(Arrays.asList(/*new Antiban(ctx, 999999999), */new ToLander(PestVariables.ctx, PestVariables.combatLevel), new Fight(ctx), new ClickContinue(ctx), new Run(ctx)));
-        } else {
-            ctx.controller.stop();
-            JOptionPane.showMessageDialog(null, "Sorry, " + PestVariables.user + ", but you're not a valid user.", "Not a Valid User", ERROR_MESSAGE);
-        }
+        PestWidgets.initiateWidgets(PestVariables.ctx);
+        PestVariables.taskList.addAll(Arrays.asList(/*new Antiban(ctx, 999999999), */new ToLander(PestVariables.ctx, PestVariables.combatLevel), new Fight(ctx), new ClickContinue(ctx), new Run(ctx)));
+
+//        if (Arrays.asList(PestConstants.validUsers).contains(PestVariables.user)) {
+//        } else {
+//            ctx.controller.stop();
+//            JOptionPane.showMessageDialog(null, "Sorry, " + PestVariables.user + ", but you're not a valid user.", "Not a Valid User", ERROR_MESSAGE);
+//        }
     }
 
     @Override
