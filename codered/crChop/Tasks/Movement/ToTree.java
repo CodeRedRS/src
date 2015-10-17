@@ -31,14 +31,14 @@ public class ToTree extends Task<ClientContext> {
     @Override
     public boolean activate() {
         if (area != null) {
-            return ctx.inventory.count() < 28 &&
+            return ctx.inventory.select().count() < 28 &&
                     !ctx.bank.opened() &&
                     (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() == axe || ctx.inventory.id(this.axe).count() == 1) &&
                     !ctx.objects.select().name(tree.getName()).within(new Area(this.area)).poll().inViewport() &&
                     ctx.players.local().animation() == -1 &&
                     !new Area(area).contains(ctx.players.local());
         }
-        return ctx.inventory.count() < 28 &&
+        return ctx.inventory.select().count() < 28 &&
                 !ctx.bank.opened() &&
                 (ctx.equipment.itemAt(Equipment.Slot.MAIN_HAND).id() == axe || ctx.inventory.id(this.axe).count() == 1) &&
                 !ctx.objects.select().name(tree.getName()).poll().inViewport() &&
@@ -64,6 +64,8 @@ public class ToTree extends Task<ClientContext> {
                         if (door.inViewport()) {
                             door.interact(false, "Open", "Door");
                         }
+                    } else {
+                        p.randomize(2, 2);
                     }
                 } else {
                     p.randomize(2, 2);

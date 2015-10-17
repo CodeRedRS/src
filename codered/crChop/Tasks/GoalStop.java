@@ -29,6 +29,7 @@ public class GoalStop extends Task<ClientContext> {
 
     @Override
     public void execute() {
+        crChop.taskList.clear();
         Widget.logoutButton.click();
         if (Widget.logoutButton2.click())
             ctx.controller.stop();

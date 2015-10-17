@@ -56,9 +56,10 @@ public class ChopDown extends Task<ClientContext> {
     public void execute() {
         if (this.area != null) {
             Area area = new Area(this.area);
-            treeObject = ctx.objects.each(Interactive.doSetBounds(tree.getBounds())).within(area).limit(2).shuffle().nearest().poll();
+            treeObject = ctx.objects.each(Interactive.doSetBounds(tree.getBounds())).within(area).limit(2).shuffle().poll();
 
             if (!treeObject.inViewport() && area.contains(ctx.players.local())) {
+//                Condition.sleep(Random.nextInt(0, 5000));
                 if (ctx.movement.step(treeObject)) {
                     Paint.paintStatus("Walking to " + tree.getName());
                     if (!treeObject.inViewport()) {

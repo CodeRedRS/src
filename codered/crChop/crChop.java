@@ -50,8 +50,6 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     private Gui gui;
     private boolean axeEquiped;
 
-    private int axeId = -1;
-
     public static final String[] news = {"Coming soon!"};
 
     private CursorPaint cursor = new CursorPaint(ctx);
@@ -94,9 +92,9 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void start() {
 
         Widget.initiateWidgets(ctx);
-        axeId = getAxeId();
+        int axeId = getAxeId();
 
-        gui = new Gui(ctx, this.axeId, this.axeEquiped);
+        gui = new Gui(ctx, axeId, this.axeEquiped);
 
         Paint.paintStatus("[i]Setting up script");
         if (ctx.game.loggedIn())

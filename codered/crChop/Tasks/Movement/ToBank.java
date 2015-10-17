@@ -48,6 +48,8 @@ public class ToBank extends Task<ClientContext> {
                         if (door.inViewport()) {
                             door.interact(false, "Open", "Door");
                         }
+                    } else {
+                        p.randomize(2, 2);
                     }
                 } else {
                     System.out.println("ToBank: Re-randomizing");

@@ -22,7 +22,8 @@ public class Antiban extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
-        return ctx.players.local().animation() != -1 &&
+        return Random.nextInt(-frequency, frequency) % 5 == 1 &&
+                ctx.players.local().animation() != -1 &&
                 !ctx.players.local().inMotion() &&
                 !ctx.players.local().inCombat();
     }
@@ -31,7 +32,7 @@ public class Antiban extends Task<ClientContext> {
     public void execute() {
         String temp = Paint.getStatus();
         antibanEnable = true;
-        int rand = Random.nextInt(1, frequency);
+        int rand = Random.nextInt(1, 10);
         int sleepTime = Random.nextInt(500, 1000);
         String antiban = "[i][ANTIBAN - " + PaintMethods.formatTime(ctx.controller.script().getTotalRuntime()) + "] ";
         switch (rand) {
@@ -45,14 +46,8 @@ public class Antiban extends Task<ClientContext> {
                 Paint.paintStatus(temp);
                 antibanEnable = false;
                 break;
-            case 2:
-                int a = sleepTime * 10;
-                Paint.paintStatus(antiban + "AFK " + (a / 1000.0) + "s");
-                System.out.println(antiban + "AFK " + (a / 1000.0) + "s");
-                Condition.sleep(sleepTime * 10);
-                Paint.paintStatus(temp);
-                antibanEnable = false;
-                break;
+//            case 2:
+//                break;
             case 3:
                 Component randWidget = ctx.widgets.widget(548).component(Random.nextInt(27, 57));
                 Paint.paintStatus(antiban + "Opening Random Tab");
@@ -84,6 +79,12 @@ public class Antiban extends Task<ClientContext> {
 //            case 10:
 //                break;
             default:
+                int a = sleepTime * 10;
+                Paint.paintStatus(antiban + "AFK " + (a / 1000.0) + "s");
+                System.out.println(antiban + "AFK " + (a / 1000.0) + "s");
+                Condition.sleep(sleepTime * 15);
+                Paint.paintStatus(temp);
+                antibanEnable = false;
                 break;
 
         }

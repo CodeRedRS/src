@@ -53,7 +53,7 @@ public class Paint extends ClientAccessor implements PaintListener {
         String[] paintStrings = {"crChop " + crChop.version + " - " + PaintMethods.formatTime(runtime),
                 "Level: " + ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + " (+" + PaintMethods.levelsGained() + ")",
                 "Exp gained: " + PaintMethods.formatLetter(PaintMethods.experienceGained()) + " (" + PaintMethods.formatLetter(PaintMethods.hourlyExperience()) + " /hr)",
-                tree + "s: " + PaintMethods.formatLetter(logs) + " (" + PaintMethods.logsPerHour() + " /hr)",
+                tree.replace(" tree", "") + "s: " + PaintMethods.formatLetter(logs) + " (" + PaintMethods.logsPerHour() + " /hr)",
                 "To " + (ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING) + 1) + ": ",
                 "[t]Exp: " + PaintMethods.experienceTillLevel(),
                 "[t]Time: " + PaintMethods.timeTillLevel(),
