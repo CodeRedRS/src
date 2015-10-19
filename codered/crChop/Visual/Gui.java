@@ -8,7 +8,7 @@ import codered.crChop.Tasks.Movement.ToBank;
 import codered.crChop.Tasks.Movement.ToTree;
 import codered.crChop.Variables.Presets;
 import codered.crChop.crChop;
-import codered.universal.Antiban;
+import codered.universal.crAntiban;
 import codered.universal.Run;
 import org.powerbot.script.Area;
 import org.powerbot.script.PaintListener;
@@ -305,9 +305,9 @@ public class Gui extends JFrame implements PaintListener {
                 }
 
                 if (cboTrees.getSelectedItem().toString().toLowerCase().contains("magic")) {
-                    crChop.taskList.add(new Antiban(ctx, 99999));
+                    crChop.taskList.add(new crAntiban(ctx, 99999));
                 } else {
-                    crChop.taskList.add(new Antiban(ctx, 999999999));
+                    crChop.taskList.add(new crAntiban(ctx, 999999999));
                 }
 
                 if ((Integer) spnEndTime.getValue() > 0 && chkEndTime.isSelected()) {

@@ -10,12 +10,12 @@ import org.powerbot.script.rt4.Component;
 /**
  * Created by Dakota on 9/11/2015.
  */
-public class Antiban extends Task<ClientContext> {
+public class crAntiban extends Task<ClientContext> {
     public Boolean antibanEnable = false;
     private int frequency;
     private PaintMethods PaintMethods = new PaintMethods(ctx);
 
-    public Antiban(ClientContext ctx, int frequency) {
+    public crAntiban(ClientContext ctx, int frequency) {
         super(ctx);
         this.frequency = frequency;
     }
