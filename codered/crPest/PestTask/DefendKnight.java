@@ -1,43 +1,43 @@
 package codered.crPest.PestTask;
 
 import codered.crPest.PestUtil.PestConstants;
-import codered.crPest.PestUtil.PestWidgets;
+import codered.crPest.PestUtil.PestVariables;
 import codered.universal.Task;
 import org.powerbot.script.Condition;
+import org.powerbot.script.PaintListener;
 import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
-import org.powerbot.script.rt4.GameObject;
 import org.powerbot.script.rt4.Npc;
 
+import java.awt.*;
 import java.util.concurrent.Callable;
 
 /**
- * Created by Dakota on 10/16/2015.
+ * Created by Dakota on 10/20/2015.
  */
-public class Fight extends Task<ClientContext> {
+public class DefendKnight extends Task<ClientContext> implements PaintListener {
 
-    Npc enemy;
-    GameObject door;
+    private Npc enemy;
 
-    public Fight(ClientContext ctx) {
+    public DefendKnight(ClientContext ctx) {
         super(ctx);
     }
 
     @Override
     public boolean activate() {
-        return !ctx.npcs.select().name(PestConstants.pestNames).action("Attack").isEmpty()
+        return PestVariables.voidKnightTile != null
                 && ctx.players.local().interacting().name().equals("");
     }
 
     @Override
     public void execute() {
-        if (!ctx.players.local().inMotion()) {
-            enemy = ctx.npcs.nearest().poll();
+
+        if (ctx.npcs.select().within(PestVariables.voidKnightTile, PestConstants.knightRadius).name(PestConstants.pestNames).isEmpty()) {
+            enemy = ctx.npcs.select().within(PestVariables.voidKnightTile, PestConstants.knightRadius).action("Attack").poll();
+        } else {
+            enemy = ctx.npcs.select().within(PestVariables.voidKnightTile, PestConstants.knightRadius).name(PestConstants.pestNames).action("Attack").poll();
         }
 
-        if (PestWidgets.clickToContinue.visible()) {
-            PestWidgets.clickToContinue.click();
-        }
 
         if (!enemy.inViewport()) {
             if (ctx.movement.step(enemy)) {
@@ -66,31 +66,13 @@ public class Fight extends Task<ClientContext> {
                         }
                     }, 100, 10);
                 }
-            } else {
-                door = ctx.objects.select().action("Open").nearest().poll();
-                if (!door.inViewport()) {
-                    if (ctx.movement.step(door)) {
-                        Condition.wait(new Callable<Boolean>() {
-                            @Override
-                            public Boolean call() throws Exception {
-                                return ctx.movement.destination().distanceTo(ctx.players.local()) < 5;
-                            }
-                        }, 100, 10);
-                    }
-                    if (!door.inViewport()) {
-                        ctx.camera.turnTo(door, Random.nextInt(10, 20));
-                    }
-                } else {
-                    if (door.interact("Open", door.name())) {
-                        Condition.wait(new Callable<Boolean>() {
-                            @Override
-                            public Boolean call() throws Exception {
-                                return !ctx.players.local().inMotion();
-                            }
-                        }, 100, 10);
-                    }
-                }
             }
         }
+    }
+
+    @Override
+    public void repaint(Graphics g) {
+        final Graphics2D g2 = (Graphics2D) g;
+
     }
 }

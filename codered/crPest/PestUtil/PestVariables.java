@@ -1,6 +1,7 @@
 package codered.crPest.PestUtil;
 
 import codered.universal.Task;
+import org.powerbot.script.Tile;
 import org.powerbot.script.rt4.ClientContext;
 
 import java.util.ArrayList;
@@ -35,6 +36,13 @@ public class PestVariables {
     public static long minutes = 0;
     public static long seconds = 0;
     public static long millis = 0;
+
+    // Tiles
+    public static Tile purplePortalTile = null;
+    public static Tile yellowPortalTile = null;
+    public static Tile bluePortalTile = null;
+    public static Tile redPortalTile = null;
+    public static Tile voidKnightTile = null;
 
 //    public static GUI gui;
 }

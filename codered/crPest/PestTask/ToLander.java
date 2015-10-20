@@ -55,27 +55,34 @@ public class ToLander extends Task<ClientContext> {
                     public Boolean call() throws Exception {
                         return PestWidgets.pestPoints.visible();
                     }
-                }, 250, 10);
+                }, 50, 10);
                 resetPortals();
-                if (PestVariables.startPestPoints == 0) {
-                    PestVariables.startPestPoints = Integer.parseInt(PestWidgets.pestPoints.text().split(" ")[2]);
-                } else {
-                    PestVariables.gainedPestPoints = (Integer.parseInt(PestWidgets.pestPoints.text().split(" ")[2]) - PestVariables.startPestPoints);
-                    System.out.println("Points Gained: " + PestVariables.gainedPestPoints);
+                try {
+                    if (PestVariables.startPestPoints == 0) {
+                        if (PestWidgets.pestPoints.visible())
+                            PestVariables.startPestPoints = Integer.parseInt(PestWidgets.pestPoints.text().split(" ")[2]);
+                    } else {
+                        PestVariables.gainedPestPoints = (Integer.parseInt(PestWidgets.pestPoints.text().split(" ")[2]) - PestVariables.startPestPoints);
+                        System.out.println("Points Gained: " + PestVariables.gainedPestPoints);
+                    }
+                } catch (Exception ex) {
+                    System.out.println("Unable to get Pest Points");
                 }
             }
         }
     }
 
     private void resetPortals() {
-        if (PestVariables.purplePortal || PestVariables.yellowPortal || PestVariables.bluePortal
-                || PestVariables.redPortal) {
-            System.out.println("Resetting portals.\r\n");
-            PestVariables.purplePortal = false;
-            PestVariables.yellowPortal = false;
-            PestVariables.bluePortal = false;
-            PestVariables.redPortal = false;
-        }
-
+        System.out.println("Resetting portals.\r\n");
+        PestVariables.purplePortal = false;
+        PestVariables.yellowPortal = false;
+        PestVariables.bluePortal = false;
+        PestVariables.redPortal = false;
+        PestVariables.purplePortalTile = null;
+        PestVariables.purplePortalTile = null;
+        PestVariables.yellowPortalTile = null;
+        PestVariables.bluePortalTile = null;
+        PestVariables.redPortalTile = null;
+        PestVariables.voidKnightTile = null;
     }
 }

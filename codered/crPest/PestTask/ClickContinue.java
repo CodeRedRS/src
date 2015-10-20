@@ -24,8 +24,6 @@ public class ClickContinue extends Task<ClientContext> {
         if (PestWidgets.damageDealt.visible()) {
             Tile t = ctx.players.local().tile();
             ctx.movement.step(new Tile(t.x(), t.y() + Random.nextInt(-20, -30)));
-        } else {
-            PestWidgets.clickToContinue.click();
         }
     }
 }
