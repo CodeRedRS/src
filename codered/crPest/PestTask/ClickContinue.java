@@ -1,5 +1,6 @@
 package codered.crPest.PestTask;
 
+import codered.crPest.PestUtil.PestMethods;
 import codered.crPest.PestUtil.PestWidgets;
 import codered.universal.Task;
 import org.powerbot.script.Random;
@@ -22,6 +23,7 @@ public class ClickContinue extends Task<ClientContext> {
     @Override
     public void execute() {
         if (PestWidgets.damageDealt.visible()) {
+            PestMethods.resetPortals();
             Tile t = ctx.players.local().tile();
             ctx.movement.step(new Tile(t.x(), t.y() + Random.nextInt(-20, -30)));
         }

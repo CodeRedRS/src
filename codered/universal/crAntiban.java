@@ -11,13 +11,15 @@ import org.powerbot.script.rt4.Component;
  * Created by Dakota on 9/11/2015.
  */
 public class crAntiban extends Task<ClientContext> {
-    public Boolean antibanEnable = false;
+    public boolean antibanEnable = false;
     private int frequency;
+    private boolean antibanCondition;
     private PaintMethods PaintMethods = new PaintMethods(ctx);
 
-    public crAntiban(ClientContext ctx, int frequency) {
+    public crAntiban(ClientContext ctx, int frequency, boolean antibanCondition) {
         super(ctx);
         this.frequency = frequency;
+        this.antibanCondition = antibanCondition;
     }
 
     @Override
@@ -25,7 +27,8 @@ public class crAntiban extends Task<ClientContext> {
         return Random.nextInt(-frequency, frequency) % 5 == 1 &&
                 ctx.players.local().animation() != -1 &&
                 !ctx.players.local().inMotion() &&
-                !ctx.players.local().inCombat();
+                !ctx.players.local().inCombat() &&
+                antibanCondition;
     }
 
     @Override

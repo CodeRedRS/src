@@ -305,9 +305,9 @@ public class Gui extends JFrame implements PaintListener {
                 }
 
                 if (cboTrees.getSelectedItem().toString().toLowerCase().contains("magic")) {
-                    crChop.taskList.add(new crAntiban(ctx, 99999));
+                    crChop.taskList.add(new crAntiban(ctx, 99999, true));
                 } else {
-                    crChop.taskList.add(new crAntiban(ctx, 999999999));
+                    crChop.taskList.add(new crAntiban(ctx, 999999999, true));
                 }
 
                 if ((Integer) spnEndTime.getValue() > 0 && chkEndTime.isSelected()) {

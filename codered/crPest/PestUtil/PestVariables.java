@@ -18,6 +18,7 @@ public class PestVariables {
     public static int combatLevel = 0;
     public static int startPestPoints = 0;
     public static int gainedPestPoints = 0;
+    public static int totalPestPoints = 0;
 
     // Booleans
     public static boolean boarded = false;
@@ -28,14 +29,11 @@ public class PestVariables {
 
     // Strings
     public static String user = "";
+    public static String target = "";
+    public static String playStyle = "";
 
     // Longs
-    public static long runTime = 0;
-    public static long startTime = 0;
-    public static long hours = 0;
-    public static long minutes = 0;
-    public static long seconds = 0;
-    public static long millis = 0;
+    public static long runTime = 0L;
 
     // Tiles
     public static Tile purplePortalTile = null;
