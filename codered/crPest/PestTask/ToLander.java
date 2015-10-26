@@ -61,6 +61,7 @@ public class ToLander extends Task<ClientContext> {
                             return PestWidgets.pestPoints.visible();
                         }
                     }, 50, 10);
+                    PestMethods.resetPortals();
                 }
             }
             try {

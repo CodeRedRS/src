@@ -1,6 +1,6 @@
 package codered.crPest;
 
-import codered.crPest.PestTask.ClickContinue;
+import codered.crPest.PestTask.GameStarted;
 import codered.crPest.PestTask.DefendKnight;
 import codered.crPest.PestTask.ToLander;
 import codered.crPest.PestUtil.PestConstants;
@@ -41,7 +41,7 @@ public class crPest extends PollingScript<ClientContext> implements PaintListene
         System.out.println("Welcome, " + PestVariables.user + ", to crPest " + PestConstants.scriptVersion + "!");
 
         PestWidgets.initiateWidgets(PestVariables.ctx);
-        PestVariables.taskList.addAll(Arrays.asList(new crAntiban(ctx, 999999, PestWidgets.pestPoints.visible()), new ToLander(PestVariables.ctx, PestVariables.combatLevel), new DefendKnight(ctx), new ClickContinue(ctx), new Run(ctx)));
+        PestVariables.taskList.addAll(Arrays.asList(new crAntiban(ctx, 999999, PestWidgets.pestPoints.visible()), new ToLander(PestVariables.ctx, PestVariables.combatLevel), new DefendKnight(ctx), new GameStarted(ctx), new Run(ctx)));
 
 //        if (Arrays.asList(PestConstants.validUsers).contains(PestVariables.user)) {
 //        } else {
