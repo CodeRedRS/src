@@ -383,6 +383,7 @@ public class Gui extends JFrame implements PaintListener {
 
             }
         });
+        setVisible(true);
     }
 
     public String getMethod() {

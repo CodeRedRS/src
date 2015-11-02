@@ -51,12 +51,12 @@ public class ToTree extends Task<ClientContext> {
         boolean preset = this.path != null && this.area != null;
 
         if (preset) {
-            TilePath p = ctx.movement.newTilePath(path).randomize(2, 2).reverse();
+            TilePath p = ctx.movement.newTilePath(path).reverse();
             GameObject door = ctx.objects.select().name("Door").action("Open").nearest().poll();
             Paint.paintStatus("Walking path to " + tree.getName());
             Area a = new Area(this.area);
             if (!a.contains(ctx.players.local())) {
-                if (p.next() != null) {
+//                if (p.next() != null) {
                     if (this.interactive != null && !p.next().matrix(ctx).reachable()) {
                         ctx.movement.step(interactive);
                         if (door.inViewport()) {
@@ -65,10 +65,10 @@ public class ToTree extends Task<ClientContext> {
                     } else {
                         p.traverse();
                     }
-                } else {
-                    System.out.println("ToTree: Re-randomizing");
-                    p.randomize(2, 2);
-                }
+//                } else {
+//                    System.out.println("ToTree: Re-randomizing");
+//                    p.randomize(2, 2);
+//                }
             }
         } else {
             final GameObject treeObject;

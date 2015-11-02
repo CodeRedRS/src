@@ -36,11 +36,11 @@ public class ToBank extends Task<ClientContext> {
         GameObject bankObject = ctx.objects.select().name("Bank booth", "Grand Exchange booth").nearest().poll();
         ctx.camera.turnTo(bankObject, Random.nextInt(5, 10));
         if (preset) {
-            TilePath p = ctx.movement.newTilePath(path).randomize(2, 2);
+            TilePath p = ctx.movement.newTilePath(path);
             GameObject door = ctx.objects.select().name("Door").action("Open").nearest().poll();
             Paint.paintStatus("Walking path to " + bankObject.name());
             if (!bankObject.inViewport()) {
-                if (p.next() != null) {
+//                if (p.next() != null) {
                     if (this.interactive != null && !p.next().matrix(ctx).reachable()) {
                         ctx.movement.step(interactive);
                         if (door.inViewport()) {
@@ -49,10 +49,10 @@ public class ToBank extends Task<ClientContext> {
                     } else {
                         p.traverse();
                     }
-                } else {
-                    System.out.println("ToBank: Re-randomizing");
-                    p.randomize(2, 2);
-                }
+//                } else {
+//                    System.out.println("ToBank: Re-randomizing");
+//                    p.randomize(2, 2);
+//                }
             } else if (bankObject.inViewport()) {
                 if (bankObject.interact(false, "Bank")) {
                     Condition.wait(new Callable<Boolean>() {

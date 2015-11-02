@@ -95,15 +95,13 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
         int axeId = getAxeId();
 
         gui = new Gui(ctx, axeId, this.axeEquiped);
+        gui.setVisible(true);
 
         Paint.paintStatus("[i]Setting up script");
         if (ctx.game.loggedIn())
-
         {
-
             startExperience = ctx.skills.experience(Constants.SKILLS_WOODCUTTING);
             startLevel = ctx.skills.realLevel(Constants.SKILLS_WOODCUTTING);
-
 
             ctx.camera.pitch(Random.nextInt(50, 75));
             if (axeId > -1)
@@ -129,9 +127,6 @@ public class crChop extends PollingScript<ClientContext> implements PaintListene
     public void poll() {
         for (Task t : taskList) {
             if (t.activate()) {
-//                if (t.getClass() != Antiban.class) {
-//                    gui.updateInfo();
-//                }
                 t.execute();
             }
         }
