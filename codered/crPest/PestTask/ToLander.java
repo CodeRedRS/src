@@ -25,15 +25,6 @@ public class ToLander extends Task<ClientContext> {
 
         switch (lander){
             case 0:
-                gangPlankId = PestConstants.noviceGangPlankId;
-                break;
-            case 1:
-                gangPlankId = PestConstants.intermediateGangPlankId;
-                break;
-            case 2:
-                gangPlankId = PestConstants.veteranGangPlankId;
-                break;
-            case 3:
                 int combatLevel = ctx.players.local().combatLevel();
                 if (combatLevel < 70) {
                     gangPlankId = PestConstants.noviceGangPlankId;
@@ -42,6 +33,15 @@ public class ToLander extends Task<ClientContext> {
                 } else {
                     gangPlankId = PestConstants.veteranGangPlankId;
                 }
+                break;
+            case 1:
+                gangPlankId = PestConstants.noviceGangPlankId;
+                break;
+            case 2:
+                gangPlankId = PestConstants.intermediateGangPlankId;
+                break;
+            case 3:
+                gangPlankId = PestConstants.veteranGangPlankId;
                 break;
         }
     }

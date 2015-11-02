@@ -184,7 +184,7 @@ public class PestGui extends JFrame {
                         break;
                 }
                 start.setText("Update Settings");
-                setLocation(Frame.getFrames()[0].getX() - getWidth() + 10, Frame.getFrames()[0].getY());
+                //setLocation(Frame.getFrames()[0].getX() - getWidth() + 10, Frame.getFrames()[0].getY());
             }
         });
         pack();
