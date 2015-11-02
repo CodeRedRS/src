@@ -24,7 +24,7 @@ public class crAntiban extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
-        return Random.nextInt(-frequency, frequency) % 5 == 1 &&
+        return Random.nextInt(-frequency, frequency) % 5 == 0 &&
                 ctx.players.local().animation() != -1 &&
                 !ctx.players.local().inMotion() &&
                 !ctx.players.local().inCombat() &&
