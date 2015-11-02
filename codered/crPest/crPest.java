@@ -1,23 +1,13 @@
 package codered.crPest;
 
-import codered.crPest.PestTask.GameStarted;
-import codered.crPest.PestTask.DefendKnight;
-import codered.crPest.PestTask.ToLander;
-import codered.crPest.PestUtil.PestConstants;
-import codered.crPest.PestUtil.PestVariables;
-import codered.crPest.PestUtil.PestWidgets;
-import codered.universal.Run;
+import codered.crPest.PestUtil.*;
 import codered.universal.Task;
-import codered.universal.crAntiban;
 import codered.universal.crProperties;
 import org.powerbot.script.*;
 import org.powerbot.script.rt4.ClientContext;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.concurrent.Callable;
 
 /**
@@ -29,7 +19,7 @@ import java.util.concurrent.Callable;
         properties = "topic=1287172;client=4;"
 )
 public class crPest extends PollingScript<ClientContext> implements PaintListener, MessageListener {
-
+    PestGui gui;
     @SuppressWarnings({"serial", "static-access"})
     @Override
     public void start() {
@@ -38,10 +28,10 @@ public class crPest extends PollingScript<ClientContext> implements PaintListene
         PestVariables.user = ctx.properties.getProperty(crProperties.userName);
         PestVariables.runTime = ctx.controller.script().getTotalRuntime();
 
-        System.out.println("Welcome, " + PestVariables.user + ", to crPest " + PestConstants.scriptVersion + "!");
-
         PestWidgets.initiateWidgets(PestVariables.ctx);
-        PestVariables.taskList.addAll(Arrays.asList(new crAntiban(ctx, 999999, PestWidgets.pestPoints.visible()), new ToLander(PestVariables.ctx, PestVariables.combatLevel), new DefendKnight(ctx), new GameStarted(ctx), new Run(ctx)));
+
+        gui = new PestGui();
+        gui.setVisible(true);
 
 //        if (Arrays.asList(PestConstants.validUsers).contains(PestVariables.user)) {
 //        } else {
@@ -52,8 +42,8 @@ public class crPest extends PollingScript<ClientContext> implements PaintListene
 
     @Override
     public void stop() {
+        gui.dispose();
         System.out.println("Points Gained: " + PestVariables.gainedPestPoints);
-        System.out.println(new SimpleDateFormat("HH:mm:ss").format(new Date(PestVariables.runTime)));
     }
 
     @Override
@@ -63,7 +53,7 @@ public class crPest extends PollingScript<ClientContext> implements PaintListene
                 || PestVariables.bluePortalTile == null
                 || PestVariables.redPortalTile == null)
                 && PestWidgets.damageDealt.visible()) {
-            getPortalTiles();
+            PestMethods.getPortalTiles();
         }
 
         for (Task t : PestVariables.taskList) {
@@ -115,7 +105,7 @@ public class crPest extends PollingScript<ClientContext> implements PaintListene
         final Graphics2D g2 = (Graphics2D) g;
         if (PestVariables.voidKnightTile != null) {
             Point knightPoint = PestVariables.voidKnightTile.matrix(ctx).mapPoint();
-            Tile tempTile = new Tile(PestVariables.voidKnightTile.x(), PestVariables.voidKnightTile.y() + PestConstants.knightRadius);
+            Tile tempTile = new Tile(PestVariables.voidKnightTile.x(), PestVariables.voidKnightTile.y() + PestVariables.knightRadius);
             Point radiusPoint = tempTile.matrix(ctx).mapPoint();
             double distance = (Math.sqrt((knightPoint.x - radiusPoint.x) * (knightPoint.x - radiusPoint.x) + (knightPoint.y - radiusPoint.y) * (knightPoint.y - radiusPoint.y)));
 
@@ -167,25 +157,6 @@ public class crPest extends PollingScript<ClientContext> implements PaintListene
             g2.fillOval(p.x - 5, p.y - 5, 10, 10);
             g2.setColor(Color.white);
             g2.drawOval(p.x - 5, p.y - 5, 10, 10);
-        }
-    }
-
-    private void getPortalTiles() {
-        Tile tempTile = new Tile(0, 0, 0);
-        if (PestVariables.voidKnightTile == null) {
-            Tile t = ctx.npcs.select().name("Void knight").poll().tile();
-            if (t.compareTo(tempTile) > 0) {
-                PestVariables.voidKnightTile = t;
-                PestVariables.purplePortalTile = new Tile(t.x() - 27, t.y(), 0);
-                PestVariables.bluePortalTile = new Tile(t.x() + 25, t.y() - 3, 0);
-                PestVariables.yellowPortalTile = new Tile(t.x() + 14, t.y() - 21, 0);
-                PestVariables.redPortalTile = new Tile(t.x() - 10, t.y() - 22, 0);
-                System.out.println("Void knight: " + PestVariables.voidKnightTile);
-                System.out.println("Purple portal: " + PestVariables.purplePortalTile);
-                System.out.println("Blue portal: " + PestVariables.bluePortalTile);
-                System.out.println("Yellow portal: " + PestVariables.yellowPortalTile);
-                System.out.println("Red portal: " + PestVariables.redPortalTile);
-            }
         }
     }
 }

@@ -20,23 +20,37 @@ public class ToLander extends Task<ClientContext> {
     int gangPlankId;
     GameObject gangplank;
 
-    public ToLander(ClientContext ctx, int combatLevel) {
+    public ToLander(ClientContext ctx, int lander) {
         super(ctx);
 
-        System.out.println(combatLevel);
-        if (combatLevel < 70) {
-            gangPlankId = PestConstants.noviceGangPlankId;
-        } else if (combatLevel >= 70 && combatLevel < 100) {
-            gangPlankId = PestConstants.intermediateGangPlankId;
-        } else {
-            gangPlankId = PestConstants.veteranGangPlankId;
+        switch (lander){
+            case 0:
+                gangPlankId = PestConstants.noviceGangPlankId;
+                break;
+            case 1:
+                gangPlankId = PestConstants.intermediateGangPlankId;
+                break;
+            case 2:
+                gangPlankId = PestConstants.veteranGangPlankId;
+                break;
+            case 3:
+                int combatLevel = ctx.players.local().combatLevel();
+                if (combatLevel < 70) {
+                    gangPlankId = PestConstants.noviceGangPlankId;
+                } else if (combatLevel >= 70 && combatLevel < 100) {
+                    gangPlankId = PestConstants.intermediateGangPlankId;
+                } else {
+                    gangPlankId = PestConstants.veteranGangPlankId;
+                }
+                break;
         }
     }
 
     @Override
     public boolean activate() {
         return !PestWidgets.pestPoints.visible()
-                && !PestWidgets.damageDealt.visible();
+                && !PestWidgets.damageDealt.visible()
+                || PestWidgets.gameOver.visible();
     }
 
     @Override

@@ -19,6 +19,7 @@ public class PestVariables {
     public static int startPestPoints = 0;
     public static int gainedPestPoints = 0;
     public static int totalPestPoints = 0;
+    public static int knightRadius = 5;
 
     // Booleans
     public static boolean boarded = false;
@@ -31,6 +32,7 @@ public class PestVariables {
     public static String user = "";
     public static String target = "";
     public static String playStyle = "";
+    public static String[] enemyNames = {""};
 
     // Longs
     public static long runTime = 0L;

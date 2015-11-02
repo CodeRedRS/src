@@ -25,7 +25,7 @@ public class DefendKnight extends Task<ClientContext> {
     public boolean activate() {
         return PestVariables.voidKnightTile != null
                 && (ctx.players.local().interacting().name().isEmpty() || ctx.players.local().interacting().name() == null)
-                && !ctx.npcs.select().name(PestConstants.pestNames).within(PestVariables.voidKnightTile, PestConstants.knightRadius).isEmpty();
+                && !ctx.npcs.select().name(PestConstants.pestNames).within(PestVariables.voidKnightTile, PestVariables.knightRadius).action("Attack").isEmpty();
     }
 
     @Override
@@ -73,9 +73,7 @@ public class DefendKnight extends Task<ClientContext> {
 //                // Attack enemy because its closter than the gate
 //            } else {
         if (!enemy.inViewport()) {
-            System.out.println("DefendKnight: Not in Viewport");
             if (ctx.movement.step(enemy)) {
-                System.out.println("DefendKnight: Stepping to enemy");
                 Condition.wait(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
@@ -83,7 +81,6 @@ public class DefendKnight extends Task<ClientContext> {
                     }
                 }, 100, 10);
                 if (!enemy.inViewport()) {
-                    System.out.println("DefendKnight: Not in Viewport 2");
                     ctx.camera.turnTo(enemy, Random.nextInt(10, 20));
                     ctx.camera.pitch(Random.nextInt(25, 35));
                 }
@@ -91,22 +88,25 @@ public class DefendKnight extends Task<ClientContext> {
         } else {
             if (ctx.npcs.size() > 1) {
                 enemy = ctx.npcs.shuffle().poll();
-                System.out.println("DefendKnight: Shuffling enemies (" + enemy.name() + ")");
             }
             if (enemy.interact("Attack", enemy.name())) {
-                System.out.println("DefendKnight: Attacking " + enemy.name());
-//                        System.out.println("Target: " + enemy.name() + "(" + enemy.combatLevel() + ") " + " " + enemy.tile());
                 Condition.wait(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
-                        return ctx.players.local().interacting().name().isEmpty()
-                                || ctx.players.local().interacting().name() == null
-                                || !ctx.players.local().inCombat()
-                                && enemy.health() <= 0;
+                        return fighting();
                     }
                 }, 10, 10);
             }
+
         }
+    }
+
+    private boolean fighting() {
+        return ctx.players.local().interacting().name().isEmpty()
+                || ctx.players.local().interacting().name() == null
+                || !ctx.players.local().inCombat()
+                && enemy.health() <= 0
+                && ctx.players.local().tile().distanceTo(PestVariables.voidKnightTile) <= PestVariables.knightRadius;
     }
 }
 //    }

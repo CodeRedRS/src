@@ -1,7 +1,6 @@
 package codered.crPest.PestTask;
 
-import codered.crPest.PestUtil.PestConstants;
-import codered.crPest.PestUtil.PestWidgets;
+import codered.crPest.PestUtil.PestVariables;
 import codered.universal.Task;
 import org.powerbot.script.Condition;
 import org.powerbot.script.Random;
@@ -25,20 +24,13 @@ public class Fight extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
-        return !ctx.npcs.select().name(PestConstants.pestNames).action("Attack").isEmpty()
-                && ctx.players.local().interacting().name().equals("");
+        return (ctx.players.local().interacting().name().isEmpty() || ctx.players.local().interacting().name() == null)
+                && !ctx.npcs.select().name(PestVariables.enemyNames).action("Attack").isEmpty();
     }
 
     @Override
     public void execute() {
-        if (!ctx.players.local().inMotion()) {
-            enemy = ctx.npcs.nearest().poll();
-        }
-
-        if (PestWidgets.clickToContinue.visible()) {
-            PestWidgets.clickToContinue.click();
-        }
-
+        enemy = ctx.npcs.nearest().poll();
         if (!enemy.inViewport()) {
             if (ctx.movement.step(enemy)) {
                 Condition.wait(new Callable<Boolean>() {
@@ -53,44 +45,22 @@ public class Fight extends Task<ClientContext> {
                 }
             }
         } else {
-            if (enemy.tile().matrix(ctx).reachable()) {
+            if (ctx.npcs.size() > 1) {
                 enemy = ctx.npcs.shuffle().poll();
-                if (enemy.interact("Attack")) {
-                    Condition.wait(new Callable<Boolean>() {
-                        @Override
-                        public Boolean call() throws Exception {
-                            return !ctx.players.local().interacting().name().equalsIgnoreCase(enemy.name())
-                                    || !ctx.players.local().inCombat()
-//                                    || !ctx.players.local().inMotion()
-                                    || !enemy.inCombat();
-                        }
-                    }, 100, 10);
-                }
-            } else {
-                door = ctx.objects.select().action("Open").nearest().poll();
-                if (!door.inViewport()) {
-                    if (ctx.movement.step(door)) {
-                        Condition.wait(new Callable<Boolean>() {
-                            @Override
-                            public Boolean call() throws Exception {
-                                return ctx.movement.destination().distanceTo(ctx.players.local()) < 5;
-                            }
-                        }, 100, 10);
-                    }
-                    if (!door.inViewport()) {
-                        ctx.camera.turnTo(door, Random.nextInt(10, 20));
-                    }
-                } else {
-                    if (door.interact("Open", door.name())) {
-                        Condition.wait(new Callable<Boolean>() {
-                            @Override
-                            public Boolean call() throws Exception {
-                                return !ctx.players.local().inMotion();
-                            }
-                        }, 100, 10);
-                    }
-                }
             }
+            if (enemy.interact("Attack", enemy.name())) {
+                Condition.wait(new Callable<Boolean>() {
+                    @Override
+                    public Boolean call() throws Exception {
+                        return ctx.players.local().interacting().name().isEmpty()
+                                || ctx.players.local().interacting().name() == null
+                                || !ctx.players.local().inCombat()
+                                && enemy.health() <= 0;
+                    }
+                }, 10, 10);
+            }
+
         }
     }
 }
+
