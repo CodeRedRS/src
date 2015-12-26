@@ -1,0 +1,76 @@
+Version: 1.8
+============
+Added a radius option
+Better Axe detection
+
+Version: 1.7
+============
+Expanded paint to include more information
+Added end conditions
+    End Time (min)
+        Script ends and logs out once the runtime is the specified end time
+    End Level
+        Script ends and logs out once the specified level is reached
+    End Logs
+        Script ends and logs out once the specified amount of logs have been cut
+
+Version: 1.6
+============
+Added Seers' Village Yews Preset
+Added Dragon/Infernal Axe special
+Fixed Edgeville door
+Hopefully fixed the logging out issue with Magic Trees
+
+Version: 1.5
+============
+Remade paths to be overall better
+Minor tweaks for better efficiency
+Fixed Sorcerers' Tower Preset
+
+Version: 1.4
+============
+Redesigned banking and chopping methods
+Now will open door at Edgeville if closed, going to and from bank
+Added bounding boxes for better clicking
+    Only added for Normal, Oak, Willow, and Yew trees
+    All others will be hot patched soon
+Painting area for preset locations
+Changed long time format
+    Now shows a "11d 22h 33m 44s"
+Fixed issue where player wouldn't withdraw axe while banking
+
+Version: 1.3
+============
+Added Preset locations
+    Varrock Castle Yews
+    Edgeville Yews (Still needs door handling)
+Added a Basic chat response (BETA, use at own risk)
+    Only replys once every 60sec to avoid spamming if someone says something repeatedly
+    Will reply back with woodcutting level if someone asks "lvl" or "level"
+    Will reply back "Thanks" or "You?" if someone says "nice", "cool", or "sweet"
+Lag issues should be fixed now
+Some banking locations don't work because of a client bug, nothing I can fix
+    Falador is the only one I'm aware of currently
+    To check if a banking location is working, check the object name by hitting: View > Objects, if the name is correct the bank location will work
+
+Version: 1.2
+============
+Avoid combat added to Gui
+Better mouse hopping
+Gui now only loads treas in area
+Rescan for Banks and Trees added, but should be avoided for the time being
+Script should now find its way back to the bank no matte how far it strays
+
+Version: 1.2b
+=============
+Removed the run toggle as it is broken in RSBot-7 (Will be back once fixed)
+New Gui layout
+
+Version: 1.1
+============
+Fixed error where the script would wait till the player is idle
+Added basic mouse hopping option for dropping
+
+Version: 1.0
+============
+Initial release
