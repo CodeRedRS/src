@@ -1,8 +1,9 @@
 package codered.crPest.PestUtil;
 
-import codered.crPest.PestTask.*;
-import codered.universal.Run;
-import codered.universal.crAntiban;
+import codered.crPest.PestTask.Fight;
+import codered.crPest.PestTask.NewGame;
+import codered.crPest.PestTask.WaitingForGame;
+import codered.universal.crVariables;
 import org.powerbot.script.rt4.ClientContext;
 
 import javax.swing.*;
@@ -23,9 +24,8 @@ public class PestGui extends JFrame {
     private final static String[] boatLevelList = {"Automatic", "Novice (40)", "Intermediate (70)", "Veteran (100)"};
     private final static String[] enemyStringList = {"Brawler", "Defiler", "Ravager", "Shifter", "Torcher", "Spinner", "Portal", "Splatter"};
     private final static String guiTitle = "crPest Gui " + PestConstants.scriptVersion;
-    private final static ClientContext ctx = PestVariables.ctx;
 
-    public PestGui() {
+    public PestGui(final ClientContext ctx) {
         /**
          * Initialize swing objects
          */
@@ -35,13 +35,16 @@ public class PestGui extends JFrame {
         final JList enemyList = new JList(enemyStringList);
         final JButton start = new JButton("Start");
         final JLabel welcomeMessage = new JLabel(PestConstants.welcomeMessage);
+        final JCheckBox quickPrayers = new JCheckBox("Use Quick Prayers");
 
         final JPanel optionsPane = new JPanel();
+        final JPanel playStyleOptions = new JPanel();
+        playStyleOptions.setLayout(new BoxLayout(playStyleOptions, BoxLayout.Y_AXIS));
 
         /**
          * Enemy List Settings
          */
-        enemyList.setSelectedIndices(new int[] {0, 1, 2, 3, 4, 5, 6});
+        enemyList.setSelectedIndices(new int[]{0, 1, 2, 3, 4, 5, 6});
         enemyList.setToolTipText("Ctrl + Click to select multiple enemies");
         PestVariables.enemyNames = new String[]{"Brawler", "Defiler", "Ravager", "Shifter", "Torcher", "Spinner", "Portal"};
         enemyList.addListSelectionListener(new ListSelectionListener() {
@@ -60,15 +63,16 @@ public class PestGui extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 optionsPane.removeAll();
+                playStyleOptions.removeAll();
                 switch (playStyles.getSelectedIndex()) {
                     // Defend Knight
                     case 0:
-                        optionsPane.add(knightRadius, BorderLayout.EAST);
+                        playStyleOptions.add(knightRadius, BorderLayout.EAST);
                         break;
 
                     // Random Attack Npcs
                     case 1:
-                        optionsPane.add(enemyList, BorderLayout.EAST);
+                        playStyleOptions.add(enemyList, BorderLayout.EAST);
                         break;
 
                     // Target Portals
@@ -83,6 +87,8 @@ public class PestGui extends JFrame {
                     default:
                         break;
                 }
+                playStyleOptions.add(quickPrayers);
+                optionsPane.add(playStyleOptions, BorderLayout.EAST);
                 optionsPane.add(welcomeMessage, BorderLayout.NORTH);
                 optionsPane.add(start, BorderLayout.SOUTH);
                 optionsPane.add(boatLevel, BorderLayout.WEST);
@@ -118,10 +124,13 @@ public class PestGui extends JFrame {
         /**
          * Options
          */
+        playStyleOptions.add(knightRadius);
+        playStyleOptions.add(quickPrayers);
+
         optionsPane.setLayout(new BorderLayout(0, 0));
         optionsPane.add(welcomeMessage, BorderLayout.NORTH);
         optionsPane.add(start, BorderLayout.SOUTH);
-        optionsPane.add(knightRadius, BorderLayout.EAST);
+        optionsPane.add(playStyleOptions, BorderLayout.EAST);
         optionsPane.add(boatLevel, BorderLayout.WEST);
         optionsPane.add(playStyles, BorderLayout.CENTER);
         tabbedPanel.addTab("Options", null, optionsPane, "");
@@ -158,12 +167,12 @@ public class PestGui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedStyle = playStyles.getSelectedIndex();
                 PestVariables.taskList.clear();
-                PestVariables.taskList.addAll(Arrays.asList(new crAntiban(ctx, 999999, PestWidgets.pestPoints.visible()), new ToLander(ctx, boatLevel.getSelectedIndex()), new GameStarted(ctx), new Run(ctx), new Reset(ctx)));
+                PestVariables.taskList.addAll(Arrays.asList(new Fight(ctx), new NewGame(ctx, boatLevel.getSelectedIndex()), new WaitingForGame(ctx)));
                 PestVariables.playStyle = playStyleList[selectedStyle];
                 switch (selectedStyle) {
                     // Defend Knight
                     case 0:
-                        PestVariables.taskList.addAll(Arrays.asList(new DefendKnight(ctx)/*, new ReturnToKnight(ctx)*/));
+                        PestVariables.taskList.addAll(Arrays.asList(new Fight(ctx)));
                         break;
 
                     // Random Attack Npcs
@@ -184,9 +193,11 @@ public class PestGui extends JFrame {
                         break;
                 }
                 start.setText("Update Settings");
-                //setLocation(Frame.getFrames()[0].getX() - getWidth() + 10, Frame.getFrames()[0].getY());
             }
         });
+        crVariables.quickPrayers = quickPrayers.isSelected();
+        setState(Frame.ICONIFIED);
+        setAlwaysOnTop(false);
         pack();
         setLocationRelativeTo(Frame.getFrames()[0]);
     }

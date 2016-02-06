@@ -1,4 +1,4 @@
-package codered.crPest.PestTask;
+package codered.crPestDeprecated.PestTask;
 
 import codered.crPest.PestUtil.PestConstants;
 import codered.crPest.PestUtil.PestVariables;
@@ -30,6 +30,7 @@ public class DefendKnight extends Task<ClientContext> {
 
     @Override
     public void execute() {
+        System.out.println("Defend Knight");
 //        if (!ctx.npcs.select().within(PestVariables.voidKnightTile, PestConstants.knightRadius).name(PestConstants.pestNames).action("Attack").isEmpty()) {
 //            enemy = ctx.npcs.nearest().poll();
 //        } else {
@@ -39,7 +40,7 @@ public class DefendKnight extends Task<ClientContext> {
 //        if (!ctx.npcs.select().within(PestVariables.voidKnightTile, PestConstants.knightRadius).action("Attack").isEmpty()) {
 //        }
         enemy = ctx.npcs.nearest().poll();
-
+        PestVariables.target = enemy.name();
 //        TODO: Look into detecting what npcs are interacting with the knight and attack them
 //        enemy = ctx.npcs.select().action("Attack").poll().interacting().name().equalsIgnoreCase("void knight");
 
@@ -89,15 +90,16 @@ public class DefendKnight extends Task<ClientContext> {
             if (ctx.npcs.size() > 1) {
                 enemy = ctx.npcs.shuffle().poll();
             }
-            if (enemy.interact("Attack", enemy.name())) {
-                Condition.wait(new Callable<Boolean>() {
-                    @Override
-                    public Boolean call() throws Exception {
-                        return fighting();
-                    }
-                }, 10, 10);
+            if (!ctx.players.local().interacting().name().equalsIgnoreCase(enemy.name()) && (enemy.health() > 0 || enemy.health() == -1)) {
+                if (enemy.interact("Attack", enemy.name())) {
+                    Condition.wait(new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            return fighting();
+                        }
+                    }, 10, 10);
+                }
             }
-
         }
     }
 

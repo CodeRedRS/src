@@ -1,4 +1,4 @@
-package codered.crPest.PestTask;
+package codered.crPestDeprecated.PestTask;
 
 import codered.crPest.PestUtil.PestVariables;
 import codered.crPest.PestUtil.PestWidgets;
@@ -23,6 +23,7 @@ public class GameStarted extends Task<ClientContext> {
 
     @Override
     public void execute() {
+        System.out.println("GameStarted");
         Tile t = ctx.players.local().tile();
         ctx.movement.step(new Tile(t.x(), t.y() + Random.nextInt(-20, -30)));
     }

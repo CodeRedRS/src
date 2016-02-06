@@ -1,17 +1,23 @@
 package codered.crPest;
 
-import codered.crPest.PestUtil.*;
+import codered.crPest.PestGraphics.MouseTrail;
+import codered.crPest.PestGraphics.PaintMain;
+import codered.crPest.PestGraphics.PestMap;
+import codered.crPest.PestGraphics.PestMouse;
+import codered.crPest.PestUtil.PestConstants;
+import codered.crPest.PestUtil.PestGui;
+import codered.crPest.PestUtil.PestVariables;
+import codered.crPest.PestUtil.PestWidgets;
 import codered.universal.Task;
 import codered.universal.crProperties;
 import org.powerbot.script.*;
 import org.powerbot.script.rt4.ClientContext;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.util.concurrent.Callable;
 
 /**
- * Created by Dakota on 10/16/2015.
+ * Created by Dakota on 2/5/2016.
  */
 @Script.Manifest(
         name = "crPest",
@@ -20,143 +26,56 @@ import java.util.concurrent.Callable;
 )
 public class crPest extends PollingScript<ClientContext> implements PaintListener, MessageListener {
     PestGui gui;
-    @SuppressWarnings({"serial", "static-access"})
     @Override
     public void start() {
-        PestVariables.ctx = ctx;
+        if (PestConstants.blacklist.contains(PestVariables.userId)) {
+            JOptionPane.showMessageDialog(null, "You're added to the Blacklist. If you think this is a mistake please " +
+                    "feel free to contact me.", "Blacklisted", JOptionPane.ERROR_MESSAGE);
+
+            ctx.controller.stop();
+        }
+
         PestVariables.combatLevel = ctx.players.local().combatLevel();
         PestVariables.user = ctx.properties.getProperty(crProperties.userName);
-        PestVariables.runTime = ctx.controller.script().getTotalRuntime();
+        PestVariables.userId = ctx.properties.getProperty(crProperties.userId);
+        PestWidgets.initiateWidgets(ctx);
 
-        PestWidgets.initiateWidgets(PestVariables.ctx);
-
-        gui = new PestGui();
+        gui = new PestGui(ctx);
         gui.setVisible(true);
-
-//        if (Arrays.asList(PestConstants.validUsers).contains(PestVariables.user)) {
-//        } else {
-//            ctx.controller.stop();
-//            JOptionPane.showMessageDialog(null, "Sorry, " + PestVariables.user + ", but you're not a valid user.", "Not a Valid User", ERROR_MESSAGE);
-//        }
     }
 
     @Override
     public void stop() {
         gui.dispose();
-        System.out.println("Points Gained: " + PestVariables.gainedPestPoints);
     }
 
     @Override
     public void poll() {
-        if ((PestVariables.purplePortalTile == null
-                || PestVariables.yellowPortalTile == null
-                || PestVariables.bluePortalTile == null
-                || PestVariables.redPortalTile == null)
-                && PestWidgets.damageDealt.visible()) {
-            PestMethods.getPortalTiles();
-        }
-
+        PestVariables.inGame = PestWidgets.inGame.valid();
+        PestVariables.boarded = PestWidgets.pestPoints.valid();
         for (Task t : PestVariables.taskList) {
-            if (t.activate())
+            if (t.activate()) {
                 t.execute();
+            }
         }
     }
 
+
     @Override
-    public void messaged(MessageEvent e) {
-        String msg = e.text().toLowerCase();
-
-        if (msg.equalsIgnoreCase(PestConstants.boardTheLanderString)) {
-            PestVariables.boarded = true;
-        }
-
-        if (msg.equalsIgnoreCase(PestConstants.deathMessage)) {
-            System.out.println("Dead");
-            Condition.wait(new Callable<Boolean>() {
-                @Override
-                public Boolean call() throws Exception {
-                    return ctx.players.local().health() == ctx.players.local().maxHealth();
-                }
-            }, 100, 10);
-            ctx.movement.step(PestVariables.voidKnightTile);
-        }
-
-        if (msg.contains("the purple")) {
-            System.out.println("Purple portal down.");
-            PestVariables.purplePortal = true;
-        }
-        if (msg.contains("the yellow")) {
-            System.out.println("Yellow portal down.");
-            PestVariables.yellowPortal = true;
-        }
-        if (msg.contains("the blue")) {
-            System.out.println("Blue portal down.");
-            PestVariables.bluePortal = true;
-        }
-        if (msg.contains("the red")) {
-            System.out.println("Red portal down.");
-            PestVariables.redPortal = true;
-        }
+    public void messaged(MessageEvent messageEvent) {
 
     }
 
     @Override
     public void repaint(Graphics g) {
-        final Graphics2D g2 = (Graphics2D) g;
-        if (PestVariables.voidKnightTile != null) {
-            Point knightPoint = PestVariables.voidKnightTile.matrix(ctx).mapPoint();
-            Tile tempTile = new Tile(PestVariables.voidKnightTile.x(), PestVariables.voidKnightTile.y() + PestVariables.knightRadius);
-            Point radiusPoint = tempTile.matrix(ctx).mapPoint();
-            double distance = (Math.sqrt((knightPoint.x - radiusPoint.x) * (knightPoint.x - radiusPoint.x) + (knightPoint.y - radiusPoint.y) * (knightPoint.y - radiusPoint.y)));
+        PaintMain main = new PaintMain(ctx);
+        PestMap map = new PestMap(ctx);
+        PestMouse mouse = new PestMouse(ctx);
+        MouseTrail trail = new MouseTrail(ctx, null);
 
-            g2.setColor(Color.white);
-            g2.draw(new Ellipse2D.Double(knightPoint.x - distance, knightPoint.y - distance, distance * 2, distance * 2));
-        }
-
-
-        if (PestVariables.voidKnightTile != null) {
-            Point p = PestVariables.voidKnightTile.matrix(ctx).mapPoint();
-
-            g2.setColor(new Color(0));
-            g2.fillOval(p.x - 5, p.y - 5, 10, 10);
-            g2.setColor(Color.white);
-            g2.drawOval(p.x - 5, p.y - 5, 10, 10);
-        }
-
-        if (PestVariables.purplePortalTile != null) {
-            Point p = PestVariables.purplePortalTile.matrix(ctx).mapPoint();
-
-            g2.setColor(PestVariables.purplePortal ? PestConstants.purplePortal : PestConstants.purplePortal.darker());
-            g2.fillOval(p.x - 5, p.y - 5, 10, 10);
-            g2.setColor(Color.white);
-            g2.drawOval(p.x - 5, p.y - 5, 10, 10);
-        }
-
-        if (PestVariables.yellowPortalTile != null) {
-            Point p = PestVariables.yellowPortalTile.matrix(ctx).mapPoint();
-
-            g2.setColor(PestVariables.yellowPortal ? PestConstants.yellowPortal : PestConstants.yellowPortal.darker());
-            g2.fillOval(p.x - 5, p.y - 5, 10, 10);
-            g2.setColor(Color.white);
-            g2.drawOval(p.x - 5, p.y - 5, 10, 10);
-        }
-
-        if (PestVariables.bluePortalTile != null) {
-            Point p = PestVariables.bluePortalTile.matrix(ctx).mapPoint();
-
-            g2.setColor(PestVariables.bluePortal ? PestConstants.bluePortal : PestConstants.bluePortal.darker());
-            g2.fillOval(p.x - 5, p.y - 5, 10, 10);
-            g2.setColor(Color.white);
-            g2.drawOval(p.x - 5, p.y - 5, 10, 10);
-        }
-
-        if (PestVariables.redPortalTile != null) {
-            Point p = PestVariables.redPortalTile.matrix(ctx).mapPoint();
-
-            g2.setColor(PestVariables.redPortal ? PestConstants.redPortal : PestConstants.redPortal.darker());
-            g2.fillOval(p.x - 5, p.y - 5, 10, 10);
-            g2.setColor(Color.white);
-            g2.drawOval(p.x - 5, p.y - 5, 10, 10);
-        }
+        map.repaint(g);
+        main.repaint(g);
+        mouse.repaint(g);
+        trail.paint(g);
     }
 }

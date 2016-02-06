@@ -20,6 +20,7 @@ public class PestVariables {
     public static int gainedPestPoints = 0;
     public static int totalPestPoints = 0;
     public static int knightRadius = 5;
+    public static int gamesPlayed = 0;
 
     // Booleans
     public static boolean boarded = false;
@@ -27,8 +28,11 @@ public class PestVariables {
     public static boolean yellowPortal = false;
     public static boolean bluePortal = false;
     public static boolean redPortal = false;
+    public static boolean inGame = false;
+
 
     // Strings
+    public static String userId = "";
     public static String user = "";
     public static String target = "";
     public static String playStyle = "";

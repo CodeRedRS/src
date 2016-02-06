@@ -1,7 +1,6 @@
-package codered.crPest.PestTask;
+package codered.crPestDeprecated.PestTask;
 
 import codered.crPest.PestUtil.PestConstants;
-import codered.crPest.PestUtil.PestMethods;
 import codered.crPest.PestUtil.PestVariables;
 import codered.crPest.PestUtil.PestWidgets;
 import codered.universal.Task;
@@ -15,6 +14,7 @@ import java.util.concurrent.Callable;
 /**
  * Created by Dakota on 10/16/2015.
  */
+//TODO: Redo this class
 public class ToLander extends Task<ClientContext> {
 
     int gangPlankId;
@@ -48,14 +48,12 @@ public class ToLander extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
-        return !PestWidgets.pestPoints.visible()
-                && !PestWidgets.damageDealt.visible()
-                || PestWidgets.gameOver.visible();
+        return !PestVariables.boarded;
     }
 
     @Override
     public void execute() {
-        PestMethods.resetPortals();
+        System.out.println("ToLander");
         gangplank = ctx.objects.select().id(this.gangPlankId).nearest().poll();
 
         if (!gangplank.inViewport()) {
@@ -72,23 +70,31 @@ public class ToLander extends Task<ClientContext> {
                     Condition.wait(new Callable<Boolean>() {
                         @Override
                         public Boolean call() throws Exception {
+                            PestVariables.boarded = true;
                             return PestWidgets.pestPoints.visible();
                         }
                     }, 50, 10);
-                    PestMethods.resetPortals();
                 }
             }
             try {
-                if (PestVariables.startPestPoints == 0) {
-                    if (PestWidgets.pestPoints.visible())
+                if (PestWidgets.pestPoints.visible()) {
+                    if (PestVariables.startPestPoints == 0) {
                         PestVariables.startPestPoints = Integer.parseInt(PestWidgets.pestPoints.text().split(" ")[2]);
-                } else {
-                    PestVariables.gainedPestPoints = (Integer.parseInt(PestWidgets.pestPoints.text().split(" ")[2]) - PestVariables.startPestPoints);
-                    System.out.println("Points Gained: " + PestVariables.gainedPestPoints);
+                        PestVariables.totalPestPoints = Integer.parseInt(PestWidgets.pestPoints.text().split(" ")[2]);
+                    } else {
+                        PestVariables.gainedPestPoints = (Integer.parseInt(PestWidgets.pestPoints.text().split(" ")[2]) - PestVariables.startPestPoints);
+                        PestVariables.totalPestPoints = Integer.parseInt(PestWidgets.pestPoints.text().split(" ")[2]);
+                        System.out.println("Points Gained: " + PestVariables.gainedPestPoints);
+                        System.out.println("Games Played: " + PestVariables.gamesPlayed);
+                    }
                 }
             } catch (Exception ex) {
                 System.out.println("Unable to get Pest Points");
             }
+        }
+
+        if (PestWidgets.clickToContinue.visible()) {
+            PestWidgets.clickToContinue.click();
         }
     }
 }
