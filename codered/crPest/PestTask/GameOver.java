@@ -1,5 +1,6 @@
 package codered.crPest.PestTask;
 
+import codered.crPest.PestUtil.PestMethods;
 import codered.crPest.PestUtil.PestVariables;
 import codered.universal.Task;
 import org.powerbot.script.rt4.ClientContext;
@@ -7,21 +8,19 @@ import org.powerbot.script.rt4.ClientContext;
 /**
  * Created by Dakota on 2/6/2016.
  */
-public class WaitingForGame extends Task<ClientContext> {
-    private boolean waiting = false;
-    public WaitingForGame(ClientContext ctx) {
+public class GameOver extends Task<ClientContext> {
+    public GameOver(ClientContext ctx) {
         super(ctx);
     }
 
     @Override
     public boolean activate() {
-        return !PestVariables.inGame
-                && PestVariables.boarded
-                && !waiting;
+        return !ctx.widgets.widget(408).component(5).valid()
+                && !PestVariables.boarded;
     }
 
     @Override
     public void execute() {
-        waiting = true;
+        PestMethods.resetGame(ctx);
     }
 }

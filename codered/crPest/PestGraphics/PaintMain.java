@@ -38,6 +38,8 @@ public class PaintMain extends ClientAccessor implements PaintListener {
         info.add("InGame: " + PestVariables.inGame);
         info.add("Boarded: " + PestVariables.boarded);
         info.add("Points: " + PestVariables.totalPestPoints + "(+" + PestVariables.gainedPestPoints + ")");
+        info.add("GamesPlayed: " + PestVariables.gamesPlayed);
+//        info.add("GamesWon: " + PestVariables.gamesWon);
 
         // Info Loop
         for (String s : info) {

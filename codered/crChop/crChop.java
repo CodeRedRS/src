@@ -35,8 +35,7 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
  */
 @Script.Manifest(
         name = "crChop",
-        description = "AIO Woodcutter v1.8",
-        properties = "topic=1283889;client=4;"
+        description = "AIO Woodcutter v1.8"
 )
 public class crChop extends PollingScript<ClientContext> implements PaintListener, MessageListener, MouseListener {
     public static final double version = 1.8;

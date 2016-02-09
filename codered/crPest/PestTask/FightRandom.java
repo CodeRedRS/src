@@ -1,31 +1,32 @@
-package codered.crPestDeprecated.PestTask;
+package codered.crPest.PestTask;
 
+import codered.crPest.PestUtil.PestConstants;
+import codered.crPest.PestUtil.PestMethods;
 import codered.crPest.PestUtil.PestVariables;
 import codered.universal.Task;
 import org.powerbot.script.Condition;
 import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
-import org.powerbot.script.rt4.GameObject;
 import org.powerbot.script.rt4.Npc;
 
 import java.util.concurrent.Callable;
 
 /**
- * Created by Dakota on 10/16/2015.
+ * Created by Dakota on 2/5/2016.
  */
-public class Fight extends Task<ClientContext> {
-
-    Npc enemy;
-    GameObject door;
-
-    public Fight(ClientContext ctx) {
+public class FightRandom extends Task<ClientContext> {
+    private Npc enemy;
+    private boolean shuffledPest = false;
+    public FightRandom(ClientContext ctx) {
         super(ctx);
     }
 
     @Override
     public boolean activate() {
-        return (ctx.players.local().interacting().name().isEmpty() || ctx.players.local().interacting().name() == null)
-                && !ctx.npcs.select().name(PestVariables.enemyNames).action("Attack").isEmpty();
+        return PestVariables.inGame
+                && PestVariables.gameStarted
+                && !ctx.npcs.select().name(PestConstants.pestNames).isEmpty()
+                && (ctx.players.local().interacting().name().isEmpty() || ctx.players.local().interacting().name() == null);
     }
 
     @Override
@@ -46,22 +47,19 @@ public class Fight extends Task<ClientContext> {
                 }
             }
         } else {
-            if (ctx.npcs.size() > 1) {
+            if (ctx.npcs.size() > 1 && !shuffledPest) {
                 enemy = ctx.npcs.shuffle().poll();
+                shuffledPest = true;
             }
             if (enemy.interact("Attack", enemy.name())) {
                 Condition.wait(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
-                        return ctx.players.local().interacting().name().isEmpty()
-                                || ctx.players.local().interacting().name() == null
-                                || !ctx.players.local().inCombat()
-                                && enemy.health() <= 0;
+                        shuffledPest = false;
+                        return PestMethods.notFighting(ctx, enemy);
                     }
                 }, 10, 10);
             }
-
         }
     }
 }
-

@@ -18,7 +18,7 @@ public class PestWidgets {
         damageDealt = ctx.widgets.widget(408).component(4);
         pestPoints = ctx.widgets.widget(407).component(15);
         clickToContinue = ctx.widgets.widget(231).component(2);
-        gameOver = ctx.widgets.widget(231).component(3);
+        gameOver = ctx.widgets.widget(231).component(1);
         inGame = ctx.widgets.widget(408).component(5);
     }
 }

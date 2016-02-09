@@ -1,8 +1,6 @@
 package codered.crPest.PestUtil;
 
-import codered.crPest.PestTask.Fight;
-import codered.crPest.PestTask.NewGame;
-import codered.crPest.PestTask.WaitingForGame;
+import codered.crPest.PestTask.*;
 import codered.universal.crVariables;
 import org.powerbot.script.rt4.ClientContext;
 
@@ -167,17 +165,19 @@ public class PestGui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedStyle = playStyles.getSelectedIndex();
                 PestVariables.taskList.clear();
-                PestVariables.taskList.addAll(Arrays.asList(new Fight(ctx), new NewGame(ctx, boatLevel.getSelectedIndex()), new WaitingForGame(ctx)));
+                PestVariables.taskList.addAll(Arrays.asList(new NewGame(ctx, boatLevel.getSelectedIndex()),
+                        new GameStarted(ctx), new GameOver(ctx), new WaitingForGame(ctx)));
+
                 PestVariables.playStyle = playStyleList[selectedStyle];
                 switch (selectedStyle) {
                     // Defend Knight
                     case 0:
-                        PestVariables.taskList.addAll(Arrays.asList(new Fight(ctx)));
+                        PestVariables.taskList.addAll(Arrays.asList(new DefendKnight(ctx), new ReturnToKnight(ctx)));
                         break;
 
                     // Random Attack Npcs
                     case 1:
-                        PestVariables.taskList.add(new Fight(ctx));
+                        PestVariables.taskList.add(new FightRandom(ctx));
                         break;
 
                     // Target Portals

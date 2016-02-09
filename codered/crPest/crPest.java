@@ -1,13 +1,8 @@
 package codered.crPest;
 
-import codered.crPest.PestGraphics.MouseTrail;
-import codered.crPest.PestGraphics.PaintMain;
-import codered.crPest.PestGraphics.PestMap;
-import codered.crPest.PestGraphics.PestMouse;
-import codered.crPest.PestUtil.PestConstants;
-import codered.crPest.PestUtil.PestGui;
-import codered.crPest.PestUtil.PestVariables;
-import codered.crPest.PestUtil.PestWidgets;
+import codered.crPest.PestGraphics.*;
+import codered.crPest.PestTask.Async;
+import codered.crPest.PestUtil.*;
 import codered.universal.Task;
 import codered.universal.crProperties;
 import org.powerbot.script.*;
@@ -51,8 +46,7 @@ public class crPest extends PollingScript<ClientContext> implements PaintListene
 
     @Override
     public void poll() {
-        PestVariables.inGame = PestWidgets.inGame.valid();
-        PestVariables.boarded = PestWidgets.pestPoints.valid();
+        new Thread(new Async(ctx)).start();
         for (Task t : PestVariables.taskList) {
             if (t.activate()) {
                 t.execute();
@@ -63,19 +57,26 @@ public class crPest extends PollingScript<ClientContext> implements PaintListene
 
     @Override
     public void messaged(MessageEvent messageEvent) {
+        String msg = messageEvent.text();
 
+        if (msg.contains("You board the lander.")) {
+            PestVariables.gamesPlayed++;
+        }
     }
 
     @Override
     public void repaint(Graphics g) {
         PaintMain main = new PaintMain(ctx);
+        PaintOther other = new PaintOther(ctx);
         PestMap map = new PestMap(ctx);
         PestMouse mouse = new PestMouse(ctx);
         MouseTrail trail = new MouseTrail(ctx, null);
 
-        map.repaint(g);
         main.repaint(g);
+        other.repaint(g);
+
         mouse.repaint(g);
         trail.paint(g);
+        map.repaint(g);
     }
 }
